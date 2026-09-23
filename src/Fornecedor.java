@@ -11,4 +11,30 @@ public class Fornecedor {
         this.PdOrigem = PdOrigem;
         this.moedaPadr = moedaPadr;
     }
+
+
+    public String getNome() {
+        return this.nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getPdOrigem() {
+        return this.PdOrigem;
+    }
+
+    public void setPdOrigem(String PdOrigem) {
+        this.PdOrigem = PdOrigem;
+    }
+
+    public String getMoedaPadr() {
+        return this.moedaPadr;
+    }
+
+    public void setMoedaPadr(String moedaPadr) {
+        this.moedaPadr = moedaPadr;
+    }
+
 }

@@ -10,4 +10,38 @@ public abstract class Produto {
         this.aliquota = aliquota;
         this.fornecedor = fornecedor;
     }
+
+
+    public String getNome() {
+        return this.nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public int getPreco() {
+        return this.preco;
+    }
+
+    public void setPreco(int preco) {
+        this.preco = preco;
+    }
+
+    public int getAliquota() {
+        return this.aliquota;
+    }
+
+    public void setAliquota(int aliquota) {
+        this.aliquota = aliquota;
+    }
+
+    public Fornecedor getFornecedor() {
+        return this.fornecedor;
+    }
+
+    public void setFornecedor(Fornecedor fornecedor) {
+        this.fornecedor = fornecedor;
+    }
+
 }
