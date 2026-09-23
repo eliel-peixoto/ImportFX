@@ -1,8 +1,8 @@
 public class Pedido {
-    Cliente cliente;
-    Fornecedor fornecedor;
-    int codigo;
-    String status;
+    private Cliente cliente;
+    private Fornecedor fornecedor;
+    private int codigo;
+    private String status;
 
     public Pedido(Cliente cliente, Fornecedor fornecedor, int codigo, String status) {
         this.cliente = cliente;
