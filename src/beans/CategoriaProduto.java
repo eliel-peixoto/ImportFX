@@ -1,4 +1,4 @@
-
+package beans;
 public final class CategoriaProduto extends Produto {
 	//atributos
 	private String categoria;
