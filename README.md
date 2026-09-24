@@ -55,5 +55,5 @@ JavaFX, API PTAX do Banco Central (https://olinda.bcb.gov.br/olinda/servico/PTAX
 * Artur Cândido Dourado do Nascimento
 * Eliel Peixoto Teófilo de Jesus
 * Thiago Sousa Fischer de Vasconcelos - thiago.fischer@ufrpe.br
-* Vitor Miguel da Paz Azevedo
+* Vitor Miguel da Paz Azevedo - vitor.miguel@ufrpe.br
 * Wendel Lucas Oliveira Freitas
