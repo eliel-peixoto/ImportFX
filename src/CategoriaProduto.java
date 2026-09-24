@@ -7,13 +7,13 @@ public final class CategoriaProduto extends Produto {
 	private int peso;
 
 	//construtor
-	private CategoriaProduto(int preco, Fornecedor fornecedor, String categoria, int quantidade, int aliquota, int peso){
+	public CategoriaProduto(int preco, Fornecedor fornecedor, String categoria, int quantidade, int aliquota, int peso){
 		super(preco, fornecedor);
 		
 		setCategoria(categoria);
 		setQuantidade(quantidade);
 		setAliquota(aliquota);
-    setPeso(peso);
+		setPeso(peso);
 	}
 
 	//getters e setters
