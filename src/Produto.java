@@ -1,24 +1,16 @@
 
 public abstract class Produto {
 	//atributos
-	private String nome;
 	private int preco;
 	private Fornecedor fornecedor;
 	
 	//construtor
-	public Produto(String nome, int preco, Fornecedor fornecedor){
-		setNome(nome);
+	public Produto(int preco, Fornecedor fornecedor){
 		setPreco(preco);
 		setFornecedor(fornecedor);
 	}
 	
 	//getters e setters
-	public String getNome() {
-		return nome;
-	}
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
 	public int getPreco() {
 		return preco;
 	}
@@ -35,7 +27,7 @@ public abstract class Produto {
 	//toString
 	@Override
 	public String toString() {
-		return "Produto [nome: " + this.getNome() + "; preco: " + this.getPreco() + "; Fornecedor: " + this.getFornecedor().getNome() + "]";
+		return "Produto [preco: " + this.getPreco() + "; Fornecedor: " + this.getFornecedor().getNome() + "]";
 	}
 	
 	//metodo equals()
@@ -49,7 +41,7 @@ public abstract class Produto {
 		Produto o = (Produto) obj;
 		
 		//checagem real da classe
-		if(this.getNome() == o.getNome() && this.getPreco() == this.getPreco() && this.getFornecedor() == o.getFornecedor()) {
+		if(this.getPreco() == o.getPreco() && this.getFornecedor() == o.getFornecedor()) {
 			resultado = true;
 		}
 		return resultado;
