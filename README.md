@@ -51,6 +51,9 @@ JavaFX, API PTAX do Banco Central (https://olinda.bcb.gov.br/olinda/servico/PTAX
 
 **Requisito bônus (opcional, fora da contagem oficial):** exportar o extrato de um pedido como página HTML estática, exibindo a cotação usada e o detalhamento de impostos, aberta automaticamente no navegador via `Desktop.getDesktop().browse()`.
 
+## Diagrama
+![Diagrama de UML](uml/UML import FX.pdf)
+
 ## Integrantes do grupo com nome completo
 * Artur Cândido Dourado do Nascimento
 * Eliel Peixoto Teófilo de Jesus
