@@ -1,27 +1,41 @@
 public class Item {
-    private Produto produto;
-    private int quantidade;
+	//atributos
+    private String nomeProduto;
+    private Integer quantidade;
+    private Integer pesoTotal;
 
-    public Item(Produto produto, int quantidade){
-        this.produto = produto;
-        this.quantidade = quantidade;
+    //construtor
+    public Item(String nomeProduto, int quantidade, int pesoTotal) {
+    	setNomeProduto(nomeProduto);
+    	setQuantidade(quantidade);
+    	setPesoTotal(pesoTotal);
     }
 
+    //getters e setters
+	public String getNomeProduto() {
+		return nomeProduto;
+	}
 
-    public Produto getProduto() {
-        return this.produto;
-    }
+	public void setNomeProduto(String nomeProduto) {
+		this.nomeProduto = nomeProduto;
+	}
 
-    public void setProduto(Produto produto) {
-        this.produto = produto;
-    }
+	public Integer getQuantidade() {
+		return quantidade;
+	}
 
-    public int getQuantidade() {
-        return this.quantidade;
-    }
+	public void setQuantidade(int quantidade) {
+		Integer a = (Integer) quantidade;
+		this.quantidade = a;
+	}
 
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
-    }
+	public Integer getPesoTotal() {
+		return pesoTotal;
+	}
+
+	public void setPesoTotal(int pesoTotal) {
+		Integer b = (Integer) pesoTotal;
+		this.pesoTotal = b;
+	}
 
 }
