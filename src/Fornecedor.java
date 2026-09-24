@@ -6,13 +6,12 @@ public class Fornecedor {
     private String nome;
     private String pdOrigem;  //Pais de Origem
     private String moedaPadr; //moeda do Pais de Origem (vamos usar a API)
-    private ArrayList<Produto> produto;
+    private ArrayList<Produto> listaProdutos;
 
-    //construtor:
-
+    //construtores=====
     //incompleto
     public Fornecedor(){
-        this.produto = new ArrayList<>();
+        this.listaProdutos = new ArrayList<>();
     }
 
     //completo mas sem lista
@@ -20,19 +19,36 @@ public class Fornecedor {
         this.nome = nome;
         this.pdOrigem = pdOrigem;
         this.moedaPadr = moedaPadr;
-        this.produto = new ArrayList<>();
+        this.listaProdutos = new ArrayList<>();
     }
 
     //completo e com lista
-    public Fornecedor(String nome, String pdOrigem, String moedaPadr, ArrayList<Produto> produto) {
+    public Fornecedor(String nome, String pdOrigem, String moedaPadr, ArrayList<Produto> listaProduto) {
         this.nome = nome;
         this.pdOrigem = pdOrigem;
         this.moedaPadr = moedaPadr;
-        if (produto != null) {
-            this.produto = produto;
+        if (listaProdutos != null) {
+            this.listaProdutos = listaProdutos;
         } else {
-            this.produto = new ArrayList<>();
+            this.listaProdutos = new ArrayList<>();
         }
+    }
+    //===================
+    
+    //manipulação da lista
+    public void adicionar(Produto produto) {
+    	this.listaProdutos.add(produto);
+    }
+    public void remover(int i) {
+    	this.listaProdutos.remove(i);
+    }
+    public int tamanho() {
+    	int i = this.listaProdutos.size();
+    	return i;
+    }
+    public String getListaProduto(int i) {
+    	Produto p = this.listaProdutos.get(i);
+    	return p.toString();
     }
     
     //getters e setters
@@ -59,23 +75,23 @@ public class Fornecedor {
     public void setMoedaPadr(String moedaPadr) {
         this.moedaPadr = moedaPadr;
     }
-    public ArrayList<Produto> getProduto() {
-        return produto;
+    public ArrayList<Produto> getListaProdutos() {
+        return listaProdutos;
     }
 
     public void setProduto(ArrayList<Produto> produto) {
-        this.produto = produto;
+        this.listaProdutos = produto;
     }
 
     //adicionar e remover produtos
     public void adicionarProduto(Produto p) {
-        if (p != null && !this.produto.contains(p)) {
-            this.produto.add(p);
+        if (p != null && !this.listaProdutos.contains(p)) {
+            this.listaProdutos.add(p);
         }
     }
 
     public void removerProduto(Produto p) {
-        this.produto.remove(p);
+        this.listaProdutos.remove(p);
     }
 
     //Sobrecrevendo a classe object
@@ -100,7 +116,7 @@ public class Fornecedor {
                 "nome='" + nome + '\'' +
                 ", pdOrigem='" + pdOrigem + '\'' +
                 ", moedaPadr='" + moedaPadr + '\'' +
-                ", qtdProdutos=" + (produto != null ? produto.size() : 0) +
+                ", qtdProdutos=" + (listaProdutos != null ? listaProdutos.size() : 0) +
                 '}';
     }
 
