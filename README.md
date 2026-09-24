@@ -51,9 +51,12 @@ JavaFX, API PTAX do Banco Central (https://olinda.bcb.gov.br/olinda/servico/PTAX
 
 **Requisito bônus (opcional, fora da contagem oficial):** exportar o extrato de um pedido como página HTML estática, exibindo a cotação usada e o detalhamento de impostos, aberta automaticamente no navegador via `Desktop.getDesktop().browse()`.
 
+## Diagrama
+![Diagrama](uml/UML-ImportFX.png)
+
 ## Integrantes do grupo com nome completo
-* Artur Cândido Dourado do Nascimento
-* Eliel Peixoto Teófilo de Jesus
+* Artur Cândido Dourado do Nascimento - artur.candido@ufrpe.br
+* Eliel Peixoto Teófilo de Jesus - eliel.peixoto@ufrpe.br
 * Thiago Sousa Fischer de Vasconcelos - thiago.fischer@ufrpe.br
 * Vitor Miguel da Paz Azevedo - vitor.miguel@ufrpe.br
-* Wendel Lucas Oliveira Freitas - wendel.lucas@ufrpe.br
+* Wendel Lucas Oliveira Freitas - wendel.lucas@ufrpe.br
