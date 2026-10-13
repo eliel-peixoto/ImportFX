@@ -2,7 +2,7 @@ package beans;
 
 public enum StatusPedido {
 
-	AGUARDANDOPAG,
+	AGUARDANDO_PAGAMENTO,
 	PAGO,
 	TRANSITO,
 	ALFANDEGA,
