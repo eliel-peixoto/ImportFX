@@ -1,124 +1,89 @@
 package beans;
-import java.util.ArrayList;
+
 import java.util.Objects;
+import dados.RepositorioProdutos;
 
 public class Fornecedor {
-    //atributos
+    private Long id;
     private String nome;
-    private String pdOrigem;  //Pais de Origem
-    private String moedaPadr; //moeda do Pais de Origem (vamos usar a API)
-    private ArrayList<Produto> listaProdutos;
+    private String paisOrigem;
+    private Moeda moedaPadrao;
+    private RepositorioProdutos listaProdutos;
 
-    //construtores=====
-    //incompleto
-    public Fornecedor(){
-        this.listaProdutos = new ArrayList<>();
+    public Fornecedor() {
+        this.listaProdutos = new RepositorioProdutos();
     }
 
-    //completo mas sem lista
-    public Fornecedor(String nome, String pdOrigem, String moedaPadr) {
+    public Fornecedor(Long id, String nome, String paisOrigem, Moeda moedaPadrao) {
+        this.id = id;
         this.nome = nome;
-        this.pdOrigem = pdOrigem;
-        this.moedaPadr = moedaPadr;
-        this.listaProdutos = new ArrayList<>();
+        this.paisOrigem = paisOrigem;
+        this.moedaPadrao = moedaPadrao;
+        this.listaProdutos = new RepositorioProdutos();
     }
 
-    //completo e com lista
-    public Fornecedor(String nome, String pdOrigem, String moedaPadr, ArrayList<Produto> listaProduto) {
-        this.nome = nome;
-        this.pdOrigem = pdOrigem;
-        this.moedaPadr = moedaPadr;
-        if (listaProdutos != null) {
-            this.listaProdutos = listaProdutos;
-        } else {
-            this.listaProdutos = new ArrayList<>();
-        }
+    public Long getId() {
+        return id;
     }
-    //===================
-    
-    //manipulação da lista
-    public void adicionar(Produto produto) {
-    	this.listaProdutos.add(produto);
+
+    public void setId(Long id) {
+        this.id = id;
     }
-    public void remover(int i) {
-    	this.listaProdutos.remove(i);
-    }
-    public int tamanho() {
-    	int i = this.listaProdutos.size();
-    	return i;
-    }
-    public String getListaProduto(int i) {
-    	Produto p = this.listaProdutos.get(i);
-    	return p.toString();
-    }
-    
-    //getters e setters
+
     public String getNome() {
-        return this.nome;
+        return nome;
     }
 
     public void setNome(String nome) {
         this.nome = nome;
     }
 
-    public String getpdOrigem() {
-        return this.pdOrigem;
+    public String getPaisOrigem() {
+        return paisOrigem;
     }
 
-    public void setpdOrigem(String pdOrigem) {
-        this.pdOrigem = pdOrigem;
+    public void setPaisOrigem(String paisOrigem) {
+        this.paisOrigem = paisOrigem;
     }
 
-    public String getMoedaPadr() {
-        return this.moedaPadr;
+    public Moeda getMoedaPadrao() {
+        return moedaPadrao;
     }
 
-    public void setMoedaPadr(String moedaPadr) {
-        this.moedaPadr = moedaPadr;
+    public void setMoedaPadrao(Moeda moedaPadrao) {
+        this.moedaPadrao = moedaPadrao;
     }
-    public ArrayList<Produto> getListaProdutos() {
+
+    public RepositorioProdutos getListaProdutos() {
         return listaProdutos;
     }
 
-    public void setProduto(ArrayList<Produto> produto) {
-        this.listaProdutos = produto;
+    public void setListaProdutos(RepositorioProdutos listaProdutos) {
+        this.listaProdutos = listaProdutos;
     }
 
-    //adicionar e remover produtos
-    public void adicionarProduto(Produto p) {
-        if (p != null && !this.listaProdutos.contains(p)) {
-            this.listaProdutos.add(p);
-        }
-    }
-
-    public void removerProduto(Produto p) {
-        this.listaProdutos.remove(p);
-    }
-
-    //Sobrecrevendo a classe object
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Fornecedor que = (Fornecedor) o;
-        return Objects.equals(nome, que.nome) &&
-               Objects.equals(pdOrigem, que.pdOrigem) &&
-               Objects.equals(moedaPadr, que.moedaPadr);
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Fornecedor other = (Fornecedor) obj;
+
+        if (this.id != null && other.id != null) {
+            return Objects.equals(this.id, other.id);
+        }
+        return Objects.equals(
+                this.nome != null ? this.nome.toLowerCase().trim() : null,
+                other.nome != null ? other.nome.toLowerCase().trim() : null
+        );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nome, pdOrigem, moedaPadr);
+        return Objects.hash(id != null ? id : (nome != null ? nome.toLowerCase().trim() : 0));
     }
 
     @Override
     public String toString() {
-        return "Fornecedor{" +
-                "nome='" + nome + '\'' +
-                ", pdOrigem='" + pdOrigem + '\'' +
-                ", moedaPadr='" + moedaPadr + '\'' +
-                ", qtdProdutos=" + (listaProdutos != null ? listaProdutos.size() : 0) +
-                '}';
+        return "Fornecedor [ID=" + id + ", Nome=" + nome + ", País=" + paisOrigem + ", Moeda=" + moedaPadrao + "]";
     }
-
 }
