@@ -1,20 +1,25 @@
 package App;
 
 import beans.*;
+import gui.*;
+import negocio.*;
+import dados.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        Cliente c1 = new Cliente("JJ", 123456, "asdfghjkl");
-        Cliente c2 = new Cliente("AA", 67890, "qwertyuiop");
+        Cliente c1 = new Cliente(11223344L, "Junior", 123456L, "Brasil");//cpf deve ser long [corrigir na classe]
+        Cliente c2 = new Cliente(9192833L, "Alana", 67890L, "Alemanha");//cpf deve ser long [corrigir na classe]
         
-        Fornecedor f1 = new Fornecedor("Rock Lee", "Japão", "Yen");
-        Fornecedor f2 = new Fornecedor("Zip Zlap", "Planeta Zinx", "Flux");
+        Fornecedor f1 = new Fornecedor();//colocar parametros
+        Fornecedor f2 = new Fornecedor();//colocar parametros
         
-        CategoriaProduto cp1 = new CategoriaProduto(10, f1, "shuriken", 20, 10, 1);
-        CategoriaProduto cp2 = new CategoriaProduto(20, f2, "arma lazer", 10, 100, 10000);
+        Eletronicos e1 = new Eletronicos();//colocar parametros
+        Brinquedos b1 = new Brinquedos();//colocar parametros
+        Vestuario v1 = new Vestuario();//colocar parametros
         
-        f1.adicionar(cp1);
-        f2.adicionar(cp2);
+        //passar os produtos pra os Fornecedores !
+        
+        //criar 1 pedido com um fornecedor e um cliente !
         
     }
 }
