@@ -1,23 +1,20 @@
 package beans;
-
 import java.util.ArrayList;
 
 public class Cliente {
     private Long id;
     private String nome;
-    private String cpf; // Alterado para String conforme o novo diagrama
+    private String cpf;
     private String endereco;
-    private ArrayList<Pedido> pedido; // Relação com a classe Pedido
+    private ArrayList<Pedido> pedido;
 
     public Cliente(Long id, String nome, String cpf, String endereco) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
         this.endereco = endereco;
-        this.pedido = new ArrayList<>(); // Inicializando a lista
+        this.pedido = new ArrayList<>(); 
     }
-
-    // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
