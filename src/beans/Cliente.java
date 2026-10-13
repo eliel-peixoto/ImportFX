@@ -8,7 +8,7 @@ public class Cliente {
     private String endereco;
     private ArrayList<Pedido> pedido;
 
-    public Cliente(String nome, String cpf, String endereco) {
+    public Cliente(Long id, String nome, String cpf, String endereco) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
