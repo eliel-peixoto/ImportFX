@@ -1,21 +1,23 @@
 package beans;
+
 import java.util.ArrayList;
 
 public class Cliente {
     private Long id;
     private String nome;
-    private String cpf;
+    private String cpf; // Alterado para String conforme o novo diagrama
     private String endereco;
-    private ArrayList<Pedido> pedido;
+    private ArrayList<Pedido> pedido; // Relação com a classe Pedido
 
     public Cliente(Long id, String nome, String cpf, String endereco) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
         this.endereco = endereco;
-        this.pedido = new ArrayList<>();
+        this.pedido = new ArrayList<>(); // Inicializando a lista
     }
 
+    // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -30,25 +32,22 @@ public class Cliente {
 
     public ArrayList<Pedido> getPedido() { return pedido; }
     public void setPedido(ArrayList<Pedido> pedido) { this.pedido = pedido; }
-    
+
+    @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
         Cliente other = (Cliente) obj;
         return this.cpf != null && this.cpf.equals(other.cpf);
     }
 
+    @Override
     public String toString() {
         return "Cliente{" +
                 "id=" + id +
                 ", nome='" + nome + '\'' +
-                ", cpf=" + cpf +
+                ", cpf='" + cpf + '\'' +
                 ", endereco='" + endereco + '\'' +
                 '}';
     }
-    
 }
