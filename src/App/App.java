@@ -13,15 +13,16 @@ public class App {
         Fornecedor f1 = new Fornecedor(1L, "TechCorp", "Japão", Moeda.USD);
         Fornecedor f2 = new Fornecedor(2L, "GlobalImport", "Alemanha", Moeda.EUR);
         
-        Eletronicos e1 = new Eletronicos();//colocar parametros
-        Brinquedos b1 = new Brinquedos();//colocar parametros
-        Vestuario v1 = new Vestuario();//colocar parametros
+        Eletronicos e1 = new Eletronicos(1234L, "Placa-mãe", 1500.0, 150.0, 20.0);//colocar parametros
+        Brinquedos b1 = new Brinquedos(5678L, "Carrinho", 50.0, 30.0, 10.0);//colocar parametros
+        Vestuario v1 = new Vestuario(9876L, "Camisa personalizada", 50.0, 20.0, 12.0);//colocar parametros
 
         f1.getListaProdutos().adicionarProduto(e1);
         f1.getListaProdutos().adicionarProduto(b1);
         f2.getListaProdutos().adicionarProduto(v1);
         
         //criar 1 pedido com um fornecedor e um cliente !
-        
+        Pedido p1 = new Pedido(c1, f1, 0, null);
+        Pedido p2 = new Pedido(c2, f2, 0, null);
     }
 }

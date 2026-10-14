@@ -25,7 +25,7 @@ public class GerenciadorCadastro implements IGerenciadorCadastro {
     }
 
     @Override
-    public Cliente buscarClientePorCpf(String cpf) {
+    public Cliente buscarClientePorCpf(Long cpf) {
         return this.repoC.buscarPorCpf(cpf);
     }
 
@@ -42,7 +42,7 @@ public class GerenciadorCadastro implements IGerenciadorCadastro {
     }
 
     @Override
-    public void removerCliente(String cpf) {
+    public void removerCliente(Long cpf) {
         this.repoC.remover(cpf);
     }
 

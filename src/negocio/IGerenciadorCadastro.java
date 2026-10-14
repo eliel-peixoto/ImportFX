@@ -8,10 +8,10 @@ public interface IGerenciadorCadastro {
 
     // Cliente:
     void cadastrarCliente(Cliente c);
-    Cliente buscarClientePorCpf(String cpf);
+    Cliente buscarClientePorCpf(Long cpf);
     List<Cliente> listarClientes();
     void atualizarCliente(Cliente c);
-    void removerCliente(String cpf);
+    void removerCliente(Long cpf);
 
     // Fornecedor:
     void cadastrarFornecedor(Fornecedor f);

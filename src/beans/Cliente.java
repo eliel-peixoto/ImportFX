@@ -4,11 +4,11 @@ import java.util.ArrayList;
 public class Cliente {
     private Long id;
     private String nome;
-    private String cpf;
+    private Long cpf;
     private String endereco;
     private ArrayList<Pedido> pedido;
 
-    public Cliente(Long id, String nome, String cpf, String endereco) {
+    public Cliente(Long id, String nome, Long cpf, String endereco) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
@@ -21,8 +21,8 @@ public class Cliente {
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
-    public String getCpf() { return cpf; }
-    public void setCpf(String cpf) { this.cpf = cpf; }
+    public Long getCpf() { return cpf; }
+    public void setCpf(Long cpf) { this.cpf = cpf; }
 
     public String getEndereco() { return endereco; }
     public void setEndereco(String endereco) { this.endereco = endereco; }

@@ -5,8 +5,8 @@ import java.util.List;
 
 public interface IRepositorioCliente {
     void cadastrar(Cliente cliente);
-    Cliente buscarPorCpf(String cpf);
+    Cliente buscarPorCpf(Long cpf);
     List<Cliente> listarTodos();
     void atualizar(Cliente cliente);
-    void remover(String cpf);
+    void remover(Long cpf);
 }

@@ -18,9 +18,9 @@ public class RepositorioCliente implements IRepositorioCliente {
     }
 
     @Override
-    public Cliente buscarPorCpf(String cpf) {
+    public Cliente buscarPorCpf(Long cpf) {
         for (Cliente c : clientes) {
-            if (c.getCpf().equals(cpf)) {
+            if (c.getCpf() == cpf) {
                 return c;
             }
         }
@@ -45,7 +45,7 @@ public class RepositorioCliente implements IRepositorioCliente {
 
 
     @Override
-    public void remover(String cpf) {
+    public void remover(Long cpf) {
         Cliente clienteParaRemover = buscarPorCpf(cpf);
         
         if (clienteParaRemover != null) {
