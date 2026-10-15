@@ -7,6 +7,10 @@ import beans.Produto;
 public class RepositorioProdutos implements IRepositorioProdutos {
 	
 	private ArrayList<Produto> listaProduto;
+
+	public RepositorioProdutos() {
+		this.listaProduto = new ArrayList<Produto>();
+	}
 	
 	//metodos da interface
 	@Override

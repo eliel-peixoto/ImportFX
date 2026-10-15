@@ -1,9 +1,9 @@
 package App;
 
 import beans.*;
-import gui.*;
-import negocio.*;
-import dados.*;
+//import gui.*;
+//import negocio.*;
+//import dados.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
