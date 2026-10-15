@@ -1,5 +1,4 @@
-package App;
-
+package app;
 import beans.*;
 //import gui.*;
 //import negocio.*;
@@ -13,8 +12,8 @@ public class App {
         Fornecedor f1 = new Fornecedor(1L, "TechCorp", "Japão", Moeda.USD);
         Fornecedor f2 = new Fornecedor(2L, "GlobalImport", "Alemanha", Moeda.EUR);
         
-        Eletronicos e1 = new Eletronicos(1234L, "Placa-mãe", 1500.0, 150.0, 20.0);//colocar parametros
-        Brinquedos b1 = new Brinquedos(5678L, "Carrinho", 50.0, 30.0, 10.0);//colocar parametros
+        Eletronico e1 = new Eletronico(1234L, "Placa-mãe", 1500.0, 150.0, 20.0);//colocar parametros
+        Brinquedo b1 = new Brinquedo(5678L, "Carrinho", 50.0, 30.0, 10.0);//colocar parametros
         Vestuario v1 = new Vestuario(9876L, "Camisa personalizada", 50.0, 20.0, 12.0);//colocar parametros
 
         f1.getListaProdutos().adicionarProduto(e1);
