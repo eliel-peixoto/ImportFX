@@ -1,11 +1,11 @@
 package beans;
 
-public class Brinquedos extends Produto {
+public class Brinquedo extends Produto {
 
 	private Double aliquota; // não colocar a aliquota em decimais!!!
 	
 	//construtor
-	public Brinquedos(long id, String nome, Double precoMoedaOrigem, Double peso, Double aliquota) {
+	public Brinquedo(long id, String nome, Double precoMoedaOrigem, Double peso, Double aliquota) {
 		super(id, nome, precoMoedaOrigem, peso);
 		this.aliquota = aliquota;
 	}
