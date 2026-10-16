@@ -9,19 +9,18 @@ public class RepositorioProdutos extends RepositorioGenerico<Produto> implements
         super();
     }
 
-    // O @Override prova ao Java que estamos a cumprir o contrato da Interface
     @Override
     public void cadastrar(Produto produto) {
-        super.cadastrar(produto); // Usa a lógica do Repositório Genérico
+        super.cadastrar(produto); 
     }
 
     @Override
     public List<Produto> listarTodos() {
-        return super.listarTodos(); // Usa a lógica do Repositório Genérico
+        return super.listarTodos(); 
     }
 
     @Override
-    public Produto buscarPorId(long id) { // Corrigido para 'long' minúsculo
+    public Produto buscarPorId(long id) {
         for (Produto p : elementos) { 
             if (p.getId() == id) {
                 return p;
@@ -41,10 +40,10 @@ public class RepositorioProdutos extends RepositorioGenerico<Produto> implements
     }
 
     @Override
-    public void remover(long id) { // Corrigido para 'long' minúsculo
+    public void remover(long id) { 
         Produto p = buscarPorId(id);
         if (p != null) {
-            super.removerElemento(p); // Usa a lógica do Repositório Genérico
+            super.removerElemento(p); 
         }
     }
 }

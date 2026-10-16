@@ -20,17 +20,17 @@ public class Brinquedo extends Produto {
 	//metodos
 	public Double calcularAliquota() {
 		Double aliquota = this.getAliquota();
-		Double preco = this.getPrecoMoedaOrigem();// o preço tem que estar em Real (R$).
+		Double preco = this.getPrecoMoedaOrigem();//o preço tem que estar em Real (R$).
 		Double valorTotal;
 		
-		Double porcentagem = (aliquota / 100);// transforma a aliquota em decimal
+		Double porcentagem = (aliquota / 100);//transforma a aliquota em decimal
 		Double imposto = (porcentagem * preco);
 		valorTotal = (imposto + preco);
 		return valorTotal;
 	}
 	@Override
     public Double calcularImposto() {   
-    	return 0.0; // Retorno provisório apenas para o código voltar a compilar
+    	return 0.0; //Retorno provisório apenas para o código voltar a compilar
     }
 
 }
