@@ -1,44 +1,50 @@
 package dados;
 
-import java.util.List;
-import java.util.ArrayList;
 import beans.Produto;
+import java.util.List;
 
-public class RepositorioProdutos implements IRepositorioProdutos {
-	
-	private ArrayList<Produto> listaProduto;
+public class RepositorioProdutos extends RepositorioGenerico<Produto> implements IRepositorioProdutos {
 
-	public RepositorioProdutos() {
-		this.listaProduto = new ArrayList<Produto>();
-	}
-	
-	//metodos da interface
-	@Override
-	public void adicionarProduto(Produto p) {
-		this.listaProduto.add(p);
-	}
-	
-	@Override
-	public Produto procurarProduto(int id, String nome) {//procura por id e nome
-		for(Produto p : listaProduto) {
-			if(p.getId() == id && p.getNome() == nome) {
-				return p;
-			}
-		}
-		return null;
-	}
-	
-	@Override
-	public void removerProduto(int id, String nome) {//remove usando o metodo de procura
-		Produto pEncontrado = procurarProduto(id, nome);
-		if(pEncontrado != null) {
-			this.listaProduto.remove(pEncontrado);
-		}
-	}
-	
-	@Override
-	public List<Produto> listarTodos() {
-		return new ArrayList<Produto>(this.listaProduto);
-	}
+    public RepositorioProdutos() {
+        super();
+    }
 
+    // O @Override prova ao Java que estamos a cumprir o contrato da Interface
+    @Override
+    public void cadastrar(Produto produto) {
+        super.cadastrar(produto); // Usa a lógica do Repositório Genérico
+    }
+
+    @Override
+    public List<Produto> listarTodos() {
+        return super.listarTodos(); // Usa a lógica do Repositório Genérico
+    }
+
+    @Override
+    public Produto buscarPorId(long id) { // Corrigido para 'long' minúsculo
+        for (Produto p : elementos) { 
+            if (p.getId() == id) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void atualizar(Produto produtoAtualizado) {
+        Produto antigo = buscarPorId(produtoAtualizado.getId());
+        if (antigo != null) {
+            antigo.setNome(produtoAtualizado.getNome());
+            antigo.setPrecoMoedaOrigem(produtoAtualizado.getPrecoMoedaOrigem());
+            antigo.setPeso(produtoAtualizado.getPeso());
+        }
+    }
+
+    @Override
+    public void remover(long id) { // Corrigido para 'long' minúsculo
+        Produto p = buscarPorId(id);
+        if (p != null) {
+            super.removerElemento(p); // Usa a lógica do Repositório Genérico
+        }
+    }
 }

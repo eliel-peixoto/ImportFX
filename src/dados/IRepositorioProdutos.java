@@ -1,11 +1,12 @@
 package dados;
 
-import java.util.List;
 import beans.Produto;
+import java.util.List;
 
 public interface IRepositorioProdutos {
-    void adicionarProduto(Produto p);
-    Produto procurarProduto(int id, String nome);
-    void removerProduto(int id, String nome);
+    void cadastrar(Produto produto);
+    Produto buscarPorId(long id);
     List<Produto> listarTodos();
+    void atualizar(Produto produto);
+    void remover(long id);
 }

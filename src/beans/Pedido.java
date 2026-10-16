@@ -1,40 +1,44 @@
 package beans;
+
 import java.util.ArrayList;
-import java.util.List;
 
 public class Pedido {
     private Cliente cliente;
     private Fornecedor fornecedor;
-    private int codigo;
+    private Long id; 
     private String status;
     private ArrayList<Item> listaItems;
 
-    public Pedido(Cliente cliente, Fornecedor fornecedor, int codigo, String status) {
+    public Pedido(Cliente cliente, Fornecedor fornecedor, Long id, String status) {
         this.cliente = cliente;
         this.fornecedor = fornecedor;
-        this.codigo = codigo;
+        this.id = id;
         this.status = status;
         this.listaItems = new ArrayList<Item>();
     }
-
-    //manipulação da lista
+    
     public void adicionar(Item item) {
-    	this.listaItems.add(item);
+        this.listaItems.add(item);
     }
+    
     public void remover(int i) {
-    	this.listaItems.remove(i);
+        this.listaItems.remove(i);
     }
+    
     public int tamanho() {
-    	int i = this.listaItems.size();
-    	return i;
+        return this.listaItems.size();
     }
+    
     public String getListaProduto(int i) {
-    	Item item = this.listaItems.get(i);
-    	return item.toString();
+        Item item = this.listaItems.get(i);
+        return item.toString();
     }
     
+    public ArrayList<Item> getItemPedido() {
+        return this.listaItems;
+    }
     
-    //getters e setters
+    //Getters e Setters
     public Cliente getCliente() {
         return this.cliente;
     }
@@ -51,12 +55,12 @@ public class Pedido {
         this.fornecedor = fornecedor;
     }
 
-    public int getCodigo() {
-        return this.codigo;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setCodigo(int codigo) {
-        this.codigo = codigo;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getStatus() {
@@ -66,5 +70,4 @@ public class Pedido {
     public void setStatus(String status) {
         this.status = status;
     }
-
 }

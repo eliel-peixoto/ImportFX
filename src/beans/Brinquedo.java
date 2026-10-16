@@ -2,7 +2,7 @@ package beans;
 
 public class Brinquedo extends Produto {
 
-	private Double aliquota; // não colocar a aliquota em decimais!!!
+	private Double aliquota; //não colocar a aliquota em decimais!!!
 	
 	//construtor
 	public Brinquedo(long id, String nome, Double precoMoedaOrigem, Double peso, Double aliquota) {
@@ -28,5 +28,9 @@ public class Brinquedo extends Produto {
 		valorTotal = (imposto + preco);
 		return valorTotal;
 	}
-	
+	@Override
+    public Double calcularImposto() {   
+    	return 0.0; // Retorno provisório apenas para o código voltar a compilar
+    }
+
 }
