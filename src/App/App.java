@@ -18,7 +18,7 @@ public class App {
         
         int opcao = -1;
 
-        System.out.println("=== Bem-vindo ao Sistema ImportFX ===");
+        System.out.println("=== Bem-vindo ao ImportFX ===");
 
         while (opcao != 0) {
             System.out.println("\n--- MENU PRINCIPAL ---");
