@@ -1,7 +1,7 @@
 package negocio;
 
 import beans.Cliente;
-import dados.IRepositorioCliente; // Se o seu ficheiro for singular, altere para IRepositorioCliente
+import dados.IRepositorioCliente; 
 import java.util.List;
 
 public class GerenciadorCliente implements IGerenciadorCliente {
@@ -20,7 +20,6 @@ public class GerenciadorCliente implements IGerenciadorCliente {
         if (cliente.getNome() == null || cliente.getNome().trim().isEmpty()) {
             throw new Exception("O nome do cliente é obrigatório.");
         }
-        // CPF é Long: validação feita por nulidade sem utilizar .trim()
         if (cliente.getCpf() == null) {
             throw new Exception("O CPF do cliente é obrigatório.");
         }

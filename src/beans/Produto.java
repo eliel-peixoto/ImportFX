@@ -4,6 +4,7 @@ import java.util.Objects; // Importação necessária para comparar os Objetos c
 
 public abstract class Produto {
     private long id;
+    private Double preco;
     private String nome;
     private Double precoMoedaOrigem;
     private Double peso;
@@ -17,6 +18,14 @@ public abstract class Produto {
     }
 
     //getters e setters
+    public Double getPreco() {
+        return preco;
+    }
+
+    public void setPreco(Double preco) {
+        this.preco = preco;
+    }
+
     public long getId() {
         return id;
     }
