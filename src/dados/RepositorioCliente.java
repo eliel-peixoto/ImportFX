@@ -1,55 +1,39 @@
 package dados;
 
 import beans.Cliente;
-import java.util.ArrayList;
 import java.util.List;
 
-public class RepositorioCliente implements IRepositorioCliente {
-    
-    private List<Cliente> clientes;
+public class RepositorioCliente extends RepositorioGenerico<Cliente> implements IRepositorioCliente {
 
     public RepositorioCliente() {
-        this.clientes = new ArrayList<>();
+        super();
     }
 
     @Override
     public void cadastrar(Cliente cliente) {
-        this.clientes.add(cliente);
-    }
-
-    @Override
-    public Cliente buscarPorCpf(Long cpf) {
-        for (Cliente c : clientes) {
-            if (c.getCpf() == cpf) {
-                return c;
-            }
-        }
-        return null; 
+        super.cadastrar(cliente);
     }
 
     @Override
     public List<Cliente> listarTodos() {
-        return this.clientes;
+        return super.listarTodos();
     }
 
     @Override
-    public void atualizar(Cliente clienteAtualizado) {
-        Cliente antigo = buscarPorCpf(clienteAtualizado.getCpf());
-        
-        if (antigo != null) {
-            antigo.setNome(clienteAtualizado.getNome());
-            antigo.setEndereco(clienteAtualizado.getEndereco());
-            antigo.setPedido(clienteAtualizado.getPedido());
+    public Cliente buscarPorId(long id) {
+        for (Cliente c : elementos) {
+            if (c.getId() == id) {
+                return c;
+            }
         }
+        return null;
     }
 
-
     @Override
-    public void remover(Long cpf) {
-        Cliente clienteParaRemover = buscarPorCpf(cpf);
-        
-        if (clienteParaRemover != null) {
-            this.clientes.remove(clienteParaRemover);
+    public void remover(long id) {
+        Cliente c = buscarPorId(id);
+        if (c != null) {
+            super.removerElemento(c);
         }
     }
 }

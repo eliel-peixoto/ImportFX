@@ -1,30 +1,28 @@
 package dados;
 
-import java.util.ArrayList;
-import java.util.List;
 import beans.Fornecedor;
+import java.util.List;
 
-public class RepositorioFornecedores implements IRepositorioFornecedores {
-    private ArrayList<Fornecedor> listaFornecedor;
+public class RepositorioFornecedores extends RepositorioGenerico<Fornecedor> implements IRepositorioFornecedores {
 
     public RepositorioFornecedores() {
-        this.listaFornecedor = new ArrayList<>();
+        super();
     }
 
     @Override
-    public void adicionarFornecedor(Fornecedor f) {
-        if (f != null && !listaFornecedor.contains(f)) {
-            listaFornecedor.add(f);
-        }
+    public void cadastrar(Fornecedor fornecedor) {
+        super.cadastrar(fornecedor);
     }
 
     @Override
-    public Fornecedor procurarFornecedor(int id, String nome) {
-        for (Fornecedor f : listaFornecedor) {
-            boolean idIgual = (id > 0 && f.getId() != null && f.getId() == id);
-            boolean nomeIgual = (nome != null && !nome.isBlank() && f.getNome() != null && f.getNome().equalsIgnoreCase(nome.trim()));
+    public List<Fornecedor> listarTodos() {
+        return super.listarTodos();
+    }
 
-            if (idIgual || nomeIgual) {
+    @Override
+    public Fornecedor buscarPorId(long id) {
+        for (Fornecedor f : elementos) {
+            if (f.getId() == id) {
                 return f;
             }
         }
@@ -32,15 +30,10 @@ public class RepositorioFornecedores implements IRepositorioFornecedores {
     }
 
     @Override
-    public void removerFornecedor(int id, String nome) {
-        Fornecedor f = procurarFornecedor(id, nome);
+    public void remover(long id) {
+        Fornecedor f = buscarPorId(id);
         if (f != null) {
-            listaFornecedor.remove(f);
+            super.removerElemento(f);
         }
-    }
-
-    @Override
-    public List<Fornecedor> listarTodos() {
-        return new ArrayList<>(listaFornecedor);
     }
 }

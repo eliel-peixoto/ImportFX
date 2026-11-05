@@ -15,58 +15,62 @@ public class GerenciadorCadastro implements IGerenciadorCadastro {
         this.repoF = repoF;
     }
 
-    // Cliente:
+//clientes
 
     @Override
     public void cadastrarCliente(Cliente c) {
         if (c != null) {
-            this.repoC.cadastrar(c);
+            this.repoC.cadastrar(c); 
         }
     }
 
     @Override
     public Cliente buscarClientePorCpf(Long cpf) {
-        return this.repoC.buscarPorCpf(cpf);
+        return this.repoC.buscarPorId(cpf);
     }
 
     @Override
     public List<Cliente> listarClientes() {
-        return this.repoC.listarTodos();
+        return this.repoC.listarTodos(); 
     }
 
     @Override
     public void atualizarCliente(Cliente c) {
         if (c != null) {
-            this.repoC.atualizar(c);
+            Cliente antigo = this.repoC.buscarPorId(c.getId());
+            if (antigo != null) {
+                antigo.setNome(c.getNome());
+                antigo.setCpf(c.getCpf());
+                antigo.setEndereco(c.getEndereco());
+            }
         }
     }
 
     @Override
     public void removerCliente(Long cpf) {
-        this.repoC.remover(cpf);
+        this.repoC.remover(cpf); 
     }
 
-    // Fornecedor:
-
+    //fornecedores
     @Override
     public void cadastrarFornecedor(Fornecedor f) {
         if (f != null) {
-            this.repoF.adicionarFornecedor(f);
+            this.repoF.cadastrar(f);
         }
     }
 
     @Override
     public Fornecedor procurarFornecedor(int id, String nome) {
-        return this.repoF.procurarFornecedor(id, nome);
+        return this.repoF.buscarPorId(id);
     }
 
     @Override
     public void removerFornecedor(int id, String nome) {
-        this.repoF.removerFornecedor(id, nome);
+        this.repoF.remover(id);
     }
 
     @Override
     public List<Fornecedor> listarFornecedores() {
-        return this.repoF.listarTodos();
+        return this.repoF.listarTodos(); 
     }
 }

@@ -1,11 +1,11 @@
 package dados;
 
-import java.util.List;
 import beans.Fornecedor;
+import java.util.List;
 
 public interface IRepositorioFornecedores {
-    void adicionarFornecedor(Fornecedor f);
-    Fornecedor procurarFornecedor(int id, String nome);
-    void removerFornecedor(int id, String nome);
+    void cadastrar(Fornecedor fornecedor);
     List<Fornecedor> listarTodos();
+    Fornecedor buscarPorId(long id);
+    void remover(long id);
 }
