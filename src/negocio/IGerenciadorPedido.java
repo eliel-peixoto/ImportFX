@@ -9,4 +9,5 @@ public interface IGerenciadorPedido {
     List<Pedido> listarPedidos();
     void atualizarStatusPedido(Pedido pedido) throws Exception;
     void cancelarPedido(Long id) throws Exception;
+    void exportarPedidoParaHtml(Long id, String caminhoPasta) throws Exception;
 }

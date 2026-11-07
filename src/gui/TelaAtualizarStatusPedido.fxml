@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaAtualizarStatusController">
+   <children>
+      <HBox alignment="CENTER_LEFT" prefHeight="70.0" style="-fx-background-color: #ff4501;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="Atualizar Status do Pedido" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets left="25.0" />
+         </padding>
+      </HBox>
+
+      <VBox alignment="TOP_CENTER" spacing="25.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="100.0">
+         <children>
+            
+            <VBox alignment="CENTER_LEFT" spacing="10.0" maxWidth="300.0">
+               <children>
+                  <Label text="Buscar Pedido por ID:">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <HBox spacing="10.0">
+                     <children>
+                        <TextField fx:id="txtIdBusca" promptText="Digite o ID" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" HBox.hgrow="ALWAYS" />
+                        <!-- Ação para o botão buscar, que deve preencher o label com o status atual -->
+                        <Button mnemonicParsing="false" onAction="#handleBuscarPedido" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;" text="Buscar" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #fff3ed; -fx-border-color: #ff4501; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 15;">
+               <children>
+                  <Label text="Status Atual:" textFill="#555555">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblStatusAtual" text="---" textFill="#ff4501">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+
+            <VBox alignment="CENTER_LEFT" spacing="10.0" maxWidth="300.0">
+               <children>
+                  <Label text="Novo Status:" />
+                  <ComboBox fx:id="cbNovoStatus" maxWidth="Infinity" promptText="Selecione o novo status" style="-fx-border-color: #ff4501; -fx-border-radius: 4; -fx-background-color: white;" />
+               </children>
+            </VBox>
+
+            <Label fx:id="lblMensagemStatus" textFill="RED" />
+
+            <Button mnemonicParsing="false" onAction="#handleAtualizarStatus" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #ff4501; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 5;" text="Salvar Alteração" />
+            
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

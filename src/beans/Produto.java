@@ -1,6 +1,6 @@
 package beans;
 
-import java.util.Objects; // Importação necessária para comparar os Objetos com segurança
+import java.util.Objects; 
 
 public abstract class Produto {
     private long id;
@@ -14,16 +14,28 @@ public abstract class Produto {
         this.setId(id);
         this.nome = nome;
         this.precoMoedaOrigem = precoMoedaOrigem;
+        this.preco = precoMoedaOrigem; //Inicializa o preço em Real (R$) com o valor da moeda de origem
         this.peso = peso;
     }
 
     //getters e setters
+    
+    private Long idFornecedor;
+
+    public Long getIdFornecedor() {
+        return idFornecedor;
+    }
+
+    public void setIdFornecedor(Long idFornecedor) {
+        this.idFornecedor = idFornecedor;
+    }
+
     public Double getPreco() {
         return preco;
     }
 
     public void setPreco(Double preco) {
-        this.preco = preco;
+        this.preco = (preco != null) ? preco : 0.0;
     }
 
     public long getId() {

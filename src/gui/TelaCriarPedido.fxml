@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaCriarPedidoController">
+   <children>
+      <HBox alignment="CENTER_LEFT" prefHeight="70.0" style="-fx-background-color: #ff4501;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="Novo Pedido" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets left="25.0" />
+         </padding>
+      </HBox>
+
+      <VBox spacing="15.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="90.0">
+         <children>
+            
+            <HBox spacing="20.0">
+               <children>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="ID do Pedido:" />
+                        <TextField fx:id="txtId" promptText="Ex: 101" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Status Inicial:" />
+                        <TextField fx:id="txtStatus" text="PENDENTE" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" editable="false" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <HBox spacing="20.0">
+               <children>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Cliente:" />
+                        <ComboBox fx:id="cbCliente" maxWidth="Infinity" promptText="Selecione o Cliente" style="-fx-border-color: #ff4501; -fx-border-radius: 4; -fx-background-color: white;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Fornecedor:" />
+                        <ComboBox fx:id="cbFornecedor" maxWidth="Infinity" promptText="Selecione o Fornecedor" style="-fx-border-color: #ff4501; -fx-border-radius: 4; -fx-background-color: white;" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <Label text="Adicionar Item ao Pedido:">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Label>
+            <HBox spacing="10.0">
+               <children>
+                  <ComboBox fx:id="cbProduto" promptText="Selecione o Produto" style="-fx-border-color: #ff4501; -fx-border-radius: 4; -fx-background-color: white;" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                  <TextField fx:id="txtQuantidade" promptText="Qtd" prefWidth="90.0" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" />
+                  <Button mnemonicParsing="false" onAction="#handleAdicionarItem" style="-fx-background-color: #ff4501; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;" text="Adicionar" />
+               </children>
+            </HBox>
+
+            <ListView fx:id="listViewItens" prefHeight="150.0" prefWidth="200.0" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" />
+            
+            <HBox alignment="CENTER_RIGHT" spacing="15.0">
+               <children>
+                  <Label fx:id="lblMensagem" textFill="RED" />
+                  <Button mnemonicParsing="false" onAction="#handleSalvarPedido" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 4;" text="Salvar Pedido" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

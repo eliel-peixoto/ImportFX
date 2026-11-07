@@ -1,42 +1,37 @@
 package beans;
+
 public class Item {
-	//atributos
     private String nomeProduto;
     private Integer quantidade;
-    private Integer pesoTotal;
+    private Double pesoTotal;
+    private Double precoUnitario;
+	private String simboloMoeda;
 
-    //construtor
-    public Item(String nomeProduto, int quantidade, int pesoTotal) {
-    	setNomeProduto(nomeProduto);
-    	setQuantidade(quantidade);
-    	setPesoTotal(pesoTotal);
+    public Item(String nomeProduto, int quantidade, double pesoTotal, double precoUnitario, String simboloMoeda) {
+        this.nomeProduto = nomeProduto;
+        this.quantidade = quantidade;
+        this.pesoTotal = pesoTotal;
+        this.precoUnitario = precoUnitario;
+		this.simboloMoeda = simboloMoeda;
     }
 
-    //getters e setters
-	public String getNomeProduto() {
-		return nomeProduto;
-	}
+    public String getNomeProduto() { return nomeProduto; }
+    public void setNomeProduto(String nomeProduto) { this.nomeProduto = nomeProduto; }
+    
+    public Integer getQuantidade() { return quantidade; }
+    public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
+    
+    public Double getPesoTotal() { return pesoTotal; }
+    public void setPesoTotal(double pesoTotal) { this.pesoTotal = pesoTotal; }
 
-	public void setNomeProduto(String nomeProduto) {
-		this.nomeProduto = nomeProduto;
-	}
+    public Double getPrecoUnitario() { return precoUnitario; }
+    public void setPrecoUnitario(double precoUnitario) { this.precoUnitario = precoUnitario; }
 
-	public Integer getQuantidade() {
-		return quantidade;
-	}
+	public String getSimboloMoeda() { return simboloMoeda; }
+    public void setSimboloMoeda(String simboloMoeda) { this.simboloMoeda = simboloMoeda; }
 
-	public void setQuantidade(int quantidade) {
-		Integer a = (Integer) quantidade;
-		this.quantidade = a;
-	}
-
-	public Integer getPesoTotal() {
-		return pesoTotal;
-	}
-
-	public void setPesoTotal(int pesoTotal) {
-		Integer b = (Integer) pesoTotal;
-		this.pesoTotal = b;
-	}
-
+    @Override
+    public String toString() {
+        return quantidade + "x " + nomeProduto + " (" + pesoTotal + "kg) - R$" + precoUnitario;
+    }
 }

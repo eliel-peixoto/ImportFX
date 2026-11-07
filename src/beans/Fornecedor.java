@@ -61,7 +61,7 @@ public class Fornecedor {
     public void setListaProdutos(RepositorioProdutos listaProdutos) {
         this.listaProdutos = listaProdutos;
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -86,4 +86,5 @@ public class Fornecedor {
     public String toString() {
         return "Fornecedor [ID=" + id + ", Nome=" + nome + ", País=" + paisOrigem + ", Moeda=" + moedaPadrao + "]";
     }
+    
 }
