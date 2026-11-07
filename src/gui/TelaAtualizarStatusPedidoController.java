@@ -1,7 +1,7 @@
 package gui;
 
 import beans.Pedido;
-import negocio.IGerenciadorPedido; // Ajuste se o pacote/nome for diferente
+import negocio.IGerenciadorPedido; 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
@@ -81,24 +81,20 @@ public class TelaAtualizarStatusPedidoController {
 
         pedidoSelecionado.setStatus(novoStatus);
         
-        /* 
-         * NOTA: Se o seu repositório precisar de um método explícito para atualizar (ex: controlPedido.atualizar(pedido)),
-         * coloque essa chamada aqui. Se for apenas guardar na memória, o setStatus acima basta.
-         */
         
-        // REQ15: Notificar na tela que o status mudou!
+        //REQ15: Notificar na tela que o status mudou!
         mostrarAlerta("Notificação ao Cliente", 
             "O status do Pedido #" + pedidoSelecionado.getId() + " foi alterado para:\n" + novoStatus, 
             Alert.AlertType.INFORMATION);
         
-        // Limpa a tela para a próxima busca
+        //Limpa a tela para a próxima busca
         txtIdBusca.clear();
         lblStatusAtual.setText("---");
         cbNovoStatus.setValue(null);
         pedidoSelecionado = null;
     }
 
-    // Método auxiliar para criar janelas de aviso/erro no JavaFX
+    //Método auxiliar para criar janelas de aviso/erro no JavaFX
     private void mostrarAlerta(String titulo, String msg, Alert.AlertType tipo) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);
