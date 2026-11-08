@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="650.0" style="-fx-background-color: #f8f9fa;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaProdutoController">
+   <top>
+      <VBox alignment="CENTER" prefHeight="55.0" prefWidth="650.0" style="-fx-background-color: #ffffff; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cadastro de Produtos">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Text>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox prefHeight="350.0" prefWidth="650.0" spacing="14.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="20.0" left="35.0" right="35.0" top="20.0" />
+         </padding>
+         <children>
+            <!-- Grid organizado em duas colunas para os campos -->
+            <GridPane hgap="20.0" vgap="12.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="275.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="275.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="36.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="36.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="36.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <!-- Linha 0: Categoria e Fornecedor -->
+                  <ComboBox fx:id="cbCategoria" prefHeight="34.0" prefWidth="285.0" promptText="Categoria do Produto" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #d1d5db; -fx-background-color: #ffffff;" />
+                  <ComboBox fx:id="cbFornecedores" prefHeight="34.0" prefWidth="285.0" promptText="Selecione o Fornecedor" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #d1d5db; -fx-background-color: #ffffff;" GridPane.columnIndex="1" />
+                  
+                  <!-- Linha 1: Nome e Preço -->
+                  <TextField fx:id="txtNomeProduto" prefHeight="34.0" promptText="Digite o nome do Produto" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #d1d5db; -fx-background-color: #ffffff;" GridPane.rowIndex="1" />
+                  <TextField fx:id="txtPreco" prefHeight="34.0" promptText="Digite o preço na moeda de origem" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #d1d5db; -fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  
+                  <!-- Linha 2: Peso e Alíquota -->
+                  <TextField fx:id="txtPeso" prefHeight="34.0" promptText="Digite o peso unitário do produto" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #d1d5db; -fx-background-color: #ffffff;" GridPane.rowIndex="2" />
+                  <TextField fx:id="txtAliquota" prefHeight="34.0" promptText="Digite a alíquota (Deixe 0 p/ Vestuário)" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #d1d5db; -fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  
+                  <!-- Linha 3: Quantidade -->
+                  <VBox spacing="4.0" GridPane.rowIndex="3">
+                     <children>
+                        <Text fill="#4b5563" strokeType="OUTSIDE" strokeWidth="0.0" text="Selecione a quantidade:">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Text>
+                        <Spinner fx:id="spnQuantidade" prefHeight="34.0" prefWidth="275.0" style="-fx-background-radius: 6; -fx-border-radius: 6;" />
+                     </children>
+                  </VBox>
+               </children>
+            </GridPane>
+            
+            <!-- Mensagens de Erro e Sucesso Organizadas -->
+            <VBox spacing="4.0">
+               <children>
+                  <Label fx:id="msgErroProduto" text="" textFill="#dc2626">
+                     <font>
+                        <Font name="System Bold" size="11.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="msgErroFornecedor" text="" textFill="#dc2626">
+                     <font>
+                        <Font name="System Bold" size="11.0" />
+                     </font>
+                  </Label>
+                  <Text fx:id="msgSucesso" fill="#16a34a" strokeType="OUTSIDE" strokeWidth="0.0" text="">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Text>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" prefHeight="60.0" prefWidth="650.0" spacing="10.0" style="-fx-background-color: #ffffff; -fx-border-color: #e5e7eb; -fx-border-width: 1 0 0 0;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets right="35.0" />
+         </padding>
+         <children>
+            <Button fx:id="botaoVoltar" mnemonicParsing="false" onAction="#handleVoltar" prefHeight="32.0" prefWidth="95.0" style="-fx-background-color: #e5e7eb; -fx-background-radius: 6; -fx-cursor: hand;" text="Voltar" textFill="#374151">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+            <Button fx:id="botaoConfirmar" mnemonicParsing="false" onAction="#handleConfirmar" prefHeight="32.0" prefWidth="105.0" style="-fx-background-color: #ff4501; -fx-background-radius: 6; -fx-cursor: hand;" text="Confirmar" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>

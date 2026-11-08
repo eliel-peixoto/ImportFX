@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="650.0" style="-fx-background-color: #f8f9fa;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MenuPrincipalController">
+   <top>
+      <VBox alignment="CENTER" prefHeight="75.0" prefWidth="650.0" style="-fx-background-color: #ffffff; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
+         <children>
+            <Text fill="#111827" strokeType="OUTSIDE" strokeWidth="0.0" text="IMPORT FX">
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+            </Text>
+            <Text fill="#6b7280" strokeType="OUTSIDE" strokeWidth="0.0" text="Menu Principal">
+               <font>
+                  <Font name="System Regular" size="12.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="2.0" />
+               </VBox.margin>
+            </Text>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="340.0" prefWidth="350.0" spacing="12.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e5e7eb; -fx-border-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+         </padding>
+         <children>
+            <Button fx:id="abrirProduto" mnemonicParsing="false" onAction="#handleAbrirProduto" prefHeight="40.0" prefWidth="290.0" style="-fx-background-color: #ff4501; -fx-background-radius: 6; -fx-cursor: hand;" text="Produto" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="abrirCadastro" mnemonicParsing="false" onAction="#handleAbrirCadastro" prefHeight="40.0" prefWidth="290.0" style="-fx-background-color: #ff4501; -fx-background-radius: 6; -fx-cursor: hand;" text="Cadastro" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="abrirRelatorio" mnemonicParsing="false" onAction="#handleAbrirRelatorio" prefHeight="40.0" prefWidth="290.0" style="-fx-background-color: #ff4501; -fx-background-radius: 6; -fx-cursor: hand;" text="Relatório" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="abrirPedido" mnemonicParsing="false" onAction="#handleAbrirPedido" prefHeight="40.0" prefWidth="290.0" style="-fx-background-color: #ff4501; -fx-background-radius: 6; -fx-cursor: hand;" text="Pedido" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="abrirCambio" mnemonicParsing="false" onAction="#handleAbrirCambio" prefHeight="40.0" prefWidth="290.0" style="-fx-background-color: #ff4501; -fx-background-radius: 6; -fx-cursor: hand;" text="Câmbio" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
