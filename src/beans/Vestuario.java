@@ -4,9 +4,9 @@ public class Vestuario extends Produto {
 	
 	private Double aliquota; //não colocar a porcentagem da aliquota em decimais.
 
-	public Vestuario(long id, String nome, Double precoMoedaOrigem, Double peso) {
+	public Vestuario(long id, String nome, Double precoMoedaOrigem, Double peso, Double aliquota) {
         super(id, nome, precoMoedaOrigem, peso);
-        this.aliquota = 0.0; //valor padrão para aliquota
+        this.aliquota = aliquota;
     }
 
 	public Double getAliquota() {
