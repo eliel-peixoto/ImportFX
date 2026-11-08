@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaAtualizarStatusController">
+<AnchorPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaAtualizarStatusController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="70.0" style="-fx-background-color: #ff4501;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -28,7 +28,7 @@
       <VBox alignment="TOP_CENTER" spacing="25.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="100.0">
          <children>
             
-            <VBox alignment="CENTER_LEFT" spacing="10.0" maxWidth="300.0">
+            <VBox alignment="CENTER_LEFT" maxWidth="300.0" spacing="10.0">
                <children>
                   <Label text="Buscar Pedido por ID:">
                      <font>
@@ -60,7 +60,7 @@
                </children>
             </VBox>
 
-            <VBox alignment="CENTER_LEFT" spacing="10.0" maxWidth="300.0">
+            <VBox alignment="CENTER_LEFT" maxWidth="300.0" spacing="10.0">
                <children>
                   <Label text="Novo Status:" />
                   <ComboBox fx:id="cbNovoStatus" maxWidth="Infinity" promptText="Selecione o novo status" style="-fx-border-color: #ff4501; -fx-border-radius: 4; -fx-background-color: white;" />
@@ -70,6 +70,7 @@
             <Label fx:id="lblMensagemStatus" textFill="RED" />
 
             <Button mnemonicParsing="false" onAction="#handleAtualizarStatus" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #ff4501; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 5;" text="Salvar Alteração" />
+            <Button mnemonicParsing="false" onAction="#handleGerarHtml" style="-fx-background-color: #ff4501; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px; -fx-background-radius: 5;" text="Gerar Nota Fiscal (html" />
             
          </children>
       </VBox>

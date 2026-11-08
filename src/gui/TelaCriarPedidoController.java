@@ -1,9 +1,13 @@
 package gui;
 
 import beans.Cliente;
+import beans.Eletronico;
 import beans.Fornecedor;
 import beans.Item;
+import beans.Moeda;
 import beans.Pedido;
+import beans.Produto;
+import beans.Vestuario;
 import negocio.IGerenciadorPedido;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +16,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import java.util.ArrayList;
+import javafx.util.StringConverter;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.scene.Node;
+import javafx.fxml.FXMLLoader;
+import java.io.File;
+import java.net.URL;
+
 
 public class TelaCriarPedidoController {
 
@@ -19,13 +32,11 @@ public class TelaCriarPedidoController {
     @FXML private TextField txtStatus;
     @FXML private ComboBox<Cliente> cbCliente;
     @FXML private ComboBox<Fornecedor> cbFornecedor;
+    @FXML private ComboBox<Produto> cbProduto;
     @FXML private ListView<Item> listViewItens;
     @FXML private Label lblMensagem;
 
-    //Novos campos para capturar os dados do Item
-    @FXML private TextField txtNomeProduto;
     @FXML private TextField txtQuantidade;
-    @FXML private TextField txtPesoTotal;
 
     private IGerenciadorPedido gerenciadorPedido;
     private ArrayList<Item> itensTemporarios = new ArrayList<>();
@@ -36,37 +47,76 @@ public class TelaCriarPedidoController {
 
     @FXML
     public void initialize() {
-        //Carregamento de clientes e fornecedores viria aqui
-    }
+        //dados mock p/ teste
+        Cliente clienteFalso = new Cliente(1L, "Fulano de Tal", 12345678911L, "Rua Exemplo, 123, Cidade, Estado");
+        cbCliente.getItems().add(clienteFalso);
+        
+        Fornecedor fornecedorFalso = new Fornecedor(1L, "Tech Store", "China", Moeda.CNY); 
+        cbFornecedor.getItems().add(fornecedorFalso);
+        
+        Produto prod1 = new Eletronico(101L, "Smartphone", 1500.0, 0.5, 60.0);
+        Produto prod2 = new Vestuario(102L, "Camisa de Futebol Tamanho G", 150.0, 0.3);
+        cbProduto.getItems().addAll(prod1, prod2);
 
+        cbCliente.getSelectionModel().selectFirst();
+        cbFornecedor.getSelectionModel().selectFirst();
+        cbProduto.getSelectionModel().selectFirst();
+        //fim dos mock
+
+        //Conversores para limpar as caixas (mostram apenas o nome)
+        cbCliente.setConverter(new StringConverter<Cliente>() {
+            @Override
+            public String toString(Cliente cliente) {
+                return (cliente == null) ? "" : cliente.getNome();
+            }
+            @Override
+            public Cliente fromString(String string) { return null; }
+        });
+
+        cbFornecedor.setConverter(new StringConverter<Fornecedor>() {
+            @Override
+            public String toString(Fornecedor fornecedor) {
+                return (fornecedor == null) ? "" : fornecedor.getNome();
+            }
+            @Override
+            public Fornecedor fromString(String string) { return null; }
+        });
+
+        cbProduto.setConverter(new StringConverter<Produto>() {
+            @Override
+            public String toString(Produto produto) {
+                return (produto == null) ? "" : produto.getNome();
+            }
+            @Override
+            public Produto fromString(String string) { return null; }
+        });
+    }
+    
     @FXML
     private void handleAdicionarItem(ActionEvent event) {
         try {
-            String nome = txtNomeProduto.getText();
-            if (nome == null || nome.trim().isEmpty()) {
-                throw new Exception("O nome do produto é obrigatório.");
+            Produto produtoSelecionado = cbProduto.getValue();
+            if (produtoSelecionado == null) {
+                throw new Exception("Selecione um produto na lista.");
             }
             
-            //Converte os textos para inteiros conforme pede a sua classe Item
             int qtd = Integer.parseInt(txtQuantidade.getText());
-            int peso = Integer.parseInt(txtPesoTotal.getText());
+            
+            int pesoCalculado = (int) (produtoSelecionado.getPeso() * qtd);
 
-            //Cria o objeto Item com os dados reais
-            Item novoItem = new Item(nome, qtd, peso, 0.0, "placeholder"); 
+            Item novoItem = new Item(produtoSelecionado.getNome(), qtd, pesoCalculado, 0.0, "R$"); 
             
             itensTemporarios.add(novoItem);
             listViewItens.getItems().add(novoItem);
-            
-            //Limpa os campos do item após adicionar
-            txtNomeProduto.clear();
+       
             txtQuantidade.clear();
-            txtPesoTotal.clear();
+            cbProduto.getSelectionModel().clearSelection();
             
             lblMensagem.setText("Item adicionado com sucesso.");
             lblMensagem.setTextFill(javafx.scene.paint.Color.GREEN);
             
         } catch (NumberFormatException e) {
-            lblMensagem.setText("Erro: Quantidade e Peso devem ser números inteiros.");
+            lblMensagem.setText("Erro: Quantidade deve ser um número inteiro.");
             lblMensagem.setTextFill(javafx.scene.paint.Color.RED);
         } catch (Exception e) {
             lblMensagem.setText("Erro: " + e.getMessage());
@@ -84,23 +134,31 @@ public class TelaCriarPedidoController {
 
             Pedido novoPedido = new Pedido(clienteSelecionado, fornecedorSelecionado, id, status);
             
+            //REQ23
+            if (itensTemporarios.isEmpty()) {
+                throw new Exception("O pedido deve conter pelo menos um item.");
+            }
+
             for (Item item : itensTemporarios) {
                 novoPedido.adicionar(item);
             }
 
+            //Salva o pedido no sistema
             gerenciadorPedido.criarPedido(novoPedido);
-            //Tenta exportar automaticamente após criar o pedido
-            try {
-            //Passa o ID do pedido e a pasta atual (".") como destino
-                gerenciadorPedido.exportarPedidoParaHtml(novoPedido.getId(), ".");
-                lblMensagem.setText("Pedido salvo e HTML gerado com sucesso!");
-            } 
-            catch (Exception ex) {
-                lblMensagem.setText("Pedido salvo, mas erro ao gerar HTML: " + ex.getMessage());
-            }
-            lblMensagem.setText("Pedido cadastrado com sucesso!");
-            lblMensagem.setTextFill(javafx.scene.paint.Color.GREEN);
-            limparFormulario();
+
+            //Redireciona para a tela de atualização de status
+            URL url = new File("src/gui/TelaAtualizarStatusPedido.fxml").toURI().toURL(); 
+            FXMLLoader loader = new FXMLLoader(url);
+            Parent root = loader.load();
+
+            
+            TelaAtualizarStatusController controller = loader.getController();
+            controller.setGerenciadorPedido(this.gerenciadorPedido); 
+
+            // Pega a janela atual a partir do clique no botão e muda a cena
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("ImportFX - Atualizar Status");
+            stage.setScene(new Scene(root));
 
         } catch (NumberFormatException e) {
             lblMensagem.setText("Erro: O ID deve ser um número válido.");
@@ -111,11 +169,4 @@ public class TelaCriarPedidoController {
         }
     }
 
-    private void limparFormulario() {
-        txtId.clear();
-        cbCliente.getSelectionModel().clearSelection();
-        cbFornecedor.getSelectionModel().clearSelection();
-        listViewItens.getItems().clear();
-        itensTemporarios.clear();
-    }
 }
