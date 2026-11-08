@@ -4,5 +4,17 @@ public enum Moeda {
     USD,
     EUR,
     GBP,
-    CNY
+    CNY,
+    BRL,
+    ARS,
+    CLP,
+    MXN,
+    CHF,
+    AUD,
+    JPY,
+    KRW,
+    CAD,
+    INR,
+    SGD,
+    AED
 }
