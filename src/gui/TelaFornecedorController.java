@@ -41,8 +41,8 @@ public class TelaFornecedorController {
 
     @FXML
     public void initialize() {
-        // Popula o ComboBox com as moedas da enum (USD, EUR, GBP, CNY)
-        cbMoedaPadrao.setItems(FXCollections.observableArrayList(Moeda.values()));
+        // Popula o ComboBox com as moedas da enum
+        cbMoedaPadrao.setItems(FXCollections.observableArrayList(Moeda.suportadas()));
 
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
