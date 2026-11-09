@@ -6,6 +6,9 @@ public class Item {
     private Double pesoTotal;
     private Double precoUnitario;
 	private String simboloMoeda;
+    private Long idProduto;
+    private String categoria;
+    private Double aliquota;
 
     public Item(String nomeProduto, int quantidade, double pesoTotal, double precoUnitario, String simboloMoeda) {
         this.nomeProduto = nomeProduto;
@@ -13,6 +16,8 @@ public class Item {
         this.pesoTotal = pesoTotal;
         this.precoUnitario = precoUnitario;
 		this.simboloMoeda = simboloMoeda;
+        this.categoria = "Não informada";
+        this.aliquota = 0.0;
     }
 
     public String getNomeProduto() { return nomeProduto; }
@@ -30,8 +35,22 @@ public class Item {
 	public String getSimboloMoeda() { return simboloMoeda; }
     public void setSimboloMoeda(String simboloMoeda) { this.simboloMoeda = simboloMoeda; }
 
+    public Long getIdProduto() { return idProduto; }
+    public void setIdProduto(Long idProduto) { this.idProduto = idProduto; }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+
+    public Double getAliquota() { return aliquota; }
+    public void setAliquota(Double aliquota) { this.aliquota = aliquota; }
+
+    public boolean isConvertidoParaReal() {
+        return "R$".equals(simboloMoeda);
+    }
+
     @Override
     public String toString() {
-        return quantidade + "x " + nomeProduto + " (" + pesoTotal + "kg) - R$" + precoUnitario;
+        return quantidade + "x " + nomeProduto + " (" + pesoTotal + "kg) - "
+                + simboloMoeda + " " + precoUnitario;
     }
 }

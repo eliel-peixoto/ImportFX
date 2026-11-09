@@ -1,6 +1,7 @@
 package gui;
 
 import beans.Cliente;
+import beans.Cotacao;
 import beans.Eletronico;
 import beans.Fornecedor;
 import beans.Item;
@@ -9,12 +10,19 @@ import beans.Pedido;
 import beans.Produto;
 import beans.Vestuario;
 import negocio.IGerenciadorPedido;
+import negocio.IGerenciadorCambio;
+import negocio.IGerenciadorRelatorios;
+import negocio.GerenciadorRelatorios;
+import dados.Repositorios;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import java.util.ArrayList;
 import javafx.util.StringConverter;
 import javafx.scene.Parent;
@@ -22,8 +30,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.fxml.FXMLLoader;
-import java.io.File;
-import java.net.URL;
+import java.util.Optional;
 
 
 public class TelaCriarPedidoController {
@@ -37,12 +44,25 @@ public class TelaCriarPedidoController {
     @FXML private Label lblMensagem;
 
     @FXML private TextField txtQuantidade;
+    @FXML private Button btnSalvarPedido;
 
     private IGerenciadorPedido gerenciadorPedido;
+    private IGerenciadorCambio gerenciadorCambio;
+    private IGerenciadorRelatorios gerenciadorRelatorios =
+            new GerenciadorRelatorios(Repositorios.pedidos());
     private ArrayList<Item> itensTemporarios = new ArrayList<>();
+    private boolean pedidoSalvo;
 
     public void setGerenciadorPedido(IGerenciadorPedido gerenciadorPedido) {
         this.gerenciadorPedido = gerenciadorPedido;
+    }
+
+    public void setGerenciadorCambio(IGerenciadorCambio gerenciadorCambio) {
+        this.gerenciadorCambio = gerenciadorCambio;
+    }
+
+    public void setGerenciadorRelatorios(IGerenciadorRelatorios gerenciadorRelatorios) {
+        if (gerenciadorRelatorios != null) this.gerenciadorRelatorios = gerenciadorRelatorios;
     }
 
     @FXML
@@ -101,10 +121,38 @@ public class TelaCriarPedidoController {
             }
             
             int qtd = Integer.parseInt(txtQuantidade.getText());
+            if (qtd <= 0) {
+                throw new Exception("A quantidade deve ser maior que zero.");
+            }
             
-            int pesoCalculado = (int) (produtoSelecionado.getPeso() * qtd);
+            double pesoCalculado = produtoSelecionado.getPeso() * qtd;
+            double precoOriginal = produtoSelecionado.getPrecoMoedaOrigem() == null
+                    ? 0.0 : produtoSelecionado.getPrecoMoedaOrigem();
+            double precoUnitario = precoOriginal;
+            Moeda moeda = cbFornecedor.getValue() == null
+                    ? null : cbFornecedor.getValue().getMoedaPadrao();
+            String simboloMoeda = moeda == Moeda.BRL ? "R$"
+                    : moeda == null ? "N/I" : moeda.name();
+            String mensagemConversao = "Item adicionado na moeda de origem; a conversão ficará pendente.";
+            boolean convertido = moeda == Moeda.BRL;
 
-            Item novoItem = new Item(produtoSelecionado.getNome(), qtd, pesoCalculado, 0.0, "R$"); 
+            if (moeda != null && moeda != Moeda.BRL && gerenciadorCambio != null) {
+                try {
+                    Cotacao cotacao = gerenciadorCambio.obterCotacao(moeda);
+                    precoUnitario = gerenciadorCambio.converterParaReal(precoOriginal, cotacao);
+                    simboloMoeda = "R$";
+                    convertido = true;
+                    mensagemConversao = "Item adicionado e convertido para reais.";
+                } catch (Exception erroCotacao) {
+                    // Mantém o preço original para não inventar um valor em reais.
+                }
+            }
+
+            Item novoItem = new Item(produtoSelecionado.getNome(), qtd, pesoCalculado,
+                    precoUnitario, simboloMoeda);
+            novoItem.setIdProduto(produtoSelecionado.getId());
+            novoItem.setCategoria(nomeCategoria(produtoSelecionado));
+            novoItem.setAliquota(obterAliquota(produtoSelecionado));
             
             itensTemporarios.add(novoItem);
             listViewItens.getItems().add(novoItem);
@@ -112,8 +160,9 @@ public class TelaCriarPedidoController {
             txtQuantidade.clear();
             cbProduto.getSelectionModel().clearSelection();
             
-            lblMensagem.setText("Item adicionado com sucesso.");
-            lblMensagem.setTextFill(javafx.scene.paint.Color.GREEN);
+            lblMensagem.setText(mensagemConversao);
+            lblMensagem.setTextFill(convertido
+                    ? javafx.scene.paint.Color.GREEN : javafx.scene.paint.Color.ORANGE);
             
         } catch (NumberFormatException e) {
             lblMensagem.setText("Erro: Quantidade deve ser um número inteiro.");
@@ -145,20 +194,26 @@ public class TelaCriarPedidoController {
 
             //Salva o pedido no sistema
             gerenciadorPedido.criarPedido(novoPedido);
+            pedidoSalvo = true;
+            btnSalvarPedido.setDisable(true);
 
             //Redireciona para a tela de atualização de status
-            URL url = new File("src/gui/TelaAtualizarStatusPedido.fxml").toURI().toURL(); 
-            FXMLLoader loader = new FXMLLoader(url);
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/gui/TelaAtualizarStatusPedido.fxml"));
             Parent root = loader.load();
 
             
             TelaAtualizarStatusController controller = loader.getController();
             controller.setGerenciadorPedido(this.gerenciadorPedido); 
+            controller.setGerenciadorRelatorios(this.gerenciadorRelatorios);
 
-            // Pega a janela atual a partir do clique no botão e muda a cena
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("ImportFX - Atualizar Status");
-            stage.setScene(new Scene(root));
+            // Abre o status em uma nova janela e mantém o pedido visível atrás dela.
+            Stage janelaPedido = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Stage janelaStatus = new Stage();
+            janelaStatus.initOwner(janelaPedido);
+            janelaStatus.setTitle("ImportFX - Atualizar Status");
+            janelaStatus.setScene(new Scene(root));
+            janelaStatus.show();
 
         } catch (NumberFormatException e) {
             lblMensagem.setText("Erro: O ID deve ser um número válido.");
@@ -167,6 +222,57 @@ public class TelaCriarPedidoController {
             lblMensagem.setText("Erro: " + e.getMessage());
             lblMensagem.setTextFill(javafx.scene.paint.Color.RED);
         }
+    }
+
+    @FXML
+    private void handleAbrirRelatorios(ActionEvent event) {
+        try {
+            JanelaRelatorio.abrir(((Node) event.getSource()).getScene().getWindow(),
+                    gerenciadorRelatorios);
+        } catch (Exception erro) {
+            lblMensagem.setText("Não foi possível abrir os relatórios: " + erro.getMessage());
+            lblMensagem.setTextFill(javafx.scene.paint.Color.RED);
+        }
+    }
+
+    @FXML
+    private void handleVoltarMenu(ActionEvent event) {
+        boolean temDadosNaoSalvos = !pedidoSalvo
+                && (!itensTemporarios.isEmpty() || !txtId.getText().isBlank());
+        if (temDadosNaoSalvos) {
+            Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Os dados deste pedido ainda não foram salvos. Deseja voltar ao menu e descartá-los?",
+                    ButtonType.CANCEL, ButtonType.OK);
+            confirmacao.setHeaderText("Descartar pedido?");
+            Optional<ButtonType> resposta = confirmacao.showAndWait();
+            if (resposta.isEmpty() || resposta.get() != ButtonType.OK) return;
+        }
+
+        try {
+            Parent raiz = FXMLLoader.load(getClass().getResource("/gui/MenuPrincipal.fxml"));
+            Stage janela = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            janela.setTitle("ImportFX - Menu Principal");
+            janela.setScene(new Scene(raiz));
+        } catch (Exception erro) {
+            lblMensagem.setText("Não foi possível voltar ao menu: " + erro.getMessage());
+            lblMensagem.setTextFill(javafx.scene.paint.Color.RED);
+        }
+    }
+
+    private String nomeCategoria(Produto produto) {
+        if (produto instanceof Eletronico) return "Eletrônico";
+        if (produto instanceof Vestuario) return "Vestuário";
+        if (produto instanceof beans.Brinquedo) return "Brinquedo";
+        return "Não informada";
+    }
+
+    private double obterAliquota(Produto produto) {
+        Double aliquota = null;
+        if (produto instanceof Eletronico) aliquota = ((Eletronico) produto).getAliquota();
+        if (produto instanceof Vestuario) aliquota = ((Vestuario) produto).getAliquota();
+        if (produto instanceof beans.Brinquedo) aliquota = ((beans.Brinquedo) produto).getAliquota();
+        if (aliquota != null) return aliquota;
+        return 0.0;
     }
 
 }

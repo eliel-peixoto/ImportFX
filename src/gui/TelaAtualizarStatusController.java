@@ -1,7 +1,10 @@
 package gui;
 
 import beans.Pedido;
+import dados.Repositorios;
 import negocio.IGerenciadorPedido;
+import negocio.IGerenciadorRelatorios;
+import negocio.GerenciadorRelatorios;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -18,10 +21,16 @@ public class TelaAtualizarStatusController {
     @FXML private Label lblMensagemStatus;
 
     private IGerenciadorPedido gerenciadorPedido;
+    private IGerenciadorRelatorios gerenciadorRelatorios =
+            new GerenciadorRelatorios(Repositorios.pedidos());
     private Pedido pedidoSelecionado; 
 
     public void setGerenciadorPedido(IGerenciadorPedido gerenciadorPedido) {
         this.gerenciadorPedido = gerenciadorPedido;
+    }
+
+    public void setGerenciadorRelatorios(IGerenciadorRelatorios gerenciadorRelatorios) {
+        if (gerenciadorRelatorios != null) this.gerenciadorRelatorios = gerenciadorRelatorios;
     }
 
     @FXML
@@ -115,5 +124,21 @@ public class TelaAtualizarStatusController {
             lblMensagemStatus.setText("Erro ao exportar HTML: " + e.getMessage());
             lblMensagemStatus.setTextFill(javafx.scene.paint.Color.RED);
         }
+    }
+
+    @FXML
+    private void handleAbrirRelatorios(ActionEvent event) {
+        try {
+            JanelaRelatorio.abrir(((javafx.scene.Node) event.getSource()).getScene().getWindow(),
+                    gerenciadorRelatorios);
+        } catch (Exception erro) {
+            lblMensagemStatus.setText("Não foi possível abrir os relatórios: " + erro.getMessage());
+            lblMensagemStatus.setTextFill(javafx.scene.paint.Color.RED);
+        }
+    }
+
+    @FXML
+    private void handleVoltarAoPedido(ActionEvent event) {
+        ((javafx.stage.Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow()).close();
     }
 }

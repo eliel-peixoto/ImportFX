@@ -60,3 +60,20 @@ JavaFX, API PTAX do Banco Central (https://olinda.bcb.gov.br/olinda/servico/PTAX
 * Thiago Sousa Fischer de Vasconcelos - thiago.fischer@ufrpe.br
 * Vitor Miguel da Paz Azevedo - vitor.miguel@ufrpe.br
 * Wendel Lucas Oliveira Freitas - wendel.lucas@ufrpe.br
+
+## Relatórios CSV
+
+No menu principal, clique em **Relatório**. A tela tem duas abas:
+
+- **Pedidos por período**: mostra pedidos criados no intervalo escolhido, o total dos itens já convertidos para reais e os impostos dos pedidos que chegaram ao status Pago ou posterior.
+- **Produtos por categoria**: soma as unidades dos produtos em pedidos pagos ou em etapas posteriores. É possível escolher uma categoria.
+
+Use **Exportar CSV** para escolher onde salvar cada relatório. Os arquivos usam ponto e vírgula como separador e UTF-8 para preservar os acentos. Se um item não tiver cotação disponível, ele permanece registrado na moeda de origem e aparece como conversão pendente no relatório.
+
+Os pedidos ficam em memória durante a execução do programa. Eles são apagados ao fechar o sistema.
+
+As telas de pedido e de status têm botões de retorno. Depois de salvar um pedido, a tela de status abre em uma janela separada; **Voltar** fecha essa janela e retorna ao pedido. Na tela de relatório, **Voltar** fecha o relatório e retorna à tela que o abriu.
+
+## Iniciar pela interface do IntelliJ IDEA
+
+Abra no IntelliJ a pasta que contém o `pom.xml` e aguarde o carregamento do projeto Maven. Na janela **Maven**, abra **Plugins → javafx** e execute **javafx:run**. O sistema abre o menu principal em uma janela JavaFX.

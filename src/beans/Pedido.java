@@ -1,6 +1,7 @@
 package beans;
 
 import java.util.ArrayList;
+import java.time.LocalDateTime;
 
 public class Pedido {
     private Cliente cliente;
@@ -8,6 +9,7 @@ public class Pedido {
     private Long id; 
     private String status;
     private ArrayList<Item> listaItems;
+    private LocalDateTime dataCriacao;
 
     public Pedido(Cliente cliente, Fornecedor fornecedor, Long id, String status) {
         this.cliente = cliente;
@@ -15,6 +17,7 @@ public class Pedido {
         this.id = id;
         this.status = status;
         this.listaItems = new ArrayList<Item>();
+        this.dataCriacao = LocalDateTime.now();
     }
     
     public void adicionar(Item item) {
@@ -69,5 +72,13 @@ public class Pedido {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 }

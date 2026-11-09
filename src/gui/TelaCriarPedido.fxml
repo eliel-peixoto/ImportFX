@@ -81,7 +81,9 @@
             <HBox alignment="CENTER_RIGHT" spacing="15.0">
                <children>
                   <Label fx:id="lblMensagem" textFill="RED" />
-                  <Button mnemonicParsing="false" onAction="#handleSalvarPedido" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 4;" text="Salvar Pedido" />
+                  <Button mnemonicParsing="false" onAction="#handleVoltarMenu" styleClass="btn-secondary" text="Voltar ao menu" />
+                  <Button mnemonicParsing="false" onAction="#handleAbrirRelatorios" styleClass="btn-primary" text="Relatórios CSV" />
+                  <Button fx:id="btnSalvarPedido" mnemonicParsing="false" onAction="#handleSalvarPedido" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 4;" text="Salvar Pedido" />
                </children>
                <VBox.margin>
                   <Insets top="10.0" />

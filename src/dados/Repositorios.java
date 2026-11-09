@@ -11,6 +11,8 @@ public final class Repositorios {
 	//colocar os outros repositorios
     private static final RepositorioProdutos PRODUTOS = new RepositorioProdutos();
     private static final RepositorioFornecedores FORNECEDORES = new RepositorioFornecedores();
+    private static final RepositorioPedidos PEDIDOS = new RepositorioPedidos();
+    private static final RepositorioCotacoes COTACOES = new RepositorioCotacoes();
  
     private Repositorios() { }
  
@@ -20,5 +22,13 @@ public final class Repositorios {
  
     public static RepositorioFornecedores fornecedores() {
         return FORNECEDORES;
+    }
+
+    public static RepositorioPedidos pedidos() {
+        return PEDIDOS;
+    }
+
+    public static RepositorioCotacoes cotacoes() {
+        return COTACOES;
     }
 }
