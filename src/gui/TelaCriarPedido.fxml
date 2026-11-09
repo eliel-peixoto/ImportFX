@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaCriarPedidoController">
+<AnchorPane prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaCriarPedidoController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="70.0" style="-fx-background-color: #ff4501;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -40,7 +40,7 @@
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Status Inicial:" />
-                        <TextField fx:id="txtStatus" text="PENDENTE" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" editable="false" />
+                        <TextField fx:id="txtStatus" editable="false" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" text="PENDENTE" />
                      </children>
                   </VBox>
                </children>
@@ -70,8 +70,8 @@
             </Label>
             <HBox spacing="10.0">
                <children>
-                  <ComboBox fx:id="cbProduto" promptText="Selecione o Produto" style="-fx-border-color: #ff4501; -fx-border-radius: 4; -fx-background-color: white;" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
-                  <TextField fx:id="txtQuantidade" promptText="Qtd" prefWidth="90.0" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" />
+                  <ComboBox fx:id="cbProduto" maxWidth="Infinity" promptText="Selecione o Produto" style="-fx-border-color: #ff4501; -fx-border-radius: 4; -fx-background-color: white;" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="txtQuantidade" prefWidth="90.0" promptText="Qtd" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" />
                   <Button mnemonicParsing="false" onAction="#handleAdicionarItem" style="-fx-background-color: #ff4501; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;" text="Adicionar" />
                </children>
             </HBox>

@@ -17,9 +17,9 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="650.0" style="-fx-background-color: #f8f9fa;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaProdutoController">
    <top>
-      <VBox alignment="CENTER" prefHeight="55.0" prefWidth="650.0" style="-fx-background-color: #ffffff; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" prefHeight="55.0" prefWidth="650.0" style="-fx-background-color: #ff4501; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cadastro de Produtos">
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Cadastro de Produtos">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
@@ -47,16 +47,16 @@
               </rowConstraints>
                <children>
                   <!-- Linha 0: Categoria e Fornecedor -->
-                  <ComboBox fx:id="cbCategoria" prefHeight="34.0" prefWidth="285.0" promptText="Categoria do Produto" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #d1d5db; -fx-background-color: #ffffff;" />
-                  <ComboBox fx:id="cbFornecedores" prefHeight="34.0" prefWidth="285.0" promptText="Selecione o Fornecedor" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #d1d5db; -fx-background-color: #ffffff;" GridPane.columnIndex="1" />
+                  <ComboBox fx:id="cbCategoria" prefHeight="34.0" prefWidth="285.0" promptText="Categoria do Produto" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ff4501; -fx-background-color: #ffffff;" />
+                  <ComboBox fx:id="cbFornecedores" prefHeight="34.0" prefWidth="285.0" promptText="Selecione o Fornecedor" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ff4501; -fx-background-color: #ffffff;" GridPane.columnIndex="1" />
                   
                   <!-- Linha 1: Nome e Preço -->
-                  <TextField fx:id="txtNomeProduto" prefHeight="34.0" promptText="Digite o nome do Produto" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #d1d5db; -fx-background-color: #ffffff;" GridPane.rowIndex="1" />
-                  <TextField fx:id="txtPreco" prefHeight="34.0" promptText="Digite o preço na moeda de origem" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #d1d5db; -fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="txtNomeProduto" prefHeight="34.0" promptText="Digite o nome do Produto" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ff4501; -fx-background-color: #ffffff;" GridPane.rowIndex="1" />
+                  <TextField fx:id="txtPreco" prefHeight="34.0" promptText="Digite o preço na moeda de origem" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ff4501; -fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   
                   <!-- Linha 2: Peso e Alíquota -->
-                  <TextField fx:id="txtPeso" prefHeight="34.0" promptText="Digite o peso unitário do produto" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #d1d5db; -fx-background-color: #ffffff;" GridPane.rowIndex="2" />
-                  <TextField fx:id="txtAliquota" prefHeight="34.0" promptText="Digite a alíquota (Deixe 0 p/ Vestuário)" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #d1d5db; -fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="txtPeso" prefHeight="34.0" promptText="Digite o peso unitário do produto" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ff4501; -fx-background-color: #ffffff;" GridPane.rowIndex="2" />
+                  <TextField fx:id="txtAliquota" prefHeight="34.0" promptText="Digite a alíquota (Deixe 0 p/ Vestuário)" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ff4501; -fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   
                   <!-- Linha 3: Quantidade -->
                   <VBox spacing="4.0" GridPane.rowIndex="3">
@@ -66,7 +66,7 @@
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Text>
-                        <Spinner fx:id="spnQuantidade" prefHeight="34.0" prefWidth="275.0" style="-fx-background-radius: 6; -fx-border-radius: 6;" />
+                        <Spinner fx:id="spnQuantidade" prefHeight="34.0" prefWidth="275.0" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ff4501;" />
                      </children>
                   </VBox>
                </children>
@@ -101,12 +101,12 @@
             <Insets right="35.0" />
          </padding>
          <children>
-            <Button fx:id="botaoVoltar" mnemonicParsing="false" onAction="#handleVoltar" prefHeight="32.0" prefWidth="95.0" style="-fx-background-color: #e5e7eb; -fx-background-radius: 6; -fx-cursor: hand;" text="Voltar" textFill="#374151">
+            <Button fx:id="botaoVoltar" mnemonicParsing="false" onAction="#handleVoltar" prefHeight="32.0" prefWidth="95.0" style="-fx-background-color: #767D86; -fx-background-radius: 6; -fx-cursor: hand;" text="Voltar" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
             </Button>
-            <Button fx:id="botaoConfirmar" mnemonicParsing="false" onAction="#handleConfirmar" prefHeight="32.0" prefWidth="105.0" style="-fx-background-color: #ff4501; -fx-background-radius: 6; -fx-cursor: hand;" text="Confirmar" textFill="WHITE">
+            <Button fx:id="botaoConfirmar" mnemonicParsing="false" onAction="#handleConfirmar" prefHeight="32.0" prefWidth="105.0" style="-fx-background-color: #4CAF50; -fx-background-radius: 6; -fx-cursor: hand;" text="Salvar Produto" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>

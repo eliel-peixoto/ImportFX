@@ -7,3 +7,4 @@ public class App {
         Application.launch(Main.class, args);
     }
 }
+//carrega as telas do javafx

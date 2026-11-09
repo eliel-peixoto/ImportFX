@@ -9,17 +9,14 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="650.0" style="-fx-background-color: #f8f9fa;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MenuPrincipalController">
    <top>
-      <VBox alignment="CENTER" prefHeight="75.0" prefWidth="650.0" style="-fx-background-color: #ffffff; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" prefHeight="75.0" prefWidth="650.0" style="-fx-background-color: #ff4501; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
          <children>
-            <Text fill="#111827" strokeType="OUTSIDE" strokeWidth="0.0" text="IMPORT FX">
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="IMPORT FX">
                <font>
                   <Font name="System Bold" size="22.0" />
                </font>
             </Text>
-            <Text fill="#6b7280" strokeType="OUTSIDE" strokeWidth="0.0" text="Menu Principal">
-               <font>
-                  <Font name="System Regular" size="12.0" />
-               </font>
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Menu Principal">
                <VBox.margin>
                   <Insets top="2.0" />
                </VBox.margin>
@@ -28,7 +25,7 @@
       </VBox>
    </top>
    <center>
-      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="340.0" prefWidth="350.0" spacing="12.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e5e7eb; -fx-border-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="340.0" prefWidth="350.0" spacing="12.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #ff4501; -fx-border-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
          </padding>
