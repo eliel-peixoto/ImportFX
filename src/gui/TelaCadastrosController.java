@@ -60,7 +60,7 @@ public class TelaCadastrosController implements Initializable {
         gerenciadorCliente = new GerenciadorCliente(new RepositorioCliente());
         gerenciadorFornecedor = new GerenciadorFornecedor(new RepositorioFornecedores());
 
-        cbFornecedorMoeda.setItems(FXCollections.observableArrayList(Moeda.values()));
+        cbFornecedorMoeda.setItems(FXCollections.observableArrayList(Moeda.suportadas()));
 
         configurarTabelas();
         configurarListenersSelecao();
