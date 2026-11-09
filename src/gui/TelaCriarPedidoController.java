@@ -52,6 +52,7 @@ public class TelaCriarPedidoController {
             new GerenciadorRelatorios(Repositorios.pedidos());
     private ArrayList<Item> itensTemporarios = new ArrayList<>();
     private boolean pedidoSalvo;
+    private Cotacao cotacaoDoPedido;
 
     public void setGerenciadorPedido(IGerenciadorPedido gerenciadorPedido) {
         this.gerenciadorPedido = gerenciadorPedido;
@@ -133,19 +134,32 @@ public class TelaCriarPedidoController {
                     ? null : cbFornecedor.getValue().getMoedaPadrao();
             String simboloMoeda = moeda == Moeda.BRL ? "R$"
                     : moeda == null ? "N/I" : moeda.name();
-            String mensagemConversao = "Item adicionado na moeda de origem; a conversão ficará pendente.";
+            String mensagemConversao = "Item adicionado.";
             boolean convertido = moeda == Moeda.BRL;
 
-            if (moeda != null && moeda != Moeda.BRL && gerenciadorCambio != null) {
-                try {
-                    Cotacao cotacao = gerenciadorCambio.obterCotacao(moeda);
-                    precoUnitario = gerenciadorCambio.converterParaReal(precoOriginal, cotacao);
-                    simboloMoeda = "R$";
-                    convertido = true;
-                    mensagemConversao = "Item adicionado e convertido para reais.";
-                } catch (Exception erroCotacao) {
-                    // Mantém o preço original para não inventar um valor em reais.
+            if (moeda == null) {
+                throw new Exception("Selecione o fornecedor do pedido.");
+            }
+            if (moeda != Moeda.BRL) {
+                if (gerenciadorCambio == null) {
+                    throw new Exception("O câmbio não está configurado.");
                 }
+                if (cotacaoDoPedido != null && cotacaoDoPedido.getMoeda() != moeda) {
+                    throw new Exception("A moeda do fornecedor mudou depois do primeiro item. "
+                            + "Volte ao menu e crie um novo pedido para trocar de fornecedor.");
+                }
+                if (cotacaoDoPedido == null) {
+                    // Todos os itens usam a MESMA cotação. Sem cotação (nem em cache) o item é recusado
+                    cotacaoDoPedido = gerenciadorCambio.obterCotacao(moeda);
+                }
+                precoUnitario = gerenciadorCambio.converterParaReal(precoOriginal, cotacaoDoPedido);
+                simboloMoeda = "R$";
+                convertido = true;
+                mensagemConversao = "Item adicionado e convertido para reais (1 " + moeda + " = R$ "
+                        + String.format("%.4f", cotacaoDoPedido.getVenda()) + ")"
+                        + (cotacaoDoPedido.isDesatualizada()
+                                ? ". ATENÇÃO: cotação do cache, a API do Banco Central está indisponível."
+                                : ".");
             }
 
             Item novoItem = new Item(produtoSelecionado.getNome(), qtd, pesoCalculado,
@@ -183,13 +197,16 @@ public class TelaCriarPedidoController {
 
             Pedido novoPedido = new Pedido(clienteSelecionado, fornecedorSelecionado, id, status);
             
-            //REQ23
             if (itensTemporarios.isEmpty()) {
                 throw new Exception("O pedido deve conter pelo menos um item.");
             }
 
             for (Item item : itensTemporarios) {
                 novoPedido.adicionar(item);
+            }
+
+            if (cotacaoDoPedido != null) {
+                novoPedido.congelarCotacao(cotacaoDoPedido);
             }
 
             //Salva o pedido no sistema
