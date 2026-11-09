@@ -1,6 +1,7 @@
 package beans;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.time.LocalDateTime;
 
 public class Pedido {
@@ -10,6 +11,7 @@ public class Pedido {
     private String status;
     private ArrayList<Item> listaItems;
     private LocalDateTime dataCriacao;
+    private Cotacao cotacao;
 
     public Pedido(Cliente cliente, Fornecedor fornecedor, Long id, String status) {
         this.cliente = cliente;
@@ -80,5 +82,18 @@ public class Pedido {
 
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    /** Congela no pedido a cotação usada na conversão dos itens. Só pode ser feito uma vez. */
+    public void congelarCotacao(Cotacao cotacao) {
+        if (this.cotacao != null) {
+            throw new IllegalStateException("A cotação deste pedido já foi congelada.");
+        }
+        this.cotacao = Objects.requireNonNull(cotacao, "A cotação não pode ser nula.");
+    }
+
+    /** Cotação usada no pedido; null se o pedido está em Real (sem conversão). */
+    public Cotacao getCotacao() {
+        return cotacao;
     }
 }
