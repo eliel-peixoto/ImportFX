@@ -156,7 +156,7 @@ public class MenuPrincipal {
         Produto novoProduto = null;
 
         if (tipoProduto == 1) {
-            novoProduto = new Vestuario(id, nome, preco, peso);
+            novoProduto = new Vestuario(id, nome, preco, peso, 0.0);
         } else if (tipoProduto == 2) {
             System.out.print("Alíquota (%): ");
             Double aliquota = Double.parseDouble(scanner.nextLine().replace(",", "."));
