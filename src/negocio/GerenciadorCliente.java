@@ -23,6 +23,10 @@ public class GerenciadorCliente implements IGerenciadorCliente {
         if (cliente.getCpf() == null) {
             throw new Exception("O CPF do cliente é obrigatório.");
         }
+        String cpfStr = String.valueOf(cliente.getCpf());
+        if (cpfStr.length() != 11) {
+            throw new Exception("O CPF deve conter exatamente 11 dígitos numéricos.");
+        }
         repositorio.cadastrar(cliente);
     }
 

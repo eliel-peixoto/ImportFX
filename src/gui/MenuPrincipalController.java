@@ -43,7 +43,14 @@ public class MenuPrincipalController {
 
     @FXML
     private void handleAbrirCadastro(ActionEvent event) {
-        mostrarAviso("A tela de cadastro ainda não foi conectada ao menu.");
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/gui/TelaCadastros.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            mostrarErro("Não foi possível abrir a tela de cadastros: " + e.getMessage());
+        }
     }
 
     @FXML

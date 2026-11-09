@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane stylesheets="@estilo.css" prefHeight="650.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaCadastrosController">
+    <top>
+        <VBox styleClass="header-pane" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                    <children>
+                        <VBox>
+                            <children>
+                                <Text styleClass="header-title" text="ImportFX - Gestão de Cadastros" />
+                                <Text styleClass="header-subtitle" text="Painel Unificado de Cadastro e Manutenção" />
+                            </children>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnVoltar" onAction="#handleVoltar" styleClass="btn-secondary" text="Voltar" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <tabs>
+
+                <!-- Separador 1: Clientes (Estrutura idêntica à TelaCliente.fxml) -->
+                <Tab text="Clientes">
+                    <content>
+                        <VBox spacing="15.0">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
+                            <children>
+                                <!-- Formulário de Cliente -->
+                                <VBox spacing="10.0" styleClass="card-pane">
+                                    <children>
+                                        <GridPane hgap="10.0" vgap="10.0">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="250.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="250.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="30.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="30.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                            <children>
+                                                <Label styleClass="form-label" text="ID:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                <TextField fx:id="txtClienteId" promptText="Ex: 101" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                                <Label styleClass="form-label" text="CPF:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                <TextField fx:id="txtClienteCpf" promptText="Apenas números (Ex: 12345678901)" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+
+                                                <Label styleClass="form-label" text="Nome:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                                <TextField fx:id="txtClienteNome" promptText="Nome completo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                                <Label styleClass="form-label" text="Endereço:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                <TextField fx:id="txtClienteEndereco" promptText="Rua, número, cidade..." GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                            </children>
+                                        </GridPane>
+                                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                                            <children>
+                                                <Button fx:id="btnSalvarCliente" onAction="#handleSalvarCliente" styleClass="btn-primary" text="Salvar Cliente" />
+                                                <Button fx:id="btnRemoverCliente" onAction="#handleRemoverCliente" styleClass="btn-danger" text="Remover Selecionado" />
+                                                <Button fx:id="btnLimparCliente" onAction="#handleLimparCliente" styleClass="btn-secondary" text="Limpar Campos" />
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets top="10.0" />
+                                            </VBox.margin>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+
+                                <!-- Tabela de Clientes -->
+                                <VBox VBox.vgrow="ALWAYS" styleClass="card-pane">
+                                    <children>
+                                        <TableView fx:id="tblClientes" prefHeight="250.0" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="colClienteId" prefWidth="80.0" text="ID" />
+                                                <TableColumn fx:id="colClienteNome" prefWidth="220.0" text="Nome" />
+                                                <TableColumn fx:id="colClienteCpf" prefWidth="180.0" text="CPF" />
+                                                <TableColumn fx:id="colClienteEndereco" prefWidth="260.0" text="Endereço" />
+                                            </columns>
+                                            <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                            </columnResizePolicy>
+                                        </TableView>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <!-- Separador 2: Fornecedores (Estrutura idêntica à TelaFornecedor.fxml) -->
+                <Tab text="Fornecedores">
+                    <content>
+                        <VBox spacing="15.0">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
+                            <children>
+                                <!-- Formulário de Fornecedor -->
+                                <VBox spacing="10.0" styleClass="card-pane">
+                                    <children>
+                                        <GridPane hgap="10.0" vgap="10.0">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="250.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="250.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="30.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="30.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                            <children>
+                                                <Label styleClass="form-label" text="ID:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                <TextField fx:id="txtFornecedorId" promptText="Ex: 501" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                                <Label styleClass="form-label" text="País de Origem:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                <TextField fx:id="txtFornecedorPais" promptText="Ex: Estados Unidos, China..." GridPane.columnIndex="3" GridPane.rowIndex="0" />
+
+                                                <Label styleClass="form-label" text="Nome:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                                <TextField fx:id="txtFornecedorNome" promptText="Nome da empresa / fornecedor" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                                <Label styleClass="form-label" text="Moeda Padrão:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                <ComboBox fx:id="cbFornecedorMoeda" promptText="Selecione a Moeda" prefWidth="250.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                            </children>
+                                        </GridPane>
+                                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                                            <children>
+                                                <Button fx:id="btnSalvarFornecedor" onAction="#handleSalvarFornecedor" styleClass="btn-primary" text="Salvar Fornecedor" />
+                                                <Button fx:id="btnRemoverFornecedor" onAction="#handleRemoverFornecedor" styleClass="btn-danger" text="Remover Selecionado" />
+                                                <Button fx:id="btnLimparFornecedor" onAction="#handleLimparFornecedor" styleClass="btn-secondary" text="Limpar Campos" />
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets top="10.0" />
+                                            </VBox.margin>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+
+                                <!-- Tabela de Fornecedores -->
+                                <VBox VBox.vgrow="ALWAYS" styleClass="card-pane">
+                                    <children>
+                                        <TableView fx:id="tblFornecedores" prefHeight="250.0" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="colFornecedorId" prefWidth="80.0" text="ID" />
+                                                <TableColumn fx:id="colFornecedorNome" prefWidth="250.0" text="Nome" />
+                                                <TableColumn fx:id="colFornecedorPais" prefWidth="230.0" text="País de Origem" />
+                                                <TableColumn fx:id="colFornecedorMoeda" prefWidth="180.0" text="Moeda Padrão" />
+                                            </columns>
+                                            <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                            </columnResizePolicy>
+                                        </TableView>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+
+            </tabs>
+        </TabPane>
+    </center>
+</BorderPane>
