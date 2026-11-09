@@ -60,7 +60,3 @@ JavaFX, API PTAX do Banco Central (https://olinda.bcb.gov.br/olinda/servico/PTAX
 * Thiago Sousa Fischer de Vasconcelos - thiago.fischer@ufrpe.br
 * Vitor Miguel da Paz Azevedo - vitor.miguel@ufrpe.br
 * Wendel Lucas Oliveira Freitas - wendel.lucas@ufrpe.br
-
-## Iniciar pela interface do IntelliJ IDEA
-
-Abra no IntelliJ a pasta que contém o `pom.xml` e aguarde o carregamento do projeto Maven. Na janela **Maven**, abra **Plugins → javafx** e execute **javafx:run**. O sistema abre o menu principal em uma janela JavaFX.
