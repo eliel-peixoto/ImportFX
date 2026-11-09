@@ -27,7 +27,7 @@ public class Cotacao {
         this.desatualizada = desatualizada;
     }
 
-    /** Converte para Real pela cotacao de venda. Arredonda para 2 casas com HALF_UP. */
+    /** Converte para Real pela cotação de venda. Arredonda para 2 casas com HALF_UP. */
     public BigDecimal paraReal(BigDecimal valor) {
         Objects.requireNonNull(valor, "O valor a converter não pode ser nulo.");
         if (valor.signum() < 0) {
@@ -36,7 +36,7 @@ public class Cotacao {
         return valor.multiply(venda).setScale(2, RoundingMode.HALF_UP);
     }
 
-    /** copia desta cotacao marcada como "do cache" (API indisponível). */
+    /** cópia desta cotação marcada como "do cache" (API indisponível). */
     public Cotacao comoDesatualizada() {
         return new Cotacao(moeda, compra, venda, dataHora, true);
     }
