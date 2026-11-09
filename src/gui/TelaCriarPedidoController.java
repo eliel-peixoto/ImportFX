@@ -55,7 +55,7 @@ public class TelaCriarPedidoController {
         cbFornecedor.getItems().add(fornecedorFalso);
         
         Produto prod1 = new Eletronico(101L, "Smartphone", 1500.0, 0.5, 60.0);
-        Produto prod2 = new Vestuario(102L, "Camisa de Futebol Tamanho G", 150.0, 0.3);
+        Produto prod2 = new Vestuario(102L, "Camisa de Futebol Tamanho G", 25.0  , 150.0, 0.3);
         cbProduto.getItems().addAll(prod1, prod2);
 
         cbCliente.getSelectionModel().selectFirst();
