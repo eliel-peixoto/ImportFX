@@ -461,4 +461,9 @@ public class MenuPrincipal {
             System.out.println("Erro ao criar pedido: " + e.getMessage());
         }
     }
+    public static void main(String[] args) {
+    
+        MenuPrincipal menu = new MenuPrincipal();
+        menu.iniciar(); 
+    }
 }
