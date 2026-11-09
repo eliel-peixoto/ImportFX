@@ -66,7 +66,20 @@ public class MenuPrincipalController {
 
     @FXML
     private void handleAbrirCambio(ActionEvent event) {
-        mostrarAviso("A tela de câmbio ainda não foi conectada ao menu.");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/TelaCambio.fxml"));
+            Parent raiz = loader.load();
+            TelaCambioController controller = loader.getController();
+            controller.setGerenciadorCambio(new GerenciadorCambio(
+                    new ClientePtax(), Repositorios.cotacoes()));
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("ImportFX - Câmbio");
+            stage.setScene(new Scene(raiz));
+            stage.show();
+        } catch (Exception erro) {
+            mostrarErro("Não foi possível abrir a tela de câmbio: " + erro.getMessage());
+        }
     }
 
     private void trocarTela(ActionEvent event, String caminho, String titulo) {

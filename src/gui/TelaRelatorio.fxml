@@ -15,9 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane prefHeight="700.0" prefWidth="1080.0" stylesheets="@estilo.css"
-            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="gui.TelaRelatorioController">
+<BorderPane prefHeight="700.0" prefWidth="1080.0" stylesheets="@estilo.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaRelatorioController">
    <top>
       <VBox styleClass="header-pane" BorderPane.alignment="CENTER">
          <children>
@@ -30,7 +28,7 @@
                      </children>
                   </VBox>
                   <Region HBox.hgrow="ALWAYS" />
-                  <Button onAction="#handleVoltar" styleClass="btn-secondary" text="Voltar" />
+                  <Button fx:id="btnVoltar" onAction="#handleVoltar" styleClass="btn-secondary" text="Voltar" />
                </children>
             </HBox>
          </children>

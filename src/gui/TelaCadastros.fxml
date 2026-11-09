@@ -18,7 +18,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane stylesheets="@estilo.css" prefHeight="650.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaCadastrosController">
+<BorderPane prefHeight="650.0" prefWidth="850.0" stylesheets="@estilo.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaCadastrosController">
     <top>
         <VBox styleClass="header-pane" BorderPane.alignment="CENTER">
             <children>
@@ -66,16 +66,16 @@
                                             </rowConstraints>
                                             <children>
                                                 <Label styleClass="form-label" text="ID:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                                <TextField fx:id="txtClienteId" promptText="Ex: 101" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                <TextField fx:id="txtClienteId" promptText="Ex: 101" style="-fx-border-color: #ff4501;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
                                                 <Label styleClass="form-label" text="CPF:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                                                <TextField fx:id="txtClienteCpf" promptText="Apenas números (Ex: 12345678901)" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                <TextField fx:id="txtClienteCpf" promptText="Apenas números (Ex: 12345678901)" style="-fx-border-color: #ff4501;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
 
                                                 <Label styleClass="form-label" text="Nome:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                                <TextField fx:id="txtClienteNome" promptText="Nome completo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <TextField fx:id="txtClienteNome" promptText="Nome completo" style="-fx-border-color: #ff4501;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                                                 <Label styleClass="form-label" text="Endereço:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                                <TextField fx:id="txtClienteEndereco" promptText="Rua, número, cidade..." GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                <TextField fx:id="txtClienteEndereco" promptText="Rua, número, cidade..." style="-fx-border-color: #ff4501;" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                                             </children>
                                         </GridPane>
                                         <HBox alignment="CENTER_RIGHT" spacing="10.0">
@@ -92,7 +92,7 @@
                                 </VBox>
 
                                 <!-- Tabela de Clientes -->
-                                <VBox VBox.vgrow="ALWAYS" styleClass="card-pane">
+                                <VBox styleClass="card-pane" VBox.vgrow="ALWAYS">
                                     <children>
                                         <TableView fx:id="tblClientes" prefHeight="250.0" VBox.vgrow="ALWAYS">
                                             <columns>
@@ -136,21 +136,21 @@
                                             </rowConstraints>
                                             <children>
                                                 <Label styleClass="form-label" text="ID:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                                <TextField fx:id="txtFornecedorId" promptText="Ex: 501" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                <TextField fx:id="txtFornecedorId" promptText="Ex: 501" style="-fx-border-color: #ff4501;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
                                                 <Label styleClass="form-label" text="País de Origem:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                                                <TextField fx:id="txtFornecedorPais" promptText="Ex: Estados Unidos, China..." GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                <TextField fx:id="txtFornecedorPais" promptText="Ex: Estados Unidos, China..." style="-fx-border-color: #ff4501;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
 
                                                 <Label styleClass="form-label" text="Nome:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                                <TextField fx:id="txtFornecedorNome" promptText="Nome da empresa / fornecedor" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <TextField fx:id="txtFornecedorNome" promptText="Nome da empresa / fornecedor" style="-fx-border-color: #ff4501;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                                                 <Label styleClass="form-label" text="Moeda Padrão:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                                <ComboBox fx:id="cbFornecedorMoeda" promptText="Selecione a Moeda" prefWidth="250.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                <ComboBox fx:id="cbFornecedorMoeda" prefWidth="250.0" promptText="Selecione a Moeda" style="-fx-border-color: #ff4501;" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                                             </children>
                                         </GridPane>
                                         <HBox alignment="CENTER_RIGHT" spacing="10.0">
                                             <children>
-                                                <Button fx:id="btnSalvarFornecedor" onAction="#handleSalvarFornecedor" styleClass="btn-primary" text="Salvar Fornecedor" />
+                                                <Button fx:id="btnSalvarFornecedor" onAction="#handleSalvarFornecedor" style="-fx-background-color: #4CAF50;" styleClass="btn-primary" text="Salvar Fornecedor" />
                                                 <Button fx:id="btnRemoverFornecedor" onAction="#handleRemoverFornecedor" styleClass="btn-danger" text="Remover Selecionado" />
                                                 <Button fx:id="btnLimparFornecedor" onAction="#handleLimparFornecedor" styleClass="btn-secondary" text="Limpar Campos" />
                                             </children>
@@ -162,7 +162,7 @@
                                 </VBox>
 
                                 <!-- Tabela de Fornecedores -->
-                                <VBox VBox.vgrow="ALWAYS" styleClass="card-pane">
+                                <VBox styleClass="card-pane" VBox.vgrow="ALWAYS">
                                     <children>
                                         <TableView fx:id="tblFornecedores" prefHeight="250.0" VBox.vgrow="ALWAYS">
                                             <columns>

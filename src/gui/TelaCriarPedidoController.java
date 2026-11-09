@@ -72,7 +72,7 @@ public class TelaCriarPedidoController {
         Cliente clienteFalso = new Cliente(1L, "Fulano de Tal", 12345678911L, "Rua Exemplo, 123, Cidade, Estado");
         cbCliente.getItems().add(clienteFalso);
         
-        Fornecedor fornecedorFalso = new Fornecedor(1L, "Tech Store", "China", Moeda.CNY); 
+        Fornecedor fornecedorFalso = new Fornecedor(1L, "Tech Store", "Inglaterra", Moeda.GBP); 
         cbFornecedor.getItems().add(fornecedorFalso);
         
         Produto prod1 = new Eletronico(101L, "Smartphone", 1500.0, 0.5, 60.0);
