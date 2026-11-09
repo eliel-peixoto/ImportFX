@@ -7,7 +7,7 @@ public enum Moeda {
     USD(true),
     EUR(true),
     GBP(true),
-    CNY(true),
+    CNY(false),
     BRL(false),
     ARS(false),
     CLP(false),
