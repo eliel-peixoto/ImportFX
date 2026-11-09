@@ -93,7 +93,15 @@ public class GerenciadorPedido implements IGerenciadorPedido {
         html.append("<p><strong>Fornecedor:</strong> ID ").append(pedido.getFornecedor().getId())
             .append(" | ").append(pedido.getFornecedor().getNome())
             .append(" (País: ").append(pedido.getFornecedor().getPaisOrigem()).append(")</p>");
-            
+
+        if (pedido.getCotacao() != null && !pedido.getCotacao().getMoeda().isReal()) {
+            html.append("<p><strong>Cotação PTAX utilizada:</strong> 1 ").append(pedido.getCotacao().getMoeda())
+                .append(" = R$ ").append(String.format("%.4f", pedido.getCotacao().getVenda()))
+                .append(" (").append(pedido.getCotacao().getDataHora().toLocalDate()).append(")")
+                .append(pedido.getCotacao().isDesatualizada() ? " - cotação do cache" : "")
+                .append("</p>");
+        }
+
         html.append("</div>");
 
         html.append("<h2>Lista de Itens</h2>");
