@@ -5,7 +5,7 @@ import dados.IRepositorioProdutos;
 import java.util.List;
 
 public class GerenciadorProduto implements IGerenciadorProduto {
-    
+
     private IRepositorioProdutos repositorio;
 
     public GerenciadorProduto(IRepositorioProdutos repositorio) {
@@ -19,6 +19,9 @@ public class GerenciadorProduto implements IGerenciadorProduto {
         }
         if (produto.getNome() == null || produto.getNome().trim().isEmpty()) {
             throw new Exception("O nome do produto é obrigatório.");
+        }
+        if (produto.getIdFornecedor() == null) {
+            throw new Exception("O produto deve estar vinculado a um fornecedor.");
         }
         repositorio.cadastrar(produto);
     }
@@ -45,7 +48,7 @@ public class GerenciadorProduto implements IGerenciadorProduto {
     }
 
     @Override
-    public void removerProduto(long id) throws Exception { 
+    public void removerProduto(long id) throws Exception {
         if (buscarProduto(id) == null) {
             throw new Exception("Produto não encontrado para remoção.");
         }

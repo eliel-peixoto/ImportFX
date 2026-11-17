@@ -3,8 +3,7 @@ package gui;
 import beans.Cliente;
 import beans.Fornecedor;
 import beans.Moeda;
-import dados.RepositorioCliente;
-import dados.RepositorioFornecedores;
+import dados.Repositorios;
 import negocio.GerenciadorCliente;
 import negocio.GerenciadorFornecedor;
 
@@ -57,8 +56,8 @@ public class TelaCadastrosController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        gerenciadorCliente = new GerenciadorCliente(new RepositorioCliente());
-        gerenciadorFornecedor = new GerenciadorFornecedor(new RepositorioFornecedores());
+        gerenciadorCliente = new GerenciadorCliente(Repositorios.clientes());
+        gerenciadorFornecedor = new GerenciadorFornecedor(Repositorios.fornecedores());
 
         cbFornecedorMoeda.setItems(FXCollections.observableArrayList(Moeda.suportadas()));
 
