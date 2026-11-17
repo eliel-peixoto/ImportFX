@@ -22,11 +22,23 @@ public class RepositorioFornecedores extends RepositorioGenerico<Fornecedor> imp
     @Override
     public Fornecedor buscarPorId(long id) {
         for (Fornecedor f : elementos) {
-            if (f.getId() == id) {
+            if (f.getId() != null && f.getId() == id) {
                 return f;
             }
         }
         return null;
+    }
+
+    @Override
+    public void atualizar(Fornecedor fornecedorAtualizado) {
+        if (fornecedorAtualizado != null && fornecedorAtualizado.getId() != null) {
+            Fornecedor antigo = buscarPorId(fornecedorAtualizado.getId());
+            if (antigo != null) {
+                antigo.setNome(fornecedorAtualizado.getNome());
+                antigo.setPaisOrigem(fornecedorAtualizado.getPaisOrigem());
+                antigo.setMoedaPadrao(fornecedorAtualizado.getMoedaPadrao());
+            }
+        }
     }
 
     @Override
@@ -36,4 +48,5 @@ public class RepositorioFornecedores extends RepositorioGenerico<Fornecedor> imp
             super.removerElemento(f);
         }
     }
+
 }

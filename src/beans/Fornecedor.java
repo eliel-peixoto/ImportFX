@@ -1,21 +1,25 @@
 package beans;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 import dados.RepositorioProdutos;
 
 public class Fornecedor {
-    private Long id;
+    private static final AtomicLong SEQUENCIA_ID = new AtomicLong(1);
+
+    private final Long id;
     private String nome;
     private String paisOrigem;
     private Moeda moedaPadrao;
     private RepositorioProdutos listaProdutos;
 
     public Fornecedor() {
+        this.id = SEQUENCIA_ID.getAndIncrement();
         this.listaProdutos = new RepositorioProdutos();
     }
 
-    public Fornecedor(Long id, String nome, String paisOrigem, Moeda moedaPadrao) {
-        this.id = id;
+    public Fornecedor(String nome, String paisOrigem, Moeda moedaPadrao) {
+        this.id = SEQUENCIA_ID.getAndIncrement();
         this.nome = nome;
         this.paisOrigem = paisOrigem;
         this.moedaPadrao = moedaPadrao;
@@ -24,10 +28,6 @@ public class Fornecedor {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getNome() {
@@ -61,7 +61,7 @@ public class Fornecedor {
     public void setListaProdutos(RepositorioProdutos listaProdutos) {
         this.listaProdutos = listaProdutos;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -86,5 +86,5 @@ public class Fornecedor {
     public String toString() {
         return "Fornecedor [ID=" + id + ", Nome=" + nome + ", País=" + paisOrigem + ", Moeda=" + moedaPadrao + "]";
     }
-    
+
 }

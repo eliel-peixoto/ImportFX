@@ -42,7 +42,7 @@
         <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
             <tabs>
 
-                <!-- Separador 1: Clientes (Estrutura idêntica à TelaCliente.fxml) -->
+                <!-- Clientes -->
                 <Tab text="Clientes">
                     <content>
                         <VBox spacing="15.0">
@@ -112,7 +112,7 @@
                     </content>
                 </Tab>
 
-                <!-- Separador 2: Fornecedores (Estrutura idêntica à TelaFornecedor.fxml) -->
+                <!-- Fornecedores -->
                 <Tab text="Fornecedores">
                     <content>
                         <VBox spacing="15.0">
@@ -135,8 +135,8 @@
                                                 <RowConstraints minHeight="30.0" prefHeight="35.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                             <children>
-                                                <Label styleClass="form-label" text="ID:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                                <TextField fx:id="txtFornecedorId" promptText="Ex: 501" style="-fx-border-color: #ff4501;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                <Label GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label" text="ID:"/>
+                                                <TextField GridPane.columnIndex="1" GridPane.rowIndex="0" editable="false" focusTraversable="false" fx:id="txtFornecedorId" promptText="Gerado automaticamente" style="-fx-background-color: #eeeeee; -fx-border-color: #cccccc;"/>
 
                                                 <Label styleClass="form-label" text="País de Origem:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
                                                 <TextField fx:id="txtFornecedorPais" promptText="Ex: Estados Unidos, China..." style="-fx-border-color: #ff4501;" GridPane.columnIndex="3" GridPane.rowIndex="0" />

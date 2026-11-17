@@ -1,6 +1,7 @@
 package negocio;
 
 import beans.Fornecedor;
+import beans.Moeda;
 import dados.IRepositorioFornecedores;
 import java.util.List;
 
@@ -25,6 +26,28 @@ public class GerenciadorFornecedor implements IGerenciadorFornecedor {
         }
 
         repositorio.cadastrar(fornecedor);
+    }
+
+    @Override
+    public void atualizarFornecedor(long id, String nome, String paisOrigem, Moeda moedaPadrao) throws Exception {
+        Fornecedor existente = buscarFornecedor(id);
+        if (existente == null) {
+            throw new Exception("Fornecedor não encontrado para atualização.");
+        }
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new Exception("O nome do fornecedor é obrigatório.");
+        }
+        if (paisOrigem == null || paisOrigem.trim().isEmpty()) {
+            throw new Exception("O país de origem é obrigatório.");
+        }
+        if (moedaPadrao == null) {
+            throw new Exception("A moeda padrão é obrigatória.");
+        }
+
+        existente.setNome(nome.trim());
+        existente.setPaisOrigem(paisOrigem.trim());
+        existente.setMoedaPadrao(moedaPadrao);
+        repositorio.atualizar(existente);
     }
 
     @Override

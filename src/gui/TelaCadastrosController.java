@@ -183,32 +183,31 @@ public class TelaCadastrosController implements Initializable {
     @FXML
     private void handleSalvarFornecedor(ActionEvent event) {
         try {
-            if (txtFornecedorId.getText().trim().isEmpty() || txtFornecedorNome.getText().trim().isEmpty() ||
-                    txtFornecedorPais.getText().trim().isEmpty() || cbFornecedorMoeda.getValue() == null) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Por favor, preencha todos os campos do formulário.");
-                return;
-            }
-
-            Long id = Long.valueOf(txtFornecedorId.getText().trim());
             String nome = txtFornecedorNome.getText().trim();
             String paisOrigem = txtFornecedorPais.getText().trim();
             Moeda moedaPadrao = cbFornecedorMoeda.getValue();
 
-            Fornecedor fornecedor = new Fornecedor(id, nome, paisOrigem, moedaPadrao);
-
-            Fornecedor existente = gerenciadorFornecedor.buscarFornecedor(id);
-            if (existente != null) {
-                gerenciadorFornecedor.removerFornecedor(id);
+            if (nome.isEmpty() || paisOrigem.isEmpty() || moedaPadrao == null) {
+                mostrarAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Por favor, preencha nome, país de origem e moeda padrão.");
+                return;
             }
 
-            gerenciadorFornecedor.cadastrarFornecedor(fornecedor);
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Fornecedor salvo com sucesso!");
+            Fornecedor selecionado = tblFornecedores.getSelectionModel().getSelectedItem();
+
+            if (selecionado == null) {
+                // Novo cadastro: ID gerado automaticamente
+                Fornecedor novoFornecedor = new Fornecedor(nome, paisOrigem, moedaPadrao);
+                gerenciadorFornecedor.cadastrarFornecedor(novoFornecedor);
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Fornecedor cadastrado com ID " + novoFornecedor.getId() + "!");
+            } else {
+                gerenciadorFornecedor.atualizarFornecedor(selecionado.getId(), nome, paisOrigem, moedaPadrao);
+                tblFornecedores.refresh();
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Fornecedor atualizado com sucesso!");
+            }
 
             handleLimparFornecedor(null);
             atualizarTabelas();
 
-        } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Erro de Formato", "O campo ID deve ser um número inteiro válido.");
         } catch (Exception e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao salvar fornecedor: " + e.getMessage());
         }

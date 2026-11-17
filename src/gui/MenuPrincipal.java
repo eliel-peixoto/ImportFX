@@ -295,7 +295,7 @@ public class MenuPrincipal {
         
         try {
             Moeda moedaEnum = Moeda.valueOf(moedaStr); 
-            Fornecedor novoFornecedor = new Fornecedor(id, nome, pais, moedaEnum);
+            Fornecedor novoFornecedor = new Fornecedor(nome, pais, moedaEnum);
             controlCadastro.cadastrarFornecedor(novoFornecedor);
             System.out.println("Fornecedor cadastrado com sucesso!");
         } catch (IllegalArgumentException e) {

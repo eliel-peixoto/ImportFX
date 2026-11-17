@@ -8,4 +8,5 @@ public interface IRepositorioFornecedores {
     List<Fornecedor> listarTodos();
     Fornecedor buscarPorId(long id);
     void remover(long id);
+    void atualizar(Fornecedor fornecedor);
 }
