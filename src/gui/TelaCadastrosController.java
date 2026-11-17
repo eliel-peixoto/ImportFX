@@ -71,6 +71,13 @@ public class TelaCadastrosController implements Initializable {
         colClienteId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colClienteNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colClienteCpf.setCellValueFactory(new PropertyValueFactory<>("cpf"));
+        colClienteCpf.setCellFactory(col -> new javafx.scene.control.TableCell<Cliente, Long>() {
+            @Override
+            protected void updateItem(Long cpf, boolean empty) {
+                super.updateItem(cpf, empty);
+                setText(empty || cpf == null ? null : String.format("%011d", cpf));
+            }
+        });
         colClienteEndereco.setCellValueFactory(new PropertyValueFactory<>("endereco"));
 
         colFornecedorId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -85,8 +92,11 @@ public class TelaCadastrosController implements Initializable {
             if (selecionado != null) {
                 txtClienteId.setText(String.valueOf(selecionado.getId()));
                 txtClienteNome.setText(selecionado.getNome());
-                txtClienteCpf.setText(String.valueOf(selecionado.getCpf()));
+                txtClienteCpf.setText(String.format("%011d", selecionado.getCpf()));
                 txtClienteEndereco.setText(selecionado.getEndereco());
+                bloquearEdicaoCpf(true);
+            } else {
+                bloquearEdicaoCpf(false);
             }
         });
 
@@ -99,6 +109,15 @@ public class TelaCadastrosController implements Initializable {
                 cbFornecedorMoeda.setValue(selecionado.getMoedaPadrao());
             }
         });
+    }
+    private void bloquearEdicaoCpf(boolean bloquear) {
+        txtClienteCpf.setEditable(!bloquear);
+        txtClienteCpf.setFocusTraversable(!bloquear);
+        if (bloquear) {
+            txtClienteCpf.setStyle("-fx-background-color: #eeeeee; -fx-border-color: #cccccc;");
+        } else {
+            txtClienteCpf.setStyle("-fx-border-color: #ff4501;");
+        }
     }
 
     private void atualizarTabelas() {
@@ -113,40 +132,40 @@ public class TelaCadastrosController implements Initializable {
     @FXML
     private void handleSalvarCliente(ActionEvent event) {
         try {
-            String idText = txtClienteId.getText().trim();
             String nome = txtClienteNome.getText().trim();
             String cpfText = txtClienteCpf.getText().trim();
             String endereco = txtClienteEndereco.getText().trim();
 
-            if (idText.isEmpty() || nome.isEmpty() || cpfText.isEmpty() || endereco.isEmpty()) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Por favor, preencha todos os campos do cliente.");
-                return;
+            Cliente selecionado = tblClientes.getSelectionModel().getSelectedItem();
+
+            if (selecionado == null) {
+                if (nome.isEmpty() || cpfText.isEmpty() || endereco.isEmpty()) {
+                    mostrarAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Por favor, preencha nome, CPF e endereço do cliente.");
+                    return;
+                }
+                if (!cpfText.matches("\\d{11}")) {
+                    mostrarAlerta(Alert.AlertType.WARNING, "CPF Inválido", "O CPF deve conter exatamente 11 dígitos numéricos.");
+                    return;
+                }
+
+                long cpf = Long.parseLong(cpfText);
+                Cliente novoCliente = new Cliente(nome, cpf, endereco);
+                gerenciadorCliente.cadastrarCliente(novoCliente);
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Cliente cadastrado com ID " + novoCliente.getId() + "!");
+            } else {
+                if (nome.isEmpty() || endereco.isEmpty()) {
+                    mostrarAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Por favor, preencha nome e endereço do cliente.");
+                    return;
+                }
+
+                gerenciadorCliente.atualizarCliente(selecionado.getId(), nome, endereco);
+                tblClientes.refresh();
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Cliente atualizado com sucesso!");
             }
-
-            // Validação: verifica se contém exatamente 11 dígitos numéricos
-            if (!cpfText.matches("\\d{11}")) {
-                mostrarAlerta(Alert.AlertType.WARNING, "CPF Inválido", "O CPF deve conter exatamente 11 dígitos numéricos.");
-                return;
-            }
-
-            Long id = Long.valueOf(idText);
-            Long cpf = Long.valueOf(cpfText);
-
-            Cliente cliente = new Cliente(id, nome, cpf, endereco);
-
-            Cliente existente = gerenciadorCliente.buscarCliente(id);
-            if (existente != null) {
-                gerenciadorCliente.removerCliente(id);
-            }
-
-            gerenciadorCliente.cadastrarCliente(cliente);
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Cliente salvo com sucesso!");
 
             handleLimparCliente(null);
             atualizarTabelas();
 
-        } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Erro de Formato", "ID e CPF devem conter apenas números válidos.");
         } catch (Exception e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao salvar cliente: " + e.getMessage());
         }
@@ -177,6 +196,7 @@ public class TelaCadastrosController implements Initializable {
         txtClienteCpf.clear();
         txtClienteEndereco.clear();
         tblClientes.getSelectionModel().clearSelection();
+        bloquearEdicaoCpf(false);
     }
 
     // --- AÇÕES DE FORNECEDOR ---

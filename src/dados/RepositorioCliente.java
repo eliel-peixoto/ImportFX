@@ -11,6 +11,9 @@ public class RepositorioCliente extends RepositorioGenerico<Cliente> implements 
 
     @Override
     public void cadastrar(Cliente cliente) {
+        if (cliente != null) {
+            cliente.gerarId();
+        }
         super.cadastrar(cliente);
     }
 
@@ -22,11 +25,22 @@ public class RepositorioCliente extends RepositorioGenerico<Cliente> implements 
     @Override
     public Cliente buscarPorId(long id) {
         for (Cliente c : elementos) {
-            if (c.getId() == id) {
+            if (c.getId() != null && c.getId() == id) {
                 return c;
             }
         }
         return null;
+    }
+
+    @Override
+    public void atualizar(Cliente clienteAtualizado) {
+        if (clienteAtualizado != null && clienteAtualizado.getId() != null) {
+            Cliente antigo = buscarPorId(clienteAtualizado.getId());
+            if (antigo != null) {
+                antigo.setNome(clienteAtualizado.getNome());
+                antigo.setEndereco(clienteAtualizado.getEndereco());
+            }
+        }
     }
 
     @Override

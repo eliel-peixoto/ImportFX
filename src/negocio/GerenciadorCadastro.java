@@ -40,7 +40,6 @@ public class GerenciadorCadastro implements IGerenciadorCadastro {
             Cliente antigo = this.repoC.buscarPorId(c.getId());
             if (antigo != null) {
                 antigo.setNome(c.getNome());
-                antigo.setCpf(c.getCpf());
                 antigo.setEndereco(c.getEndereco());
             }
         }

@@ -260,7 +260,7 @@ public class MenuPrincipal {
         String enderecoCompleto = rua + ", Nº " + numero + " - Bairro: " + bairro + 
                                   " | " + cidade + "/" + estado + " | CEP: " + cep + " | Ref: " + ref;
         
-        Cliente novoCliente = new Cliente(id, nome, cpf, enderecoCompleto);
+        Cliente novoCliente = new Cliente(nome, cpf, enderecoCompleto);
         try {
             controlCadastro.cadastrarCliente(novoCliente);
             System.out.println("\nCliente cadastrado com sucesso!");

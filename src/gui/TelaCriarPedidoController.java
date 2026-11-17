@@ -69,7 +69,7 @@ public class TelaCriarPedidoController {
     @FXML
     public void initialize() {
         //dados mock p/ teste
-        Cliente clienteFalso = new Cliente(1L, "Fulano de Tal", 12345678911L, "Rua Exemplo, 123, Cidade, Estado");
+        Cliente clienteFalso = new Cliente("Fulano de Tal", 12345678911L, "Rua Exemplo, 123, Cidade, Estado");
         cbCliente.getItems().add(clienteFalso);
         
         Fornecedor fornecedorFalso = new Fornecedor("Tech Store", "Inglaterra", Moeda.GBP);

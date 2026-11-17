@@ -1,28 +1,47 @@
 package beans;
+
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Cliente {
+    private static final AtomicLong SEQUENCIA_ID = new AtomicLong(1);
+
     private Long id;
     private String nome;
     private Long cpf;
     private String endereco;
     private ArrayList<Pedido> pedido;
 
-    public Cliente(Long id, String nome, Long cpf, String endereco) {
-        this.id = id;
+    public Cliente() {
+        this.pedido = new ArrayList<>();
+    }
+
+    public Cliente(String nome, Long cpf, String endereco) {
         this.nome = nome;
         this.cpf = cpf;
         this.endereco = endereco;
-        this.pedido = new ArrayList<>(); 
+        this.pedido = new ArrayList<>();
     }
+    public void gerarId() {
+        if (this.id == null) {
+            this.id = SEQUENCIA_ID.getAndIncrement();
+        }
+    }
+
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
     public Long getCpf() { return cpf; }
-    public void setCpf(Long cpf) { this.cpf = cpf; }
+    public void setCpf(Long cpf) {
+        if (this.cpf != null && !this.cpf.equals(cpf)) {
+            throw new IllegalStateException("O CPF não pode ser alterado após ser cadastrado.");
+        }
+        if (this.cpf == null) {
+            this.cpf = cpf;
+        }
+    }
 
     public String getEndereco() { return endereco; }
     public void setEndereco(String endereco) { this.endereco = endereco; }
