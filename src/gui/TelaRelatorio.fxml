@@ -54,7 +54,7 @@
                                     <Button onAction="#handleLimparPedidos" styleClass="btn-secondary" text="Limpar" />
                                  </children>
                               </HBox>
-                              <Label text="Os impostos entram no total arrecadado a partir do status Pago. Valores sem conversão para R$ são sinalizados como pendentes." wrapText="true" />
+                              <Label text="O relatório atualiza automaticamente quando as datas são alteradas. Os impostos entram no total arrecadado a partir do status Pago; valores sem conversão para R$ são sinalizados como pendentes." wrapText="true" />
                            </children>
                         </VBox>
                         <VBox spacing="8.0" styleClass="card-pane" VBox.vgrow="ALWAYS">
@@ -94,12 +94,11 @@
                                     <DatePicker fx:id="dpProdutosFim" prefWidth="150.0" />
                                     <Label styleClass="form-label" text="Categoria:" />
                                     <ComboBox fx:id="cbCategoria" prefWidth="150.0" />
-                                    <Button onAction="#handleGerarProdutos" styleClass="btn-primary" text="Gerar relatório" />
                                     <Button onAction="#handleExportarProdutos" styleClass="btn-primary" text="Exportar CSV" />
                                     <Button onAction="#handleLimparProdutos" styleClass="btn-secondary" text="Limpar" />
                                  </children>
                               </HBox>
-                              <Label text="A tabela conta itens de pedidos com status Pago, Em Trânsito, Alfândega ou Entregue." wrapText="true" />
+                              <Label text="O relatório atualiza automaticamente quando as datas ou a categoria são alteradas. A tabela conta itens de pedidos com status Pago, Em Trânsito, Alfândega ou Entregue." wrapText="true" />
                            </children>
                         </VBox>
                         <VBox spacing="8.0" styleClass="card-pane" VBox.vgrow="ALWAYS">

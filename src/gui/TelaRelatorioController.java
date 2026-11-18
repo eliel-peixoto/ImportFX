@@ -62,6 +62,17 @@ public class TelaRelatorioController {
                 "Todas", "Eletrônico", "Vestuário", "Brinquedo", "Não informada"));
         cbCategoria.getSelectionModel().selectFirst();
 
+        dpPedidosInicio.valueProperty().addListener(
+                (obs, antiga, nova) -> atualizarPedidosPeloFiltro());
+        dpPedidosFim.valueProperty().addListener(
+                (obs, antiga, nova) -> atualizarPedidosPeloFiltro());
+        dpProdutosInicio.valueProperty().addListener(
+                (obs, antiga, nova) -> atualizarProdutosPelosFiltros());
+        dpProdutosFim.valueProperty().addListener(
+                (obs, antiga, nova) -> atualizarProdutosPelosFiltros());
+        cbCategoria.valueProperty().addListener(
+                (obs, antiga, nova) -> atualizarProdutosPelosFiltros());
+
         colPedidoId.setCellValueFactory(new PropertyValueFactory<>("idPedido"));
         colPedidoData.setCellValueFactory(new PropertyValueFactory<>("dataFormatada"));
         colPedidoCliente.setCellValueFactory(new PropertyValueFactory<>("cliente"));
@@ -77,38 +88,28 @@ public class TelaRelatorioController {
         colProdutoTotal.setCellValueFactory(new PropertyValueFactory<>("totalConvertidoFormatado"));
         colProdutoConversao.setCellValueFactory(new PropertyValueFactory<>("situacaoConversao"));
 
-        lblResumoPedidos.setText("Escolha o período e clique em Gerar relatório.");
-        lblResumoProdutos.setText("Escolha o período e clique em Gerar relatório.");
+        lblResumoPedidos.setText("Os resultados aparecem para o período selecionado.");
+        lblResumoProdutos.setText("Os resultados aparecem para os filtros selecionados.");
     }
 
     public void setGerenciadorRelatorios(IGerenciadorRelatorios gerenciadorRelatorios) {
         this.gerenciadorRelatorios = gerenciadorRelatorios;
-        gerarPedidos();
-        gerarProdutos();
-    }
-
-    @FXML
-    private void handleGerarPedidos() {
-        gerarPedidos();
-    }
-
-    @FXML
-    private void handleGerarProdutos() {
-        gerarProdutos();
+        atualizarPedidosPeloFiltro();
+        atualizarProdutosPelosFiltros();
     }
 
     @FXML
     private void handleLimparPedidos() {
         tblPedidos.getItems().clear();
         pedidosVisiveis = List.of();
-        lblResumoPedidos.setText("Relatório limpo. Escolha um período para gerar novamente.");
+        lblResumoPedidos.setText("Relatório limpo. Altere uma data para atualizar novamente.");
     }
 
     @FXML
     private void handleLimparProdutos() {
         tblProdutos.getItems().clear();
         produtosVisiveis = List.of();
-        lblResumoProdutos.setText("Relatório limpo. Escolha um período para gerar novamente.");
+        lblResumoProdutos.setText("Relatório limpo. Altere um filtro para atualizar novamente.");
     }
 
     @FXML
@@ -163,6 +164,25 @@ public class TelaRelatorioController {
         }
     }
 
+    private void atualizarPedidosPeloFiltro() {
+        if (gerenciadorRelatorios == null) return;
+
+        LocalDate inicio = dpPedidosInicio.getValue();
+        LocalDate fim = dpPedidosFim.getValue();
+        if (inicio == null || fim == null) {
+            tblPedidos.getItems().clear();
+            pedidosVisiveis = List.of();
+            lblResumoPedidos.setText("Selecione as duas datas para consultar os pedidos.");
+        } else if (inicio.isAfter(fim)) {
+            tblPedidos.getItems().clear();
+            pedidosVisiveis = List.of();
+            lblResumoPedidos.setText(
+                    "Período inválido: a data inicial deve ser anterior ou igual à data final.");
+        } else {
+            gerarPedidos();
+        }
+    }
+
     private void gerarProdutos() {
         if (gerenciadorRelatorios == null) return;
         try {
@@ -181,6 +201,25 @@ public class TelaRelatorioController {
                     produtosVisiveis.size(), unidades, totalConvertido));
         } catch (IllegalArgumentException erro) {
             mostrarAviso(erro.getMessage());
+        }
+    }
+
+    private void atualizarProdutosPelosFiltros() {
+        if (gerenciadorRelatorios == null) return;
+
+        LocalDate inicio = dpProdutosInicio.getValue();
+        LocalDate fim = dpProdutosFim.getValue();
+        if (inicio == null || fim == null) {
+            tblProdutos.getItems().clear();
+            produtosVisiveis = List.of();
+            lblResumoProdutos.setText("Selecione as duas datas para consultar os produtos.");
+        } else if (inicio.isAfter(fim)) {
+            tblProdutos.getItems().clear();
+            produtosVisiveis = List.of();
+            lblResumoProdutos.setText(
+                    "Período inválido: a data inicial deve ser anterior ou igual à data final.");
+        } else {
+            gerarProdutos();
         }
     }
 
