@@ -1,13 +1,13 @@
 package beans;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.time.LocalDateTime;
 
 public class Pedido {
     private Cliente cliente;
     private Fornecedor fornecedor;
-    private Long id; 
+    private Long id;
     private String status;
     private ArrayList<Item> listaItems;
     private LocalDateTime dataCriacao;
@@ -21,29 +21,97 @@ public class Pedido {
         this.listaItems = new ArrayList<Item>();
         this.dataCriacao = LocalDateTime.now();
     }
-    
+
     public void adicionar(Item item) {
         this.listaItems.add(item);
     }
-    
+
     public void remover(int i) {
         this.listaItems.remove(i);
     }
-    
+
     public int tamanho() {
         return this.listaItems.size();
     }
-    
+
     public String getListaProduto(int i) {
         Item item = this.listaItems.get(i);
         return item.toString();
     }
-    
+
     public ArrayList<Item> getItemPedido() {
         return this.listaItems;
     }
-    
-    //Getters e Setters
+
+    //calculos financeiros (subtotal, impostos, frete, total final)
+
+    //Soma o peso total declarado (em kg) de todos os itens do pedido. */
+    public double getPesoTotalDeclarado() {
+        double pesoTotal = 0.0;
+        for (Item item : listaItems) {
+            if (item.getPesoTotal() != null) {
+                pesoTotal += item.getPesoTotal();
+            }
+        }
+        return pesoTotal;
+    }
+
+    // Soma o subtotal dos produtos (quantidade * preço unitário).
+    public double getSubtotalItens() {
+        double subtotal = 0.0;
+        for (Item item : listaItems) {
+            int qtd = item.getQuantidade() != null ? item.getQuantidade() : 0;
+            double preco = item.getPrecoUnitario() != null ? item.getPrecoUnitario() : 0.0;
+            subtotal += qtd * preco;
+        }
+        return subtotal;
+    }
+
+    //Calcula o imposto individual de um item considerando sua alíquota. 
+    public double calcularImpostoItem(Item item) {
+        if (item == null) return 0.0;
+        int qtd = item.getQuantidade() != null ? item.getQuantidade() : 0;
+        double preco = item.getPrecoUnitario() != null ? item.getPrecoUnitario() : 0.0;
+        double subtotalItem = qtd * preco;
+        double aliq = item.getAliquota() != null ? item.getAliquota() : 0.0;
+        //Normaliza caso a alíquota esteja em percentual (ex: 60.0 -> 0.60) ou decimal (0.60)
+        double fator = (aliq > 1.0) ? (aliq / 100.0) : aliq;
+        return subtotalItem * fator;
+    }
+
+    //Soma os impostos de todos os itens do pedido.
+    public double getTotalImpostos() {
+        double totalImpostos = 0.0;
+        for (Item item : listaItems) {
+            totalImpostos += calcularImpostoItem(item);
+        }
+        return totalImpostos;
+    }
+
+    /**
+     * Calcula o frete com base no peso total declarado:
+     * - Internacional (fora do Brasil): taxa base R$ 45,00 + R$ 25,00 por kg declarado.
+     * - Nacional (Brasil): taxa base R$ 15,00 + R$ 5,00 por kg declarado.
+     */
+    public double getValorFreteInternacional() {
+        if (listaItems.isEmpty()) return 0.0;
+        double peso = getPesoTotalDeclarado();
+        boolean isNacional = fornecedor != null
+                && fornecedor.getPaisOrigem() != null
+                && fornecedor.getPaisOrigem().trim().equalsIgnoreCase("Brasil");
+
+        if (isNacional) {
+            return 15.0 + (peso * 5.0);
+        }
+        return 45.0 + (peso * 25.0);
+    }
+
+    public double getValorTotalFinal() {
+        return getSubtotalItens() + getTotalImpostos() + getValorFreteInternacional();
+    }
+
+    // --- GETTERS E SETTERS ---
+
     public Cliente getCliente() {
         return this.cliente;
     }
@@ -84,7 +152,6 @@ public class Pedido {
         this.dataCriacao = dataCriacao;
     }
 
-    /** Congela no pedido a cotação usada na conversão dos itens. Só pode ser feito uma vez. */
     public void congelarCotacao(Cotacao cotacao) {
         if (this.cotacao != null) {
             throw new IllegalStateException("A cotação deste pedido já foi congelada.");
@@ -92,7 +159,6 @@ public class Pedido {
         this.cotacao = Objects.requireNonNull(cotacao, "A cotação não pode ser nula.");
     }
 
-    /** Cotação usada no pedido; null se o pedido está em Real (sem conversão). */
     public Cotacao getCotacao() {
         return cotacao;
     }

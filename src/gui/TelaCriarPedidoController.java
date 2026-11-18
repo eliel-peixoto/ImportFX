@@ -11,6 +11,7 @@ import beans.Pedido;
 import beans.Produto;
 import beans.Vestuario;
 import dados.Repositorios;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -77,7 +78,10 @@ public class TelaCriarPedidoController {
     private Cotacao cotacaoDoPedido;
 
     public void setGerenciadorPedido(IGerenciadorPedido gerenciadorPedido) {
-        if (gerenciadorPedido != null) this.gerenciadorPedido = gerenciadorPedido;
+        if (gerenciadorPedido != null) {
+            this.gerenciadorPedido = gerenciadorPedido;
+            atualizarProximoIdNaTela();
+        }
     }
 
     public void setGerenciadorCambio(IGerenciadorCambio gerenciadorCambio) {
@@ -90,9 +94,19 @@ public class TelaCriarPedidoController {
 
     @FXML
     public void initialize() {
+        txtId.setEditable(false);
+        txtId.setFocusTraversable(false);
+        atualizarProximoIdNaTela();
+
         configurarConversoresComboBox();
         carregarDadosReais();
         configurarFiltroProdutosPorFornecedor();
+    }
+
+    private void atualizarProximoIdNaTela() {
+        if (txtId != null && gerenciadorPedido != null) {
+            txtId.setText(String.valueOf(gerenciadorPedido.gerarProximoId()));
+        }
     }
 
     private void configurarConversoresComboBox() {
@@ -100,9 +114,7 @@ public class TelaCriarPedidoController {
             @Override
             public String toString(Cliente cliente) {
                 if (cliente == null) return "";
-                String cpfFormatado = (cliente.getCpf() == null)
-                        ? "" : " (CPF: " + String.format("%011d", cliente.getCpf()) + ")";
-                return cliente.getNome() + cpfFormatado;
+                return cliente.getNome();
             }
 
             @Override
@@ -159,7 +171,6 @@ public class TelaCriarPedidoController {
 
     private void configurarFiltroProdutosPorFornecedor() {
         cbFornecedor.valueProperty().addListener((obs, fornecedorAnterior, novoFornecedor) -> {
-            // Se trocar de fornecedor após já ter adicionado itens, limpa os itens anteriores para não misturar fornecedores/moedas
             if (fornecedorAnterior != null && !fornecedorAnterior.equals(novoFornecedor) && !itensTemporarios.isEmpty()) {
                 itensTemporarios.clear();
                 listViewItens.getItems().clear();
@@ -233,7 +244,6 @@ public class TelaCriarPedidoController {
                             + "Volte ao menu e crie um novo pedido para trocar de fornecedor.");
                 }
                 if (cotacaoDoPedido == null) {
-                    // Todos os itens usam a MESMA cotação. Sem cotação (nem em cache) o item é recusado
                     cotacaoDoPedido = gerenciadorCambio.obterCotacao(moeda);
                 }
                 precoUnitario = gerenciadorCambio.converterParaReal(precoOriginal, cotacaoDoPedido);
@@ -273,16 +283,7 @@ public class TelaCriarPedidoController {
     @FXML
     private void handleSalvarPedido(ActionEvent event) {
         try {
-            if (txtId.getText() == null || txtId.getText().trim().isEmpty()) {
-                throw new Exception("Informe o ID do pedido.");
-            }
-            Long id = Long.parseLong(txtId.getText().trim());
-            if (id <= 0) {
-                throw new Exception("O ID do pedido deve ser maior que zero.");
-            }
-            if (gerenciadorPedido.buscarPedido(id) != null) {
-                throw new Exception("Já existe um pedido cadastrado com o ID " + id + ".");
-            }
+            Long idAutomatico = gerenciadorPedido.gerarProximoId();
 
             Cliente clienteSelecionado = cbCliente.getValue();
             if (clienteSelecionado == null) {
@@ -299,7 +300,7 @@ public class TelaCriarPedidoController {
             }
 
             String status = txtStatus.getText();
-            Pedido novoPedido = new Pedido(clienteSelecionado, fornecedorSelecionado, id, status);
+            Pedido novoPedido = new Pedido(clienteSelecionado, fornecedorSelecionado, idAutomatico, status);
 
             for (Item item : itensTemporarios) {
                 novoPedido.adicionar(item);
@@ -309,14 +310,21 @@ public class TelaCriarPedidoController {
                 novoPedido.congelarCotacao(cotacaoDoPedido);
             }
 
-            // Salva o pedido no sistema
+            //Salva o pedido no sistema (atribui o ID sequencial automaticamente)
             gerenciadorPedido.criarPedido(novoPedido);
             pedidoSalvo = true;
             btnSalvarPedido.setDisable(true);
-            lblMensagem.setText("Pedido #" + id + " salvo com sucesso!");
+            txtId.setText(String.valueOf(novoPedido.getId()));
+
+            //Gera o Extrato HTML (abrindo automaticamente no navegador) e a Fatura PDF
+            String pastaDestino = System.getProperty("user.dir");
+            gerenciadorPedido.exportarPedidoParaHtml(novoPedido.getId(), pastaDestino);
+            File pdfGerado = gerenciadorPedido.exportarPedidoParaPdf(novoPedido.getId(), pastaDestino);
+
+            lblMensagem.setText("Pedido #" + novoPedido.getId() + " salvo! HTML aberto e PDF gerado em: " + pdfGerado.getName());
             lblMensagem.setTextFill(Color.GREEN);
 
-            // Redireciona para a tela de atualização de status
+            //Redireciona para a tela de atualização de status
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/gui/TelaAtualizarStatusPedido.fxml"));
             Parent root = loader.load();
@@ -325,7 +333,6 @@ public class TelaCriarPedidoController {
             controller.setGerenciadorPedido(this.gerenciadorPedido);
             controller.setGerenciadorRelatorios(this.gerenciadorRelatorios);
 
-            // Abre o status em uma nova janela e mantém o pedido visível atrás dela
             Stage janelaPedido = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Stage janelaStatus = new Stage();
             janelaStatus.initOwner(janelaPedido);
@@ -333,9 +340,6 @@ public class TelaCriarPedidoController {
             janelaStatus.setScene(new Scene(root));
             janelaStatus.show();
 
-        } catch (NumberFormatException e) {
-            lblMensagem.setText("Erro: O ID deve ser um número válido.");
-            lblMensagem.setTextFill(Color.RED);
         } catch (Exception e) {
             lblMensagem.setText("Erro: " + e.getMessage());
             lblMensagem.setTextFill(Color.RED);
@@ -355,8 +359,7 @@ public class TelaCriarPedidoController {
 
     @FXML
     private void handleVoltarMenu(ActionEvent event) {
-        boolean temDadosNaoSalvos = !pedidoSalvo
-                && (!itensTemporarios.isEmpty() || !txtId.getText().isBlank());
+        boolean temDadosNaoSalvos = !pedidoSalvo && !itensTemporarios.isEmpty();
         if (temDadosNaoSalvos) {
             Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION,
                     "Os dados deste pedido ainda não foram salvos. Deseja voltar ao menu e descartá-los?",

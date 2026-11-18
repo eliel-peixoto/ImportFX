@@ -26,7 +26,7 @@ import negocio.IGerenciadorPedido;
 
 import java.util.Scanner;
 
-public class MenuPrincipal {
+public class Demo {
     
     private GerenciadorProduto controlProduto;
     private GerenciadorCadastro controlCadastro;
@@ -36,7 +36,7 @@ public class MenuPrincipal {
     private RepositorioFornecedores repoF;
     private Scanner scanner;
 
-    public MenuPrincipal() {
+    public Demo() {
         RepositorioProdutos repoProdutos = new RepositorioProdutos();
         this.controlProduto = new GerenciadorProduto(repoProdutos);
         
@@ -195,7 +195,7 @@ public class MenuPrincipal {
         System.out.println("\n-- Cadastrar Cliente --");
         System.out.println("Digite '-' a qualquer momento para cancelar e voltar ao menu.");
 
-        long id;
+        //long id;
         while (true) {
             try {
                 System.out.print("ID do Cliente: ");
@@ -203,7 +203,7 @@ public class MenuPrincipal {
                 if (inputId.equals("-")) {
                     return;
                 }
-                id = Long.parseLong(inputId);
+                //long id = Long.parseLong(inputId);
                 break;
             } catch (Exception e) { System.out.println("Erro: Digite apenas números para o ID."); }
         }
@@ -277,7 +277,7 @@ public class MenuPrincipal {
         if (inputId.equals("-")) {
             return;
         }
-        long id = Long.parseLong(inputId);
+        //long id = Long.parseLong(inputId);
         
         System.out.print("Nome: ");
         String nome = scanner.nextLine();
@@ -463,7 +463,7 @@ public class MenuPrincipal {
     }
     public static void main(String[] args) {
     
-        MenuPrincipal menu = new MenuPrincipal();
+        Demo menu = new Demo();
         menu.iniciar(); 
     }
 }
