@@ -17,8 +17,7 @@
 <BorderPane prefHeight="640.0" prefWidth="920.0" style="-fx-background-color: #f4f5f7;"
             xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="gui.TelaFornecedorController">
-
-    <!-- CABEÇALHO DO FORNECEDOR -->
+            
     <top>
         <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #ff4501; -fx-padding: 18 25 18 25;">
             <children>
@@ -49,7 +48,6 @@
         </HBox>
     </top>
 
-    <!-- CORPO COM ABAS -->
     <center>
         <VBox spacing="12.0">
             <padding>
@@ -58,12 +56,10 @@
             <children>
                 <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                     <tabs>
-                        <!-- ABA 1: PRODUTOS E ESTOQUE -->
                         <Tab text="Meus Produtos e Estoque">
                             <content>
                                 <VBox spacing="14.0" style="-fx-background-color: white; -fx-padding: 16; -fx-border-color: #dddddd;">
                                     <children>
-                                        <!-- Barra de Ações de Produtos e Estoque -->
                                         <HBox spacing="10.0" alignment="CENTER_LEFT">
                                             <children>
                                                 <Label text="Catálogo / Estoque Cadastrado">
@@ -104,7 +100,6 @@
                             </content>
                         </Tab>
 
-                        <!-- ABA 2: STATUS DOS PEDIDOS DO FORNECEDOR -->
                         <Tab text="Pedidos Recebidos e Status">
                             <content>
                                 <VBox spacing="12.0" style="-fx-background-color: white; -fx-padding: 16; -fx-border-color: #dddddd;">
