@@ -75,7 +75,10 @@ public class TelaCriarPedidoController {
 
     private final ArrayList<Item> itensTemporarios = new ArrayList<>();
     private boolean pedidoSalvo;
+    private Pedido pedidoCriado;
+    private File ultimoPdfGerado;
     private Cotacao cotacaoDoPedido;
+    private boolean modoModalCliente = false;
 
     public void setGerenciadorPedido(IGerenciadorPedido gerenciadorPedido) {
         if (gerenciadorPedido != null) {
@@ -90,6 +93,32 @@ public class TelaCriarPedidoController {
 
     public void setGerenciadorRelatorios(IGerenciadorRelatorios gerenciadorRelatorios) {
         if (gerenciadorRelatorios != null) this.gerenciadorRelatorios = gerenciadorRelatorios;
+    }
+
+    public Pedido getPedidoCriado() {
+        return pedidoCriado;
+    }
+
+    public File getUltimoPdfGerado() {
+        return ultimoPdfGerado;
+    }
+    
+    public void configurarParaCliente(Cliente cliente) {
+        this.modoModalCliente = true;
+        if (cliente != null) {
+            if (!cbCliente.getItems().contains(cliente)) {
+                cbCliente.getItems().add(cliente);
+            }
+            cbCliente.setValue(cliente);
+            cbCliente.setDisable(true);
+        }
+        if (txtStatus != null) {
+            if (txtStatus.getText() == null || txtStatus.getText().trim().isEmpty()) {
+                txtStatus.setText("Pendente");
+            }
+            txtStatus.setEditable(false);
+            txtStatus.setFocusTraversable(false);
+        }
     }
 
     @FXML
@@ -241,7 +270,7 @@ public class TelaCriarPedidoController {
                 }
                 if (cotacaoDoPedido != null && cotacaoDoPedido.getMoeda() != moeda) {
                     throw new Exception("A moeda do fornecedor mudou depois do primeiro item. "
-                            + "Volte ao menu e crie um novo pedido para trocar de fornecedor.");
+                            + "Crie um novo pedido para trocar de fornecedor.");
                 }
                 if (cotacaoDoPedido == null) {
                     cotacaoDoPedido = gerenciadorCambio.obterCotacao(moeda);
@@ -299,7 +328,8 @@ public class TelaCriarPedidoController {
                 throw new Exception("O pedido deve conter pelo menos um item.");
             }
 
-            String status = txtStatus.getText();
+            String status = (txtStatus.getText() == null || txtStatus.getText().trim().isEmpty())
+                    ? "Pendente" : txtStatus.getText().trim();
             Pedido novoPedido = new Pedido(clienteSelecionado, fornecedorSelecionado, idAutomatico, status);
 
             for (Item item : itensTemporarios) {
@@ -313,36 +343,47 @@ public class TelaCriarPedidoController {
             //Salva o pedido no sistema (atribui o ID sequencial automaticamente)
             gerenciadorPedido.criarPedido(novoPedido);
             pedidoSalvo = true;
+            pedidoCriado = novoPedido;
             btnSalvarPedido.setDisable(true);
             txtId.setText(String.valueOf(novoPedido.getId()));
+
+            //Atualiza estoque dos produtos caso tenham quantidade registrada
+            atualizarEstoqueProdutos(itensTemporarios);
 
             //Gera o Extrato HTML (abrindo automaticamente no navegador) e a Fatura PDF
             String pastaDestino = System.getProperty("user.dir");
             gerenciadorPedido.exportarPedidoParaHtml(novoPedido.getId(), pastaDestino);
-            File pdfGerado = gerenciadorPedido.exportarPedidoParaPdf(novoPedido.getId(), pastaDestino);
+            ultimoPdfGerado = gerenciadorPedido.exportarPedidoParaPdf(novoPedido.getId(), pastaDestino);
 
-            lblMensagem.setText("Pedido #" + novoPedido.getId() + " salvo! HTML aberto e PDF gerado em: " + pdfGerado.getName());
+            lblMensagem.setText("Pedido #" + novoPedido.getId() + " salvo! HTML aberto e PDF gerado em: "
+                    + ultimoPdfGerado.getName());
             lblMensagem.setTextFill(Color.GREEN);
 
-            //Redireciona para a tela de atualização de status
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/gui/TelaAtualizarStatusPedido.fxml"));
-            Parent root = loader.load();
-
-            TelaAtualizarStatusController controller = loader.getController();
-            controller.setGerenciadorPedido(this.gerenciadorPedido);
-            controller.setGerenciadorRelatorios(this.gerenciadorRelatorios);
-
-            Stage janelaPedido = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Stage janelaStatus = new Stage();
-            janelaStatus.initOwner(janelaPedido);
-            janelaStatus.setTitle("ImportFX - Atualizar Status");
-            janelaStatus.setScene(new Scene(root));
-            janelaStatus.show();
+            //Se aberto pela Área do Cliente, fecha o modal automaticamente para atualizar a lista
+            if (modoModalCliente) {
+                Stage janelaModal = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                janelaModal.close();
+            }
 
         } catch (Exception e) {
             lblMensagem.setText("Erro: " + e.getMessage());
             lblMensagem.setTextFill(Color.RED);
+        }
+    }
+
+    private void atualizarEstoqueProdutos(List<Item> itens) {
+        for (Item item : itens) {
+            if (item.getIdProduto() != null && item.getQuantidade() != null) {
+                Produto p = gerenciadorProduto.buscarProduto(item.getIdProduto());
+                if (p != null && p.getQuantidadeEstoque() > 0) {
+                    int novoEstoque = Math.max(0, p.getQuantidadeEstoque() - item.getQuantidade());
+                    p.setQuantidadeEstoque(novoEstoque);
+                    try {
+                        gerenciadorProduto.atualizarProduto(p);
+                    } catch (Exception ignored) {
+                    }
+                }
+            }
         }
     }
 
@@ -362,16 +403,21 @@ public class TelaCriarPedidoController {
         boolean temDadosNaoSalvos = !pedidoSalvo && !itensTemporarios.isEmpty();
         if (temDadosNaoSalvos) {
             Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION,
-                    "Os dados deste pedido ainda não foram salvos. Deseja voltar ao menu e descartá-los?",
+                    "Os dados deste pedido ainda não foram salvos. Deseja voltar e descartá-los?",
                     ButtonType.CANCEL, ButtonType.OK);
             confirmacao.setHeaderText("Descartar pedido?");
             Optional<ButtonType> resposta = confirmacao.showAndWait();
             if (resposta.isEmpty() || resposta.get() != ButtonType.OK) return;
         }
 
+        Stage janela = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        if (modoModalCliente) {
+            janela.close();
+            return;
+        }
+
         try {
             Parent raiz = FXMLLoader.load(getClass().getResource("/gui/MenuPrincipal.fxml"));
-            Stage janela = (Stage) ((Node) event.getSource()).getScene().getWindow();
             janela.setTitle("ImportFX - Menu Principal");
             janela.setScene(new Scene(raiz));
         } catch (Exception erro) {

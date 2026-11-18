@@ -83,8 +83,23 @@ public class GerenciadorPedido implements IGerenciadorPedido {
             throw new Exception("Pedido não encontrado no sistema.");
         }
 
-        pedidoExistente.setStatus(pedido.getStatus());
+        String statusAnterior = pedidoExistente.getStatus();
+        String novoStatus = pedido.getStatus();
+
+        pedidoExistente.setStatus(novoStatus);
         repositorio.atualizar(pedidoExistente);
+
+        //Gera notificação para o cliente sempre que o status realmente mudar
+        if (pedidoExistente.getCliente() != null
+                && novoStatus != null
+                && !novoStatus.equalsIgnoreCase(statusAnterior)) {
+            String aviso = "O status do seu Pedido #" + pedidoExistente.getId()
+                    + " foi atualizado de \"" + statusAnterior + "\" para \"" + novoStatus + "\".";
+            pedidoExistente.getCliente().adicionarNotificacao(aviso, pedidoExistente.getId());
+            if (dados.Repositorios.clientes() != null) {
+                dados.Repositorios.clientes().atualizar(pedidoExistente.getCliente());
+            }
+        }
     }
 
     @Override

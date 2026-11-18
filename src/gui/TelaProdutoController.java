@@ -6,6 +6,7 @@ import beans.Fornecedor;
 import beans.Produto;
 import beans.Vestuario;
 import dados.Repositorios;
+import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,8 +26,6 @@ import javafx.util.StringConverter;
 import negocio.GerenciadorFornecedor;
 import negocio.GerenciadorProduto;
 
-import java.util.List;
-
 public class TelaProdutoController {
 
     @FXML private ComboBox<String> cbCategoria;
@@ -44,6 +43,8 @@ public class TelaProdutoController {
 
     private final GerenciadorProduto gerenciadorProduto = new GerenciadorProduto(Repositorios.produtos());
     private final GerenciadorFornecedor gerenciadorFornecedor = new GerenciadorFornecedor(Repositorios.fornecedores());
+
+    private boolean modoModalFornecedor = false;
 
     @FXML
     public void initialize() {
@@ -65,6 +66,21 @@ public class TelaProdutoController {
             }
         } else {
             msgErroFornecedor.setText("");
+        }
+    }
+
+    public void configurarParaFornecedor(Fornecedor fornecedor) {
+        this.modoModalFornecedor = true;
+        if (fornecedor != null) {
+            if (!cbFornecedores.getItems().contains(fornecedor)) {
+                cbFornecedores.getItems().add(fornecedor);
+            }
+            cbFornecedores.setValue(fornecedor);
+            cbFornecedores.setDisable(true);
+            msgErroFornecedor.setText("");
+            if (botaoConfirmar != null) {
+                botaoConfirmar.setDisable(false);
+            }
         }
     }
 
@@ -117,6 +133,8 @@ public class TelaProdutoController {
             double preco = lerNumero(txtPreco.getText(), "Preço", true);
             double peso = lerNumero(txtPeso.getText(), "Peso", true);
             double aliquota = lerNumero(txtAliquota.getText(), "Alíquota", false);
+            int quantidadeEstoque = (spnQuantidade != null && spnQuantidade.getValue() != null)
+                    ? spnQuantidade.getValue() : 1;
 
             long id = gerarId(fornecedor);
             Produto novo;
@@ -126,11 +144,12 @@ public class TelaProdutoController {
                 default:           novo = new Brinquedo(id, nome, preco, peso, aliquota); break;
             }
             novo.setIdFornecedor(fornecedor.getId());
+            novo.setQuantidadeEstoque(quantidadeEstoque);
 
             gerenciadorProduto.cadastrarProduto(novo);
             fornecedor.getListaProdutos().cadastrar(novo);
 
-            msgSucesso.setText("Produto \"" + nome + "\" (ID: " + id + ") vinculado a " + fornecedor.getNome() + "!");
+            msgSucesso.setText("Produto \"" + nome + "\" (ID: " + id + " | Estoque: " + quantidadeEstoque + ") cadastrado!");
             txtNomeProduto.clear();
             txtPreco.clear();
             txtPeso.clear();
@@ -169,9 +188,13 @@ public class TelaProdutoController {
 
     @FXML
     private void handleVoltar(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        if (modoModalFornecedor) {
+            stage.close();
+            return;
+        }
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/gui/MenuPrincipal.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setTitle("ImportFX - Menu Principal");
             stage.setScene(new Scene(root));
             stage.show();

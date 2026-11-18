@@ -71,8 +71,6 @@
                   </VBox>
                </children>
             </GridPane>
-            
-            <!-- Mensagens de Erro e Sucesso Organizadas -->
             <VBox spacing="4.0">
                <children>
                   <Label fx:id="msgErroProduto" text="" textFill="#dc2626">

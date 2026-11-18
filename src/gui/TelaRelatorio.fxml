@@ -50,7 +50,6 @@
                                     <DatePicker fx:id="dpPedidosInicio" prefWidth="150.0" />
                                     <Label styleClass="form-label" text="Até:" />
                                     <DatePicker fx:id="dpPedidosFim" prefWidth="150.0" />
-                                    <Button onAction="#handleGerarPedidos" styleClass="btn-primary" text="Gerar relatório" />
                                     <Button onAction="#handleExportarPedidos" styleClass="btn-primary" text="Exportar CSV" />
                                     <Button onAction="#handleLimparPedidos" styleClass="btn-secondary" text="Limpar" />
                                  </children>

@@ -101,9 +101,9 @@ public class MenuPrincipalController {
         alerta.showAndWait();
     }
 
-    private void mostrarAviso(String mensagem) {
+  /*   private void mostrarAviso(String mensagem) {
         Alert alerta = new Alert(Alert.AlertType.INFORMATION, mensagem);
         alerta.setHeaderText(null);
         alerta.showAndWait();
-    }
+    }*/
 }
