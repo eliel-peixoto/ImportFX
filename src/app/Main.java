@@ -10,8 +10,8 @@ public class Main extends Application {
 
    @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent raiz = FXMLLoader.load(getClass().getResource("/gui/MenuPrincipal.fxml"));
-        primaryStage.setTitle("ImportFX - Menu Principal");
+        Parent raiz = FXMLLoader.load(getClass().getResource("/gui/TelaLogin.fxml"));
+        primaryStage.setTitle("ImportFX - Acesso ao Sistema");
         primaryStage.setScene(new Scene(raiz));
         primaryStage.show();
     }

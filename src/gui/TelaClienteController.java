@@ -15,15 +15,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -77,16 +80,18 @@ public class TelaClienteController {
         controller.setGerenciadorPedido(gp);
         controller.setGerenciadorCambio(gc);
         controller.setGerenciadorRelatorios(gr);
-        controller.setClienteLogado(cliente);
 
         stage.setTitle("ImportFX - Área do Cliente");
         stage.setScene(new Scene(root));
         stage.show();
+
+        controller.setClienteLogado(cliente);
     }
 
     public void setClienteLogado(Cliente cliente) {
         this.clienteLogado = cliente;
         atualizarPainelCompleto();
+        exibirPopupNovasNotificacoes();
     }
 
     public void setGerenciadorPedido(IGerenciadorPedido gerenciadorPedido) {
@@ -110,14 +115,6 @@ public class TelaClienteController {
     public void initialize() {
         configurarTabelaPedidos();
         configurarVisualNotificacoes();
-
-        // Fallback caso a tela seja aberta diretamente sem login para testes
-        if (this.clienteLogado == null) {
-            List<Cliente> cadastrados = gerenciadorCliente.listarTodos();
-            if (!cadastrados.isEmpty()) {
-                setClienteLogado(cadastrados.get(0));
-            }
-        }
     }
 
     private void configurarTabelaPedidos() {
@@ -135,7 +132,7 @@ public class TelaClienteController {
     }
 
     private void configurarVisualNotificacoes() {
-        //Destaca visualmente as notificações não lidas em laranja claro e negrito
+        // Destaca visualmente as notificações não lidas em laranja claro e negrito
         listViewNotificacoes.setCellFactory(lv -> new ListCell<Notificacao>() {
             @Override
             protected void updateItem(Notificacao item, boolean empty) {
@@ -159,7 +156,7 @@ public class TelaClienteController {
     private void atualizarPainelCompleto() {
         if (clienteLogado == null) return;
 
-        //Sincroniza com o cadastro mais recente do repositório
+        // Sincroniza com o cadastro mais recente do repositório
         Cliente atualizado = gerenciadorCliente.buscarCliente(clienteLogado.getId());
         if (atualizado != null) {
             this.clienteLogado = atualizado;
@@ -202,6 +199,94 @@ public class TelaClienteController {
         tablePedidosCliente.setItems(FXCollections.observableArrayList(meusPedidos));
     }
 
+    private void exibirPopupNovasNotificacoes() {
+        if (this.clienteLogado == null) return;
+
+        List<Notificacao> pendentesPopup = this.clienteLogado.getNotificacoes().stream()
+                .filter(n -> !n.isPopupExibido())
+                .collect(Collectors.toList());
+
+        if (pendentesPopup.isEmpty()) return;
+
+        StringBuilder texto = new StringBuilder();
+        for (Notificacao n : pendentesPopup) {
+            n.setPopupExibido(true);
+            texto.append("• ").append(n.getMensagem()).append("\n");
+        }
+
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        if (lblNomeCliente != null && lblNomeCliente.getScene() != null) {
+            alerta.initOwner(lblNomeCliente.getScene().getWindow());
+        }
+        alerta.setTitle("ImportFX - Atualização de Pedido");
+        alerta.setHeaderText("Você tem " + pendentesPopup.size() + " nova(s) atualização(ões) de status!");
+        alerta.setContentText(texto.toString().trim());
+        alerta.showAndWait();
+    }
+
+    @FXML
+    private void handleVerUltimasAlteracoes(ActionEvent event) {
+        if (clienteLogado == null) return;
+
+        atualizarPainelCompleto();
+        List<Notificacao> alteracoes = clienteLogado.getNotificacoes();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+        Stage modal = new Stage();
+        modal.initModality(Modality.APPLICATION_MODAL);
+        modal.initOwner(((Node) event.getSource()).getScene().getWindow());
+        modal.setTitle("ImportFX - Últimas Alterações de Pedidos");
+
+        TableView<Notificacao> tabela = new TableView<>();
+        tabela.setPlaceholder(new Label("Nenhuma alteração de status registrada para seus pedidos."));
+
+        TableColumn<Notificacao, String> colDataHora = new TableColumn<>("Data / Hora");
+        colDataHora.setPrefWidth(145);
+        colDataHora.setCellValueFactory(c -> new SimpleStringProperty(
+                c.getValue().getDataHora() != null ? c.getValue().getDataHora().format(fmt) : "-"));
+
+        TableColumn<Notificacao, String> colPedido = new TableColumn<>("Pedido");
+        colPedido.setPrefWidth(85);
+        colPedido.setCellValueFactory(c -> new SimpleStringProperty(
+                c.getValue().getIdPedido() != null ? "#" + c.getValue().getIdPedido() : "-"));
+
+        TableColumn<Notificacao, String> colDescricao = new TableColumn<>("Alteração de Status");
+        colDescricao.setPrefWidth(420);
+        colDescricao.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getMensagem()));
+
+        TableColumn<Notificacao, String> colSituacao = new TableColumn<>("Situação");
+        colSituacao.setPrefWidth(95);
+        colSituacao.setCellValueFactory(c -> new SimpleStringProperty(
+                c.getValue().isLida() ? "Lida" : "Nova"));
+
+        tabela.getColumns().addAll(List.of(colDataHora, colPedido, colDescricao, colSituacao));
+        tabela.setItems(FXCollections.observableArrayList(alteracoes));
+
+        Label lblResumo = new Label("Total de alterações registradas: " + alteracoes.size());
+
+        Button btnMarcar = new Button("Marcar todas como lidas");
+        btnMarcar.setOnAction(e -> {
+            clienteLogado.marcarTodasNotificacoesComoLidas();
+            tabela.refresh();
+            atualizarNotificacoesNaTela();
+        });
+
+        Button btnFechar = new Button("Fechar");
+        btnFechar.setOnAction(e -> modal.close());
+
+        HBox rodape = new HBox(12, lblResumo, btnMarcar, btnFechar);
+        rodape.setAlignment(Pos.CENTER_RIGHT);
+
+        VBox layout = new VBox(12,
+                new Label("Histórico de alterações de status dos pedidos de " + clienteLogado.getNome() + ":"),
+                tabela,
+                rodape);
+        layout.setPadding(new Insets(16));
+
+        modal.setScene(new Scene(layout, 780, 420));
+        modal.showAndWait();
+    }
+
     @FXML
     private void handleMarcarNotificacoesLidas(ActionEvent event) {
         if (clienteLogado == null) return;
@@ -216,7 +301,7 @@ public class TelaClienteController {
         lblMensagemCliente.setTextFill(Color.GREEN);
     }
 
-   @FXML
+    @FXML
     private void handleCriarPedido(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/TelaCriarPedido.fxml"));
@@ -317,9 +402,9 @@ public class TelaClienteController {
     @FXML
     private void handleSair(ActionEvent event) {
         try {
-            Parent raiz = FXMLLoader.load(getClass().getResource("/gui/MenuPrincipal.fxml"));
+            Parent raiz = FXMLLoader.load(getClass().getResource("/gui/TelaLogin.fxml"));
             Stage janela = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            janela.setTitle("ImportFX - Menu Principal");
+            janela.setTitle("ImportFX - Acesso ao Sistema");
             janela.setScene(new Scene(raiz));
         } catch (Exception e) {
             ((Stage) ((Node) event.getSource()).getScene().getWindow()).close();

@@ -219,6 +219,25 @@ public class TelaAdminController {
     }
 
     @FXML
+    private void handleGerenciarCadastros(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/TelaCadastros.fxml"));
+            Parent root = loader.load();
+
+            TelaCadastrosController controller = loader.getController();
+            controller.configurarModoAdmin(true, gerenciadorPedido, gerenciadorRelatorios);
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("ImportFX - Gestão de Cadastros (Administrador)");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            lblMensagemAdmin.setText("Erro ao abrir gestão de cadastros: " + e.getMessage());
+            lblMensagemAdmin.setTextFill(Color.RED);
+        }
+    }
+
+    @FXML
     private void handleAbrirRelatorios(ActionEvent event) {
         try {
             JanelaRelatorio.abrir(((Node) event.getSource()).getScene().getWindow(),
@@ -239,9 +258,9 @@ public class TelaAdminController {
     @FXML
     private void handleSair(ActionEvent event) {
         try {
-            Parent raiz = FXMLLoader.load(getClass().getResource("/gui/MenuPrincipal.fxml"));
+            Parent raiz = FXMLLoader.load(getClass().getResource("/gui/TelaLogin.fxml"));
             Stage janela = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            janela.setTitle("ImportFX - Menu Principal");
+            janela.setTitle("ImportFX - Acesso ao Sistema");
             janela.setScene(new Scene(raiz));
         } catch (Exception e) {
             ((Stage) ((Node) event.getSource()).getScene().getWindow()).close();

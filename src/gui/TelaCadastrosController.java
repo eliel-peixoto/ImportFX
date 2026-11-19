@@ -4,12 +4,10 @@ import beans.Cliente;
 import beans.Fornecedor;
 import beans.Moeda;
 import dados.Repositorios;
-import negocio.GerenciadorCliente;
-import negocio.GerenciadorFornecedor;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,12 +18,17 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import negocio.GerenciadorCliente;
+import negocio.GerenciadorFornecedor;
+import negocio.IGerenciadorPedido;
+import negocio.IGerenciadorRelatorios;
 
 public class TelaCadastrosController implements Initializable {
 
@@ -34,6 +37,8 @@ public class TelaCadastrosController implements Initializable {
     @FXML private TextField txtClienteNome;
     @FXML private TextField txtClienteCpf;
     @FXML private TextField txtClienteEndereco;
+    @FXML private Button btnSalvarCliente;
+    @FXML private Button btnRemoverCliente;
     @FXML private TableView<Cliente> tblClientes;
     @FXML private TableColumn<Cliente, Long> colClienteId;
     @FXML private TableColumn<Cliente, String> colClienteNome;
@@ -45,6 +50,8 @@ public class TelaCadastrosController implements Initializable {
     @FXML private TextField txtFornecedorNome;
     @FXML private TextField txtFornecedorPais;
     @FXML private ComboBox<Moeda> cbFornecedorMoeda;
+    @FXML private Button btnSalvarFornecedor;
+    @FXML private Button btnRemoverFornecedor;
     @FXML private TableView<Fornecedor> tblFornecedores;
     @FXML private TableColumn<Fornecedor, Long> colFornecedorId;
     @FXML private TableColumn<Fornecedor, String> colFornecedorNome;
@@ -53,6 +60,10 @@ public class TelaCadastrosController implements Initializable {
 
     private GerenciadorCliente gerenciadorCliente;
     private GerenciadorFornecedor gerenciadorFornecedor;
+
+    private boolean modoAdmin = false;
+    private IGerenciadorPedido gerenciadorPedidoAdmin;
+    private IGerenciadorRelatorios gerenciadorRelatoriosAdmin;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -64,6 +75,33 @@ public class TelaCadastrosController implements Initializable {
         configurarTabelas();
         configurarListenersSelecao();
         atualizarTabelas();
+        aplicarPermissoesModo();
+    }
+
+    public void configurarModoAdmin(boolean modoAdmin,
+                                    IGerenciadorPedido gp,
+                                    IGerenciadorRelatorios gr) {
+        this.modoAdmin = modoAdmin;
+        this.gerenciadorPedidoAdmin = gp;
+        this.gerenciadorRelatoriosAdmin = gr;
+        aplicarPermissoesModo();
+    }
+
+    private void aplicarPermissoesModo() {
+        if (btnRemoverCliente != null) {
+            btnRemoverCliente.setVisible(modoAdmin);
+            btnRemoverCliente.setManaged(modoAdmin);
+        }
+        if (btnRemoverFornecedor != null) {
+            btnRemoverFornecedor.setVisible(modoAdmin);
+            btnRemoverFornecedor.setManaged(modoAdmin);
+        }
+        if (btnSalvarCliente != null) {
+            btnSalvarCliente.setText(modoAdmin ? "Salvar / Atualizar Cliente" : "Cadastrar Cliente");
+        }
+        if (btnSalvarFornecedor != null) {
+            btnSalvarFornecedor.setText(modoAdmin ? "Salvar / Atualizar Fornecedor" : "Cadastrar Fornecedor");
+        }
     }
 
     private void configurarTabelas() {
@@ -86,8 +124,14 @@ public class TelaCadastrosController implements Initializable {
     }
 
     private void configurarListenersSelecao() {
-        // Seleção na tabela de Clientes preenche os campos
+        // Apenas administradores podem selecionar registros na tabela para edição/exclusão
         tblClientes.getSelectionModel().selectedItemProperty().addListener((obs, antigo, selecionado) -> {
+            if (!modoAdmin) {
+                if (selecionado != null) {
+                    Platform.runLater(() -> tblClientes.getSelectionModel().clearSelection());
+                }
+                return;
+            }
             if (selecionado != null) {
                 txtClienteId.setText(String.valueOf(selecionado.getId()));
                 txtClienteNome.setText(selecionado.getNome());
@@ -99,8 +143,13 @@ public class TelaCadastrosController implements Initializable {
             }
         });
 
-        // Seleção na tabela de Fornecedores preenche os campos
         tblFornecedores.getSelectionModel().selectedItemProperty().addListener((obs, antigo, selecionado) -> {
+            if (!modoAdmin) {
+                if (selecionado != null) {
+                    Platform.runLater(() -> tblFornecedores.getSelectionModel().clearSelection());
+                }
+                return;
+            }
             if (selecionado != null) {
                 txtFornecedorId.setText(String.valueOf(selecionado.getId()));
                 txtFornecedorNome.setText(selecionado.getNome());
@@ -109,6 +158,7 @@ public class TelaCadastrosController implements Initializable {
             }
         });
     }
+
     private void bloquearEdicaoCpf(boolean bloquear) {
         txtClienteCpf.setEditable(!bloquear);
         txtClienteCpf.setFocusTraversable(!bloquear);
@@ -136,6 +186,12 @@ public class TelaCadastrosController implements Initializable {
             String endereco = txtClienteEndereco.getText().trim();
 
             Cliente selecionado = tblClientes.getSelectionModel().getSelectedItem();
+
+            if (selecionado != null && !modoAdmin) {
+                mostrarAlerta(Alert.AlertType.WARNING, "Acesso Restrito", "Apenas administradores podem alterar clientes cadastrados.");
+                handleLimparCliente(null);
+                return;
+            }
 
             if (selecionado == null) {
                 if (nome.isEmpty() || cpfText.isEmpty() || endereco.isEmpty()) {
@@ -172,6 +228,11 @@ public class TelaCadastrosController implements Initializable {
 
     @FXML
     private void handleRemoverCliente(ActionEvent event) {
+        if (!modoAdmin) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Acesso Restrito", "Apenas administradores podem excluir clientes.");
+            return;
+        }
+
         Cliente selecionado = tblClientes.getSelectionModel().getSelectedItem();
         if (selecionado == null) {
             mostrarAlerta(Alert.AlertType.WARNING, "Nenhum Selecionado", "Por favor, selecione um cliente na tabela para remover.");
@@ -213,8 +274,13 @@ public class TelaCadastrosController implements Initializable {
 
             Fornecedor selecionado = tblFornecedores.getSelectionModel().getSelectedItem();
 
+            if (selecionado != null && !modoAdmin) {
+                mostrarAlerta(Alert.AlertType.WARNING, "Acesso Restrito", "Apenas administradores podem alterar fornecedores cadastrados.");
+                handleLimparFornecedor(null);
+                return;
+            }
+
             if (selecionado == null) {
-                // Novo cadastro: ID gerado automaticamente
                 Fornecedor novoFornecedor = new Fornecedor(nome, paisOrigem, moedaPadrao);
                 gerenciadorFornecedor.cadastrarFornecedor(novoFornecedor);
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Fornecedor cadastrado com ID " + novoFornecedor.getId() + "!");
@@ -234,6 +300,11 @@ public class TelaCadastrosController implements Initializable {
 
     @FXML
     private void handleRemoverFornecedor(ActionEvent event) {
+        if (!modoAdmin) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Acesso Restrito", "Apenas administradores podem excluir fornecedores.");
+            return;
+        }
+
         Fornecedor selecionado = tblFornecedores.getSelectionModel().getSelectedItem();
         if (selecionado == null) {
             mostrarAlerta(Alert.AlertType.WARNING, "Nenhum Selecionado", "Por favor, selecione um fornecedor na tabela para remover.");
@@ -262,12 +333,17 @@ public class TelaCadastrosController implements Initializable {
     // --- NAVEGAÇÃO ---
     @FXML
     private void handleVoltar(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/gui/MenuPrincipal.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            if (modoAdmin) {
+                TelaAdminController.abrirParaAdmin(stage, gerenciadorPedidoAdmin, gerenciadorRelatoriosAdmin);
+                return;
+            }
+            Parent root = FXMLLoader.load(getClass().getResource("/gui/TelaLogin.fxml"));
+            stage.setTitle("ImportFX - Acesso ao Sistema");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

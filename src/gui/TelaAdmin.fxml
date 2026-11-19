@@ -63,7 +63,6 @@
                             <content>
                                 <VBox spacing="14.0" style="-fx-background-color: white; -fx-padding: 16; -fx-border-color: #dddddd;">
                                     <children>
-                                        <!-- Barra de Resumo e Ação de Relatório -->
                                         <HBox alignment="CENTER_LEFT" spacing="12.0"
                                               style="-fx-background-color: #fff8f5; -fx-padding: 12; -fx-border-color: #ffd5c4; -fx-border-radius: 6; -fx-background-radius: 6;">
                                             <children>
@@ -106,7 +105,6 @@
                                             </children>
                                         </HBox>
 
-                                        <!-- Controles para Alterar Status do Pedido Selecionado -->
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="Alterar Status do Pedido Selecionado:">
@@ -125,7 +123,6 @@
                                             </children>
                                         </HBox>
 
-                                        <!-- Tabela Geral de Pedidos -->
                                         <TableView fx:id="tablePedidosAdmin" VBox.vgrow="ALWAYS">
                                             <columns>
                                                 <TableColumn fx:id="colPedId" prefWidth="65.0" text="ID" />
@@ -145,47 +142,63 @@
                         <!-- ABA 2: CLIENTES E FORNECEDORES CADASTRADOS -->
                         <Tab text="Clientes e Fornecedores Cadastrados">
                             <content>
-                                <HBox spacing="16.0" style="-fx-background-color: white; -fx-padding: 16; -fx-border-color: #dddddd;">
+                                <VBox spacing="12.0" style="-fx-background-color: white; -fx-padding: 16; -fx-border-color: #dddddd;">
                                     <children>
-                                        <!-- Tabela de Clientes -->
-                                        <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                        <HBox alignment="CENTER_LEFT" spacing="12.0"
+                                              style="-fx-background-color: #fff8f5; -fx-padding: 10 14 10 14; -fx-border-color: #ffd5c4; -fx-border-radius: 6; -fx-background-radius: 6;">
                                             <children>
-                                                <Label text="Clientes Cadastrados">
-                                                    <font>
-                                                        <Font name="System Bold" size="15.0" />
-                                                    </font>
-                                                </Label>
-                                                <TableView fx:id="tableClientesAdmin" VBox.vgrow="ALWAYS">
-                                                    <columns>
-                                                        <TableColumn fx:id="colCliId" prefWidth="65.0" text="ID" />
-                                                        <TableColumn fx:id="colCliNome" prefWidth="185.0" text="Nome do Cliente" />
-                                                        <TableColumn fx:id="colCliCpf" prefWidth="120.0" text="CPF" />
-                                                        <TableColumn fx:id="colCliEndereco" prefWidth="150.0" text="Endereço" />
-                                                    </columns>
-                                                </TableView>
+                                                <Label text="Apenas administradores têm permissão para alterar ou excluir clientes e fornecedores."
+                                                       style="-fx-text-fill: #555555;" />
+                                                <Region HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" onAction="#handleGerenciarCadastros"
+                                                        text="Gerenciar Cadastros (Alterar / Excluir)"
+                                                        style="-fx-background-color: #ff4501; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 8 16 8 16; -fx-cursor: hand;" />
                                             </children>
-                                        </VBox>
+                                        </HBox>
 
-                                        <!-- Tabela de Fornecedores -->
-                                        <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                        <HBox spacing="16.0" VBox.vgrow="ALWAYS">
                                             <children>
-                                                <Label text="Fornecedores Cadastrados">
-                                                    <font>
-                                                        <Font name="System Bold" size="15.0" />
-                                                    </font>
-                                                </Label>
-                                                <TableView fx:id="tableFornecedoresAdmin" VBox.vgrow="ALWAYS">
-                                                    <columns>
-                                                        <TableColumn fx:id="colFornId" prefWidth="65.0" text="ID" />
-                                                        <TableColumn fx:id="colFornNome" prefWidth="180.0" text="Nome do Fornecedor" />
-                                                        <TableColumn fx:id="colFornPais" prefWidth="120.0" text="País" />
-                                                        <TableColumn fx:id="colFornMoeda" prefWidth="80.0" text="Moeda" />
-                                                    </columns>
-                                                </TableView>
+                                                <!-- Tabela de Clientes -->
+                                                <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <Label text="Clientes Cadastrados">
+                                                            <font>
+                                                                <Font name="System Bold" size="15.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <TableView fx:id="tableClientesAdmin" VBox.vgrow="ALWAYS">
+                                                            <columns>
+                                                                <TableColumn fx:id="colCliId" prefWidth="65.0" text="ID" />
+                                                                <TableColumn fx:id="colCliNome" prefWidth="185.0" text="Nome do Cliente" />
+                                                                <TableColumn fx:id="colCliCpf" prefWidth="120.0" text="CPF" />
+                                                                <TableColumn fx:id="colCliEndereco" prefWidth="150.0" text="Endereço" />
+                                                            </columns>
+                                                        </TableView>
+                                                    </children>
+                                                </VBox>
+
+                                                <!-- Tabela de Fornecedores -->
+                                                <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <Label text="Fornecedores Cadastrados">
+                                                            <font>
+                                                                <Font name="System Bold" size="15.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <TableView fx:id="tableFornecedoresAdmin" VBox.vgrow="ALWAYS">
+                                                            <columns>
+                                                                <TableColumn fx:id="colFornId" prefWidth="65.0" text="ID" />
+                                                                <TableColumn fx:id="colFornNome" prefWidth="180.0" text="Nome do Fornecedor" />
+                                                                <TableColumn fx:id="colFornPais" prefWidth="120.0" text="País" />
+                                                                <TableColumn fx:id="colFornMoeda" prefWidth="80.0" text="Moeda" />
+                                                            </columns>
+                                                        </TableView>
+                                                    </children>
+                                                </VBox>
                                             </children>
-                                        </VBox>
+                                        </HBox>
                                     </children>
-                                </HBox>
+                                </VBox>
                             </content>
                         </Tab>
                     </tabs>

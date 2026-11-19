@@ -15,6 +15,7 @@
 <BorderPane prefHeight="620.0" prefWidth="860.0" style="-fx-background-color: #f4f5f7;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaClienteController">
 
     <!-- CABEÇALHO SUPERIOR: Bem-vindo: Nome | ID: 0 -->
+    <!-- CABEÇALHO SUPERIOR -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #ff4501; -fx-padding: 18 25 18 25;">
             <children>
@@ -24,11 +25,18 @@
                     </font>
                 </Label>
                 <Region HBox.hgrow="ALWAYS" />
-                <Label fx:id="lblIdCliente" style="-fx-background-color: rgba(0,0,0,0.2); -fx-padding: 6 14 6 14; -fx-background-radius: 6;" text="ID: 0" textFill="WHITE">
+                <Label fx:id="lblIdCliente" text="ID: -" textFill="WHITE"
+                       style="-fx-background-color: rgba(0,0,0,0.25); -fx-padding: 6 14 6 14; -fx-background-radius: 6;">
                     <font>
-                        <Font name="System Bold" size="16.0" />
+                        <Font name="System Bold" size="14.0" />
                     </font>
                 </Label>
+                <Button mnemonicParsing="false" onAction="#handleSair" text="Sair / Voltar"
+                        style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 10 15 10 15; -fx-cursor: hand;">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Button>
             </children>
         </HBox>
     </top>
@@ -45,12 +53,9 @@
                     <children>
                         <Button mnemonicParsing="false" onAction="#handleCriarPedido" style="-fx-background-color: #ff4501; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18 10 18; -fx-cursor: hand;" text="+ Criar Novo Pedido" />
                         <Button mnemonicParsing="false" onAction="#handleVerCotacaoDiaria" style="-fx-background-color: #2c3e50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18 10 18; -fx-cursor: hand;" text="Ver Cotação Diária (PTAX)" />
+                        <Button mnemonicParsing="false" onAction="#handleVerUltimasAlteracoes" style="-fx-background-color: #2c3e50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18 10 18; -fx-cursor: hand;" text="Últimas Alterações" />
                         <Button mnemonicParsing="false" onAction="#handleAtualizarDados" style="-fx-background-color: #ffffff; -fx-border-color: #cccccc; -fx-padding: 10 15 10 15; -fx-cursor: hand;" text="Atualizar Painel" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#handleSair" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-padding: 10 15 10 15; -fx-cursor: hand;" text="Sair / Voltar">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font></Button>
                     </children>
                 </HBox>
 

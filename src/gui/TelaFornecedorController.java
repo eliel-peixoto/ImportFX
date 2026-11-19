@@ -273,9 +273,9 @@ public class TelaFornecedorController {
     @FXML
     private void handleSair(ActionEvent event) {
         try {
-            Parent raiz = FXMLLoader.load(getClass().getResource("/gui/MenuPrincipal.fxml"));
+            Parent raiz = FXMLLoader.load(getClass().getResource("/gui/TelaLogin.fxml"));
             Stage janela = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            janela.setTitle("ImportFX - Menu Principal");
+            janela.setTitle("ImportFX - Acesso ao Sistema");
             janela.setScene(new Scene(raiz));
         } catch (Exception e) {
             ((Stage) ((Node) event.getSource()).getScene().getWindow()).close();

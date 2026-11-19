@@ -8,12 +8,14 @@ public class Notificacao {
     private String mensagem;
     private LocalDateTime dataHora;
     private boolean lida;
+    private boolean popupExibido;
 
     public Notificacao(Long idPedido, String mensagem) {
         this.idPedido = idPedido;
         this.mensagem = mensagem;
         this.dataHora = LocalDateTime.now();
         this.lida = false;
+        this.popupExibido = false;
     }
 
     public Long getIdPedido() { return idPedido; }
@@ -27,6 +29,9 @@ public class Notificacao {
 
     public boolean isLida() { return lida; }
     public void setLida(boolean lida) { this.lida = lida; }
+
+    public boolean isPopupExibido() { return popupExibido; }
+    public void setPopupExibido(boolean popupExibido) { this.popupExibido = popupExibido; }
 
     @Override
     public String toString() {

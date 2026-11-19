@@ -65,6 +65,15 @@ public class GerenciadorFornecedor implements IGerenciadorFornecedor {
         if (buscarFornecedor(id) == null) {
             throw new Exception("Fornecedor não encontrado para remoção.");
         }
+        for (beans.Pedido p : dados.Repositorios.pedidos().listarTodos()) {
+            if (p.getFornecedor() != null && p.getFornecedor().getId() != null
+                    && p.getFornecedor().getId() == id) {
+                String status = p.getStatus() == null ? "" : p.getStatus().trim();
+                if (!status.equalsIgnoreCase("Entregue")) {
+                    throw new Exception("Não é possível remover este fornecedor: existe pelo menos um pedido em andamento (#" + p.getId() + ").");
+                }
+            }
+        }
         repositorio.remover(id);
     }
 }
