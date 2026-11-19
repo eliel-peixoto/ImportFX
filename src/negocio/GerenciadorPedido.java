@@ -1,6 +1,8 @@
 package negocio;
 
+import beans.Cotacao;
 import beans.Item;
+import beans.Moeda;
 import beans.Pedido;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
@@ -65,6 +67,27 @@ public class GerenciadorPedido implements IGerenciadorPedido {
         }
         if (pedido.getItemPedido() == null || pedido.getItemPedido().isEmpty()) {
             throw new Exception("O pedido deve conter pelo menos um item.");
+        }
+
+        if (pedido.getFornecedor() != null
+                && pedido.getFornecedor().getMoedaPadrao() != null
+                && !pedido.getFornecedor().getMoedaPadrao().isReal()) {
+
+            Moeda moeda = pedido.getFornecedor().getMoedaPadrao();
+
+            if (pedido.getCotacao() == null) {
+                Cotacao cotacaoCache = Repositorios.cotacoes().buscarUltima(moeda);
+                if (cotacaoCache != null && cotacaoCache.getVenda() != null
+                        && cotacaoCache.getVenda().signum() > 0) {
+                    pedido.congelarCotacao(cotacaoCache);
+                }
+            }
+
+            if (pedido.getCotacao() == null || pedido.getCotacao().getVenda() == null
+                    || pedido.getCotacao().getVenda().signum() <= 0) {
+                throw new Exception("Não é possível confirmar o pedido: nenhuma cotação disponível (API ou cache) para "
+                        + moeda + ".");
+            }
         }
 
         //Atribui automaticamente o ID sequencial com base nos pedidos existentes
@@ -209,11 +232,15 @@ public class GerenciadorPedido implements IGerenciadorPedido {
         }
         html.append("</table>");
 
+        String infoImpostoHtml = pedido.isIsentoImpostoImportacao()
+                ? "R$ 0,00 <small>(Isento - até US$ 50,00)</small>"
+                : "R$ " + String.format(ptBR, "%.2f", pedido.getTotalImpostos());
+
         html.append("<div class='resumo'>");
         html.append("<p><span><strong>Subtotal dos Produtos:</strong></span><span>R$ ")
             .append(String.format(ptBR, "%.2f", pedido.getSubtotalItens())).append("</span></p>");
-        html.append("<p><span><strong>Total de Impostos:</strong></span><span>R$ ")
-            .append(String.format(ptBR, "%.2f", pedido.getTotalImpostos())).append("</span></p>");
+        html.append("<p><span><strong>Total de Impostos:</strong></span><span>")
+            .append(infoImpostoHtml).append("</span></p>");
         html.append("<p><span><strong>Frete:</strong></span><span>R$ ")
             .append(String.format(ptBR, "%.2f", pedido.getValorFreteInternacional())).append("</span></p>");
         html.append("<div class='detalhe-frete'>")
@@ -235,7 +262,7 @@ public class GerenciadorPedido implements IGerenciadorPedido {
             throw new Exception("Erro ao gravar o ficheiro HTML: " + e.getMessage());
         }
 
-        //Abre automaticamente no navegador padrão
+        // Abre automaticamente no navegador padrão
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             Desktop.getDesktop().browse(arquivoHtml.toURI());
         }
@@ -324,7 +351,12 @@ public class GerenciadorPedido implements IGerenciadorPedido {
             document.add(secTotais);
 
             document.add(new Paragraph(String.format(ptBR, "Subtotal dos Itens: R$ %.2f", pedido.getSubtotalItens()), fonteNormal));
-            document.add(new Paragraph(String.format(ptBR, "Total de Impostos: R$ %.2f", pedido.getTotalImpostos()), fonteNormal));
+
+            String infoImpostoPdf = pedido.isIsentoImpostoImportacao()
+                    ? "Total de Impostos: R$ 0,00 (Isento - pedido até US$ 50,00)"
+                    : String.format(ptBR, "Total de Impostos: R$ %.2f", pedido.getTotalImpostos());
+            document.add(new Paragraph(infoImpostoPdf, fonteNormal));
+
             document.add(new Paragraph(String.format(ptBR, "Frete: R$ %.2f", pedido.getValorFreteInternacional()), fonteNormal));
 
             Paragraph detalheFrete = new Paragraph("   (" + pedido.getDetalhamentoFrete() + ")", fonteDetalhe);

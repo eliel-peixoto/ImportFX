@@ -9,6 +9,13 @@
       "notificacoes": [
         {
           "idPedido": 1,
+          "mensagem": "O status do seu Pedido #1 foi atualizado de \"Pago\" para \"Em Trânsito\".",
+          "dataHora": "2026-11-19T17:39:38.726347700",
+          "lida": true,
+          "popupExibido": true
+        },
+        {
+          "idPedido": 1,
           "mensagem": "O status do seu Pedido #1 foi atualizado de \"Aguardando Pagamento\" para \"Pago\".",
           "dataHora": "2026-11-19T17:39:20.654357700",
           "lida": true,
@@ -48,6 +55,66 @@
       "moeda": "GBP",
       "compra": 7.72370,
       "venda": 7.72620,
+      "dataHora": "2026-11-19T13:04:18",
+      "desatualizada": false
+    }
+  },
+  {
+    "cliente": {
+      "id": 1,
+      "nome": "Dom Pedro II",
+      "cpf": 1,
+      "endereco": "Paço Imperial",
+      "pedido": [],
+      "notificacoes": [
+        {
+          "idPedido": 1,
+          "mensagem": "O status do seu Pedido #1 foi atualizado de \"Pago\" para \"Em Trânsito\".",
+          "dataHora": "2026-11-19T17:39:38.726347700",
+          "lida": true,
+          "popupExibido": true
+        },
+        {
+          "idPedido": 1,
+          "mensagem": "O status do seu Pedido #1 foi atualizado de \"Aguardando Pagamento\" para \"Pago\".",
+          "dataHora": "2026-11-19T17:39:20.654357700",
+          "lida": true,
+          "popupExibido": true
+        },
+        {
+          "idPedido": 1,
+          "mensagem": "O status do seu Pedido #1 foi atualizado de \"PENDENTE\" para \"Aguardando Pagamento\".",
+          "dataHora": "2026-11-19T17:38:54.918692700",
+          "lida": true,
+          "popupExibido": true
+        }
+      ]
+    },
+    "fornecedor": {
+      "id": 3,
+      "nome": "Vice Store",
+      "paisOrigem": "USA",
+      "moedaPadrao": "USD"
+    },
+    "id": 2,
+    "status": "PENDENTE",
+    "listaItems": [
+      {
+        "nomeProduto": "Xícara Vice City",
+        "quantidade": 2,
+        "pesoTotal": 0.5,
+        "precoUnitario": 29.44,
+        "simboloMoeda": "R$",
+        "idProduto": 1795122651996,
+        "categoria": "Eletrônico",
+        "aliquota": 18.0
+      }
+    ],
+    "dataCriacao": "2026-11-19T18:11:13.228926600",
+    "cotacao": {
+      "moeda": "USD",
+      "compra": 5.88830,
+      "venda": 5.88890,
       "dataHora": "2026-11-19T13:04:18",
       "desatualizada": false
     }

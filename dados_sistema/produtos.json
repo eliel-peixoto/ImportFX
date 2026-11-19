@@ -1,12 +1,12 @@
 [
   {
     "aliquota": 18.0,
-    "id": 1795120664516,
-    "preco": 125.0,
-    "nome": "Tea Maker",
-    "precoMoedaOrigem": 125.0,
-    "peso": 1.75,
-    "idFornecedor": 1,
+    "id": 1795122651996,
+    "preco": 5.0,
+    "nome": "Xícara Vice City",
+    "precoMoedaOrigem": 5.0,
+    "peso": 0.25,
+    "idFornecedor": 3,
     "quantidadeEstoque": 0
   }
 ]
