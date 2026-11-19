@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="620.0" prefWidth="860.0" style="-fx-background-color: #f4f5f7;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaClienteController">
+
+    <!-- CABEÇALHO SUPERIOR: Bem-vindo: Nome | ID: 0 -->
+    <!-- CABEÇALHO SUPERIOR -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #ff4501; -fx-padding: 18 25 18 25;">
+            <children>
+                <Label fx:id="lblNomeCliente" text="Bem-vindo: Cliente" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="lblIdCliente" text="ID: -" textFill="WHITE"
+                       style="-fx-background-color: rgba(0,0,0,0.25); -fx-padding: 6 14 6 14; -fx-background-radius: 6;">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+                <Button mnemonicParsing="false" onAction="#handleSair" text="Sair / Voltar"
+                        style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 10 15 10 15; -fx-cursor: hand;">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Button>
+            </children>
+        </HBox>
+    </top>
+
+    <!-- CORPO PRINCIPAL -->
+    <center>
+        <VBox spacing="16.0">
+            <padding>
+                <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
+            </padding>
+            <children>
+                <!-- BARRA DE AÇÕES DO CLIENTE -->
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#handleCriarPedido" style="-fx-background-color: #ff4501; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18 10 18; -fx-cursor: hand;" text="+ Criar Novo Pedido" />
+                        <Button mnemonicParsing="false" onAction="#handleVerCotacaoDiaria" style="-fx-background-color: #2c3e50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18 10 18; -fx-cursor: hand;" text="Ver Cotação Diária (PTAX)" />
+                        <Button mnemonicParsing="false" onAction="#handleVerUltimasAlteracoes" style="-fx-background-color: #2c3e50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18 10 18; -fx-cursor: hand;" text="Últimas Alterações" />
+                        <Button mnemonicParsing="false" onAction="#handleAtualizarDados" style="-fx-background-color: #ffffff; -fx-border-color: #cccccc; -fx-padding: 10 15 10 15; -fx-cursor: hand;" text="Atualizar Painel" />
+                        <Region HBox.hgrow="ALWAYS" />
+                    </children>
+                </HBox>
+
+                <!-- PAINEL DE NOTIFICAÇÕES COM DESTAQUE PARA NÃO LIDAS -->
+                <VBox spacing="8.0" style="-fx-background-color: white; -fx-padding: 14; -fx-border-color: #dddddd; -fx-border-radius: 6; -fx-background-radius: 6;">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Label text="Notificações de Pedidos">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblBadgeNotificacoes" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333333; -fx-padding: 3 10 3 10; -fx-background-radius: 12; -fx-font-weight: bold;" text="Nenhuma nova notificação" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Button fx:id="btnMarcarLidas" mnemonicParsing="false" onAction="#handleMarcarNotificacoesLidas" style="-fx-font-size: 11px; -fx-cursor: hand;" text="Marcar todas como lidas" />
+                            </children>
+                        </HBox>
+                        <ListView fx:id="listViewNotificacoes" prefHeight="110.0" />
+                    </children>
+                </VBox>
+
+                <!-- TABELA DE PEDIDOS E STATUS DO CLIENTE -->
+                <VBox spacing="8.0" style="-fx-background-color: white; -fx-padding: 14; -fx-border-color: #dddddd; -fx-border-radius: 6; -fx-background-radius: 6;" VBox.vgrow="ALWAYS">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Label text="Meus Pedidos e Status de Entrega">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Button mnemonicParsing="false" onAction="#handleVerExtratoHtml" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Abrir Extrato HTML do Pedido Selecionado" />
+                            </children>
+                        </HBox>
+                        <TableView fx:id="tablePedidosCliente" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colIdPedido" prefWidth="85.0" text="ID Pedido" />
+                                <TableColumn fx:id="colFornecedor" prefWidth="210.0" text="Fornecedor" />
+                                <TableColumn fx:id="colData" prefWidth="145.0" text="Data" />
+                                <TableColumn fx:id="colTotal" prefWidth="140.0" text="Total Final (R$)" />
+                                <TableColumn fx:id="colStatus" prefWidth="195.0" text="Status Atual" />
+                            </columns>
+                        </TableView>
+                    </children>
+                </VBox>
+
+                <Label fx:id="lblMensagemCliente" text="" />
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,0 +1,51 @@
+{
+  "USD": {
+    "moeda": "USD",
+    "compra": 5.88830,
+    "venda": 5.88890,
+    "dataHora": "2026-11-19T13:04:18",
+    "desatualizada": false
+  },
+  "EUR": {
+    "moeda": "EUR",
+    "compra": 6.46590,
+    "venda": 6.46720,
+    "dataHora": "2026-11-19T13:04:18",
+    "desatualizada": false
+  },
+  "GBP": {
+    "moeda": "GBP",
+    "compra": 7.72370,
+    "venda": 7.72620,
+    "dataHora": "2026-11-19T13:04:18",
+    "desatualizada": false
+  },
+  "CHF": {
+    "moeda": "CHF",
+    "compra": 6.98330,
+    "venda": 6.98650,
+    "dataHora": "2026-11-19T13:04:18",
+    "desatualizada": false
+  },
+  "AUD": {
+    "moeda": "AUD",
+    "compra": 3.93280,
+    "venda": 3.93380,
+    "dataHora": "2026-11-19T13:04:18",
+    "desatualizada": false
+  },
+  "JPY": {
+    "moeda": "JPY",
+    "compra": 0.03685,
+    "venda": 0.03685,
+    "dataHora": "2026-11-19T13:04:18",
+    "desatualizada": false
+  },
+  "CAD": {
+    "moeda": "CAD",
+    "compra": 4.11340,
+    "venda": 4.11470,
+    "dataHora": "2026-11-19T13:04:18",
+    "desatualizada": false
+  }
+}

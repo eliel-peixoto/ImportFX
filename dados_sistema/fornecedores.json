@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "nome": "Tea Store",
+    "paisOrigem": "England",
+    "moedaPadrao": "GBP"
+  },
+  {
+    "id": 3,
+    "nome": "Vice Store",
+    "paisOrigem": "USA",
+    "moedaPadrao": "USD"
+  }
+]

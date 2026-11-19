@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="640.0" prefWidth="920.0" style="-fx-background-color: #f4f5f7;"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gui.TelaFornecedorController">
+            
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #ff4501; -fx-padding: 18 25 18 25;">
+            <children>
+                <VBox spacing="2.0">
+                    <children>
+                        <Label fx:id="lblNomeFornecedor" text="Fornecedor: ---" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="20.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblDetalhesFornecedor" text="País: --- | Moeda Padrão: ---" textFill="#ffe6dc">
+                            <font>
+                                <Font size="13.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="lblIdFornecedor" text="ID: 0" textFill="WHITE"
+                       style="-fx-background-color: rgba(0,0,0,0.2); -fx-padding: 6 14 6 14; -fx-background-radius: 6;">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Label>
+                <Button mnemonicParsing="false" onAction="#handleSair" text="Sair / Voltar"
+                        style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 10 15 10 15; -fx-cursor: hand;" />
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="12.0">
+            <padding>
+                <Insets bottom="18.0" left="22.0" right="22.0" top="18.0" />
+            </padding>
+            <children>
+                <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                    <tabs>
+                        <Tab text="Meus Produtos e Estoque">
+                            <content>
+                                <VBox spacing="14.0" style="-fx-background-color: white; -fx-padding: 16; -fx-border-color: #dddddd;">
+                                    <children>
+                                        <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                            <children>
+                                                <Label text="Catálogo / Estoque Cadastrado">
+                                                    <font>
+                                                        <Font name="System Bold" size="15.0" />
+                                                    </font>
+                                                </Label>
+                                                <Region HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" onAction="#handleAbrirCadastroProduto"
+                                                        text="+ Cadastrar Novo Produto"
+                                                        style="-fx-background-color: #ff4501; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 8 15 8 15; -fx-cursor: hand;" />
+                                            </children>
+                                        </HBox>
+
+                                        <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                                            <children>
+                                                <TextField fx:id="txtAtualizarEstoque" prefWidth="120.0" promptText="Nova qtd." />
+                                                <Button mnemonicParsing="false" onAction="#handleAtualizarEstoque" text="Atualizar Estoque"
+                                                        style="-fx-background-color: #2c3e50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 7 14 7 14; -fx-cursor: hand;" />
+                                                <Button mnemonicParsing="false" onAction="#handleRemoverProduto" text="Remover Selecionado"
+                                                        style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 7 14 7 14; -fx-cursor: hand;" />
+                                            </children>
+                                        </HBox>
+
+                                        <TableView fx:id="tableProdutosFornecedor" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="colProdId" prefWidth="115.0" text="ID" />
+                                                <TableColumn fx:id="colProdNome" prefWidth="220.0" text="Produto" />
+                                                <TableColumn fx:id="colProdCategoria" prefWidth="115.0" text="Categoria" />
+                                                <TableColumn fx:id="colProdPreco" prefWidth="120.0" text="Preço Origem" />
+                                                <TableColumn fx:id="colProdPeso" prefWidth="90.0" text="Peso (kg)" />
+                                                <TableColumn fx:id="colProdAliquota" prefWidth="90.0" text="Alíquota" />
+                                                <TableColumn fx:id="colProdEstoque" prefWidth="95.0" text="Estoque (un.)" />
+                                            </columns>
+                                        </TableView>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+
+                        <Tab text="Pedidos Recebidos e Status">
+                            <content>
+                                <VBox spacing="12.0" style="-fx-background-color: white; -fx-padding: 16; -fx-border-color: #dddddd;">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label text="Pedidos Vinculados a este Fornecedor">
+                                                    <font>
+                                                        <Font name="System Bold" size="15.0" />
+                                                    </font>
+                                                </Label>
+                                                <Region HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" onAction="#handleAtualizarPainel" text="Atualizar Lista"
+                                                        style="-fx-background-color: #2c3e50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;" />
+                                            </children>
+                                        </HBox>
+
+                                        <TableView fx:id="tablePedidosFornecedor" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="colPedId" prefWidth="85.0" text="ID Pedido" />
+                                                <TableColumn fx:id="colPedCliente" prefWidth="200.0" text="Cliente" />
+                                                <TableColumn fx:id="colPedItens" prefWidth="230.0" text="Resumo dos Itens" />
+                                                <TableColumn fx:id="colPedData" prefWidth="135.0" text="Data" />
+                                                <TableColumn fx:id="colPedStatus" prefWidth="180.0" text="Status Atual" />
+                                            </columns>
+                                        </TableView>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+
+                <Label fx:id="lblMensagemFornecedor" text="" />
+            </children>
+        </VBox>
+    </center>
+</BorderPane>
