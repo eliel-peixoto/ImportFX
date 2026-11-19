@@ -62,13 +62,10 @@ public class TelaCriarPedidoController {
 
     private final IGerenciadorCliente gerenciadorCliente =
             new GerenciadorCliente(Repositorios.clientes());
-    private final IGerenciadorFornecedor gerenciadorFornecedor =
-            new GerenciadorFornecedor(Repositorios.fornecedores());
-    private final IGerenciadorProduto gerenciadorProduto =
-            new GerenciadorProduto(Repositorios.produtos());
+    private final IGerenciadorFornecedor gerenciadorFornecedor = GerenciadorFornecedor.getInstance();
+    private final IGerenciadorProduto gerenciadorProduto = GerenciadorProduto.getInstance();
 
-    private IGerenciadorPedido gerenciadorPedido =
-            new GerenciadorPedido(Repositorios.pedidos());
+    private IGerenciadorPedido gerenciadorPedido = GerenciadorPedido.getInstance();
     private IGerenciadorCambio gerenciadorCambio;
     private IGerenciadorRelatorios gerenciadorRelatorios =
             new GerenciadorRelatorios(Repositorios.pedidos());
@@ -102,7 +99,7 @@ public class TelaCriarPedidoController {
     public File getUltimoPdfGerado() {
         return ultimoPdfGerado;
     }
-    
+
     public void configurarParaCliente(Cliente cliente) {
         this.modoModalCliente = true;
         if (cliente != null) {
@@ -340,17 +337,14 @@ public class TelaCriarPedidoController {
                 novoPedido.congelarCotacao(cotacaoDoPedido);
             }
 
-            //Salva o pedido no sistema (atribui o ID sequencial automaticamente)
             gerenciadorPedido.criarPedido(novoPedido);
             pedidoSalvo = true;
             pedidoCriado = novoPedido;
             btnSalvarPedido.setDisable(true);
             txtId.setText(String.valueOf(novoPedido.getId()));
 
-            //Atualiza estoque dos produtos caso tenham quantidade registrada
             atualizarEstoqueProdutos(itensTemporarios);
 
-            //Gera o Extrato HTML (abrindo automaticamente no navegador) e a Fatura PDF
             String pastaDestino = System.getProperty("user.dir");
             gerenciadorPedido.exportarPedidoParaHtml(novoPedido.getId(), pastaDestino);
             ultimoPdfGerado = gerenciadorPedido.exportarPedidoParaPdf(novoPedido.getId(), pastaDestino);
@@ -359,7 +353,6 @@ public class TelaCriarPedidoController {
                     + ultimoPdfGerado.getName());
             lblMensagem.setTextFill(Color.GREEN);
 
-            //Se aberto pela Área do Cliente, fecha o modal automaticamente para atualizar a lista
             if (modoModalCliente) {
                 Stage janelaModal = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 janelaModal.close();

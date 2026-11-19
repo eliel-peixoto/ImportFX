@@ -61,8 +61,7 @@ public class TelaClienteController {
     private Cliente clienteLogado;
     private final IGerenciadorCliente gerenciadorCliente =
             new GerenciadorCliente(Repositorios.clientes());
-    private IGerenciadorPedido gerenciadorPedido =
-            new GerenciadorPedido(Repositorios.pedidos());
+    private IGerenciadorPedido gerenciadorPedido = GerenciadorPedido.getInstance();
     private IGerenciadorCambio gerenciadorCambio;
     private IGerenciadorRelatorios gerenciadorRelatorios =
             new GerenciadorRelatorios(Repositorios.pedidos());

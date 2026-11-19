@@ -2,15 +2,25 @@ package negocio;
 
 import beans.Fornecedor;
 import beans.Moeda;
+import beans.Pedido;
 import dados.IRepositorioFornecedores;
+import dados.Repositorios;
 import java.util.List;
 
 public class GerenciadorFornecedor implements IGerenciadorFornecedor {
 
-    private IRepositorioFornecedores repositorio;
+    private static GerenciadorFornecedor instance;
+    private final IRepositorioFornecedores repositorio;
 
-    public GerenciadorFornecedor(IRepositorioFornecedores repositorio) {
+    private GerenciadorFornecedor(IRepositorioFornecedores repositorio) {
         this.repositorio = repositorio;
+    }
+
+    public static synchronized GerenciadorFornecedor getInstance() {
+        if (instance == null) {
+            instance = new GerenciadorFornecedor(Repositorios.fornecedores());
+        }
+        return instance;
     }
 
     @Override
@@ -65,7 +75,7 @@ public class GerenciadorFornecedor implements IGerenciadorFornecedor {
         if (buscarFornecedor(id) == null) {
             throw new Exception("Fornecedor não encontrado para remoção.");
         }
-        for (beans.Pedido p : dados.Repositorios.pedidos().listarTodos()) {
+        for (Pedido p : Repositorios.pedidos().listarTodos()) {
             if (p.getFornecedor() != null && p.getFornecedor().getId() != null
                     && p.getFornecedor().getId() == id) {
                 String status = p.getStatus() == null ? "" : p.getStatus().trim();

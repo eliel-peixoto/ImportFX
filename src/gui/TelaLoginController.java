@@ -84,7 +84,7 @@ public class TelaLoginController {
             TelaClienteController.abrirParaCliente(
                     stage,
                     selecionado,
-                    new GerenciadorPedido(Repositorios.pedidos()),
+                    GerenciadorPedido.getInstance(),
                     new GerenciadorCambio(new ClientePtax(), Repositorios.cotacoes()),
                     new GerenciadorRelatorios(
                             Repositorios.produtos(),
@@ -109,8 +109,8 @@ public class TelaLoginController {
             TelaFornecedorController.abrirParaFornecedor(
                     stage,
                     selecionado,
-                    new GerenciadorPedido(Repositorios.pedidos()),
-                    new GerenciadorProduto(Repositorios.produtos())
+                    GerenciadorPedido.getInstance(),
+                    GerenciadorProduto.getInstance()
             );
         } catch (Exception e) {
             lblAvisoLogin.setText("Erro ao abrir área do fornecedor: " + e.getMessage());
@@ -123,7 +123,7 @@ public class TelaLoginController {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             TelaAdminController.abrirParaAdmin(
                     stage,
-                    new GerenciadorPedido(Repositorios.pedidos()),
+                    GerenciadorPedido.getInstance(),
                     new GerenciadorRelatorios(
                             Repositorios.produtos(),
                             Repositorios.clientes(),

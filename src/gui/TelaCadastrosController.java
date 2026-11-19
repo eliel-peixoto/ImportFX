@@ -4,7 +4,6 @@ import beans.Cliente;
 import beans.Fornecedor;
 import beans.Moeda;
 import dados.Repositorios;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -68,7 +67,7 @@ public class TelaCadastrosController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         gerenciadorCliente = new GerenciadorCliente(Repositorios.clientes());
-        gerenciadorFornecedor = new GerenciadorFornecedor(Repositorios.fornecedores());
+        gerenciadorFornecedor = GerenciadorFornecedor.getInstance();
 
         cbFornecedorMoeda.setItems(FXCollections.observableArrayList(Moeda.suportadas()));
 

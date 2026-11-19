@@ -22,13 +22,22 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import dados.Repositorios;
 
 public class GerenciadorPedido implements IGerenciadorPedido {
 
-    private IRepositorioPedidos repositorio;
+    private static GerenciadorPedido instance;
+    private final IRepositorioPedidos repositorio;
 
-    public GerenciadorPedido(IRepositorioPedidos repositorio) {
+    private GerenciadorPedido(IRepositorioPedidos repositorio) {
         this.repositorio = repositorio;
+    }
+
+    public static synchronized GerenciadorPedido getInstance() {
+        if (instance == null) {
+            instance = new GerenciadorPedido(Repositorios.pedidos());
+        }
+        return instance;
     }
 
     @Override

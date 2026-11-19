@@ -5,7 +5,6 @@ import beans.Eletronico;
 import beans.Fornecedor;
 import beans.Produto;
 import beans.Vestuario;
-import dados.Repositorios;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -25,6 +24,8 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import negocio.GerenciadorFornecedor;
 import negocio.GerenciadorProduto;
+import negocio.IGerenciadorFornecedor;
+import negocio.IGerenciadorProduto;
 
 public class TelaProdutoController {
 
@@ -41,8 +42,8 @@ public class TelaProdutoController {
     @FXML private Text msgSucesso;
     @FXML private Button botaoConfirmar;
 
-    private final GerenciadorProduto gerenciadorProduto = new GerenciadorProduto(Repositorios.produtos());
-    private final GerenciadorFornecedor gerenciadorFornecedor = new GerenciadorFornecedor(Repositorios.fornecedores());
+    private final IGerenciadorProduto gerenciadorProduto = GerenciadorProduto.getInstance();
+    private final IGerenciadorFornecedor gerenciadorFornecedor = GerenciadorFornecedor.getInstance();
 
     private boolean modoModalFornecedor = false;
 

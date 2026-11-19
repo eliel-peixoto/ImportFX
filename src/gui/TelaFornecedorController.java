@@ -7,7 +7,6 @@ import beans.Item;
 import beans.Pedido;
 import beans.Produto;
 import beans.Vestuario;
-import dados.Repositorios;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -61,12 +60,9 @@ public class TelaFornecedorController {
     @FXML private TableColumn<Pedido, String> colPedStatus;
 
     private Fornecedor fornecedorLogado;
-    private final IGerenciadorFornecedor gerenciadorFornecedor =
-            new GerenciadorFornecedor(Repositorios.fornecedores());
-    private IGerenciadorProduto gerenciadorProduto =
-            new GerenciadorProduto(Repositorios.produtos());
-    private IGerenciadorPedido gerenciadorPedido =
-            new GerenciadorPedido(Repositorios.pedidos());
+    private final IGerenciadorFornecedor gerenciadorFornecedor = GerenciadorFornecedor.getInstance();
+    private IGerenciadorProduto gerenciadorProduto = GerenciadorProduto.getInstance();
+    private IGerenciadorPedido gerenciadorPedido = GerenciadorPedido.getInstance();
 
     public static void abrirParaFornecedor(Stage stage, Fornecedor fornecedor,
                                            IGerenciadorPedido gp,
@@ -118,7 +114,7 @@ public class TelaFornecedorController {
         Locale ptBR = Locale.forLanguageTag("pt-BR");
         DateTimeFormatter fmtData = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-        //Tabela de Produtos / Estoque
+        // Tabela de Produtos / Estoque
         colProdId.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getId())));
         colProdNome.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getNome()));
         colProdCategoria.setCellValueFactory(c -> new SimpleStringProperty(obterNomeCategoria(c.getValue())));
@@ -135,7 +131,7 @@ public class TelaFornecedorController {
         colProdEstoque.setCellValueFactory(c -> new SimpleStringProperty(
                 c.getValue().getQuantidadeEstoque() + " un."));
 
-        //Tabela de Pedidos do Fornecedor
+        // Tabela de Pedidos do Fornecedor
         colPedId.setCellValueFactory(c -> new SimpleStringProperty("#" + c.getValue().getId()));
         colPedCliente.setCellValueFactory(c -> new SimpleStringProperty(
                 c.getValue().getCliente() != null ? c.getValue().getCliente().getNome() : "-"));
@@ -201,7 +197,7 @@ public class TelaFornecedorController {
             modal.setScene(new Scene(root));
             modal.showAndWait();
 
-            //Ao fechar a tela de cadastro, recarrega a lista de produtos/estoque automaticamente
+            // Ao fechar a tela de cadastro, recarrega a lista de produtos/estoque automaticamente
             atualizarTabelaProdutos();
             lblMensagemFornecedor.setText("Catálogo de produtos atualizado.");
             lblMensagemFornecedor.setTextFill(Color.GREEN);

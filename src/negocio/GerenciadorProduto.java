@@ -2,14 +2,23 @@ package negocio;
 
 import beans.Produto;
 import dados.IRepositorioProdutos;
+import dados.Repositorios;
 import java.util.List;
 
 public class GerenciadorProduto implements IGerenciadorProduto {
 
-    private IRepositorioProdutos repositorio;
+    private static GerenciadorProduto instance;
+    private final IRepositorioProdutos repositorio;
 
-    public GerenciadorProduto(IRepositorioProdutos repositorio) {
+    private GerenciadorProduto(IRepositorioProdutos repositorio) {
         this.repositorio = repositorio;
+    }
+
+    public static synchronized GerenciadorProduto getInstance() {
+        if (instance == null) {
+            instance = new GerenciadorProduto(Repositorios.produtos());
+        }
+        return instance;
     }
 
     @Override

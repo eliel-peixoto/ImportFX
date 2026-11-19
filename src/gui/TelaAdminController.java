@@ -59,12 +59,10 @@ public class TelaAdminController {
     @FXML private TableColumn<Fornecedor, String> colFornPais;
     @FXML private TableColumn<Fornecedor, String> colFornMoeda;
 
-    private IGerenciadorPedido gerenciadorPedido =
-            new GerenciadorPedido(Repositorios.pedidos());
+    private IGerenciadorPedido gerenciadorPedido = GerenciadorPedido.getInstance();
     private final IGerenciadorCliente gerenciadorCliente =
             new GerenciadorCliente(Repositorios.clientes());
-    private final IGerenciadorFornecedor gerenciadorFornecedor =
-            new GerenciadorFornecedor(Repositorios.fornecedores());
+    private final IGerenciadorFornecedor gerenciadorFornecedor = GerenciadorFornecedor.getInstance();
     private IGerenciadorRelatorios gerenciadorRelatorios =
             new GerenciadorRelatorios(
                     Repositorios.produtos(),
