@@ -1,20 +1,34 @@
 package dados;
 
 import beans.Cliente;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class RepositorioCliente extends RepositorioGenerico<Cliente> implements IRepositorioCliente {
 
+    private static final String ARQUIVO = "clientes.json";
+
     public RepositorioCliente() {
         super();
+        Type tipoLista = new TypeToken<List<Cliente>>() {}.getType();
+        this.elementos.addAll(PersistenciaJson.carregarLista(ARQUIVO, tipoLista));
+    }
+
+    public void salvar() {
+        PersistenciaJson.salvarLista(ARQUIVO, this.elementos);
     }
 
     @Override
     public void cadastrar(Cliente cliente) {
         if (cliente != null) {
             cliente.gerarId();
+            while (cliente.getId() != null && buscarPorId(cliente.getId()) != null) {
+                cliente.gerarId();
+            }
         }
         super.cadastrar(cliente);
+        salvar();
     }
 
     @Override
@@ -39,6 +53,7 @@ public class RepositorioCliente extends RepositorioGenerico<Cliente> implements 
             if (antigo != null) {
                 antigo.setNome(clienteAtualizado.getNome());
                 antigo.setEndereco(clienteAtualizado.getEndereco());
+                salvar();
             }
         }
     }
@@ -48,6 +63,7 @@ public class RepositorioCliente extends RepositorioGenerico<Cliente> implements 
         Cliente c = buscarPorId(id);
         if (c != null) {
             super.removerElemento(c);
+            salvar();
         }
     }
 }

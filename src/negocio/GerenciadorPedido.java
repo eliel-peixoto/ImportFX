@@ -13,6 +13,7 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import dados.IRepositorioPedidos;
+import dados.Repositorios;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.io.File;
@@ -22,7 +23,6 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
-import dados.Repositorios;
 
 public class GerenciadorPedido implements IGerenciadorPedido {
 
@@ -159,6 +159,7 @@ public class GerenciadorPedido implements IGerenciadorPedido {
         html.append("th { background-color: #ff4501; color: white; }");
         html.append(".resumo { margin-top: 25px; width: 420px; margin-left: auto; border: 1px solid #ddd; padding: 15px; background: #fffaf8; }");
         html.append(".resumo p { display: flex; justify-content: space-between; margin: 6px 0; }");
+        html.append(".detalhe-frete { font-size: 12px; color: #666; margin-top: -2px; margin-bottom: 8px; }");
         html.append(".total-final { font-size: 18px; color: #ff4501; border-top: 2px solid #ff4501; padding-top: 8px; margin-top: 8px; }");
         html.append("</style></head><body>");
 
@@ -213,10 +214,11 @@ public class GerenciadorPedido implements IGerenciadorPedido {
             .append(String.format(ptBR, "%.2f", pedido.getSubtotalItens())).append("</span></p>");
         html.append("<p><span><strong>Total de Impostos:</strong></span><span>R$ ")
             .append(String.format(ptBR, "%.2f", pedido.getTotalImpostos())).append("</span></p>");
-        html.append("<p><span><strong>Frete Internacional (")
-            .append(String.format(ptBR, "%.2f kg", pedido.getPesoTotalDeclarado()))
-            .append("):</strong></span><span>R$ ")
+        html.append("<p><span><strong>Frete:</strong></span><span>R$ ")
             .append(String.format(ptBR, "%.2f", pedido.getValorFreteInternacional())).append("</span></p>");
+        html.append("<div class='detalhe-frete'>")
+            .append(pedido.getDetalhamentoFrete())
+            .append("</div>");
         html.append("<p class='total-final'><span><strong>TOTAL GERAL:</strong></span><span><strong>R$ ")
             .append(String.format(ptBR, "%.2f", pedido.getValorTotalFinal())).append("</strong></span></p>");
         html.append("</div>");
@@ -263,6 +265,7 @@ public class GerenciadorPedido implements IGerenciadorPedido {
             Font fonteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, new Color(255, 69, 1));
             Font fonteSubtitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Color.DARK_GRAY);
             Font fonteNormal = FontFactory.getFont(FontFactory.HELVETICA, 10, Color.BLACK);
+            Font fonteDetalhe = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8.5f, Color.DARK_GRAY);
             Font fonteNegrito = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Color.BLACK);
             Font fonteCabecalhoTabela = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9, Color.WHITE);
 
@@ -322,8 +325,11 @@ public class GerenciadorPedido implements IGerenciadorPedido {
 
             document.add(new Paragraph(String.format(ptBR, "Subtotal dos Itens: R$ %.2f", pedido.getSubtotalItens()), fonteNormal));
             document.add(new Paragraph(String.format(ptBR, "Total de Impostos: R$ %.2f", pedido.getTotalImpostos()), fonteNormal));
-            document.add(new Paragraph(String.format(ptBR, "Frete Internacional (Peso total declarado: %.2f kg): R$ %.2f",
-                    pedido.getPesoTotalDeclarado(), pedido.getValorFreteInternacional()), fonteNormal));
+            document.add(new Paragraph(String.format(ptBR, "Frete: R$ %.2f", pedido.getValorFreteInternacional()), fonteNormal));
+
+            Paragraph detalheFrete = new Paragraph("   (" + pedido.getDetalhamentoFrete() + ")", fonteDetalhe);
+            detalheFrete.setSpacingAfter(4);
+            document.add(detalheFrete);
 
             Paragraph totalFinal = new Paragraph(String.format(ptBR,
                     "TOTAL FINAL DA FATURA (Subtotal + Impostos + Frete): R$ %.2f",

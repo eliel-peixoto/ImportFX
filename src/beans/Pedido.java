@@ -106,6 +106,24 @@ public class Pedido {
         return 45.0 + (peso * 25.0);
     }
 
+    public String getDetalhamentoFrete() {
+        if (listaItems == null || listaItems.isEmpty()) {
+            return "R$ 0,00 (sem itens)";
+        }
+        double peso = getPesoTotalDeclarado();
+        boolean isNacional = fornecedor != null
+                && fornecedor.getPaisOrigem() != null
+                && fornecedor.getPaisOrigem().trim().equalsIgnoreCase("Brasil");
+
+        double taxaBase = isNacional ? 15.0 : 45.0;
+        double valorPorKg = isNacional ? 5.0 : 25.0;
+        String modalidade = isNacional ? "Nacional" : "Internacional";
+
+        return String.format(java.util.Locale.forLanguageTag("pt-BR"),
+                "%s: Base R$ %.2f + (%.2f kg × R$ %.2f/kg)",
+                modalidade, taxaBase, peso, valorPorKg);
+    }
+
     public double getValorTotalFinal() {
         return getSubtotalItens() + getTotalImpostos() + getValorFreteInternacional();
     }

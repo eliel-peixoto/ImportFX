@@ -1,0 +1,55 @@
+[
+  {
+    "cliente": {
+      "id": 1,
+      "nome": "Dom Pedro II",
+      "cpf": 1,
+      "endereco": "Paço Imperial",
+      "pedido": [],
+      "notificacoes": [
+        {
+          "idPedido": 1,
+          "mensagem": "O status do seu Pedido #1 foi atualizado de \"Aguardando Pagamento\" para \"Pago\".",
+          "dataHora": "2026-11-19T17:39:20.654357700",
+          "lida": true,
+          "popupExibido": true
+        },
+        {
+          "idPedido": 1,
+          "mensagem": "O status do seu Pedido #1 foi atualizado de \"PENDENTE\" para \"Aguardando Pagamento\".",
+          "dataHora": "2026-11-19T17:38:54.918692700",
+          "lida": true,
+          "popupExibido": true
+        }
+      ]
+    },
+    "fornecedor": {
+      "id": 1,
+      "nome": "Tea Store",
+      "paisOrigem": "England",
+      "moedaPadrao": "GBP"
+    },
+    "id": 1,
+    "status": "Em Trânsito",
+    "listaItems": [
+      {
+        "nomeProduto": "Tea Maker",
+        "quantidade": 5,
+        "pesoTotal": 8.75,
+        "precoUnitario": 965.78,
+        "simboloMoeda": "R$",
+        "idProduto": 1795120664516,
+        "categoria": "Eletrônico",
+        "aliquota": 18.0
+      }
+    ],
+    "dataCriacao": "2026-11-19T17:38:00.867802600",
+    "cotacao": {
+      "moeda": "GBP",
+      "compra": 7.72370,
+      "venda": 7.72620,
+      "dataHora": "2026-11-19T13:04:18",
+      "desatualizada": false
+    }
+  }
+]

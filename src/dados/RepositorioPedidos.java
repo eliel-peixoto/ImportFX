@@ -1,17 +1,28 @@
 package dados;
 
 import beans.Pedido;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class RepositorioPedidos extends RepositorioGenerico<Pedido> implements IRepositorioPedidos {
 
+    private static final String ARQUIVO = "pedidos.json";
+
     public RepositorioPedidos() {
         super();
+        Type tipoLista = new TypeToken<List<Pedido>>() {}.getType();
+        this.elementos.addAll(PersistenciaJson.carregarLista(ARQUIVO, tipoLista));
+    }
+
+    private void salvar() {
+        PersistenciaJson.salvarLista(ARQUIVO, this.elementos);
     }
 
     @Override
     public void cadastrar(Pedido pedido) {
         super.cadastrar(pedido);
+        salvar();
     }
 
     @Override
@@ -22,7 +33,6 @@ public class RepositorioPedidos extends RepositorioGenerico<Pedido> implements I
     @Override
     public Pedido buscarPorId(Long id) {
         for (Pedido p : elementos) {
-            // Como id é Long (Objeto), usamos .equals() em vez de ==
             if (p.getId().equals(id)) {
                 return p;
             }
@@ -38,7 +48,8 @@ public class RepositorioPedidos extends RepositorioGenerico<Pedido> implements I
                 antigo.setCliente(pedido.getCliente());
                 antigo.setFornecedor(pedido.getFornecedor());
                 antigo.setStatus(pedido.getStatus());
-                // A lista de itens permanece a mesma ou é manipulada via adicionar/remover do próprio pedido
+                salvar();
+                Repositorios.clientes().salvar();
             }
         }
     }
@@ -48,6 +59,7 @@ public class RepositorioPedidos extends RepositorioGenerico<Pedido> implements I
         Pedido p = buscarPorId(id);
         if (p != null) {
             super.removerElemento(p);
+            salvar();
         }
     }
 }

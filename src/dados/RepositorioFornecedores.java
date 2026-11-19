@@ -1,17 +1,36 @@
 package dados;
 
 import beans.Fornecedor;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class RepositorioFornecedores extends RepositorioGenerico<Fornecedor> implements IRepositorioFornecedores {
 
+    private static final String ARQUIVO = "fornecedores.json";
+
     public RepositorioFornecedores() {
         super();
+        Type tipoLista = new TypeToken<List<Fornecedor>>() {}.getType();
+        this.elementos.addAll(PersistenciaJson.carregarLista(ARQUIVO, tipoLista));
+
+        long maiorId = 0;
+        for (Fornecedor f : this.elementos) {
+            if (f.getId() != null && f.getId() > maiorId) {
+                maiorId = f.getId();
+            }
+        }
+        Fornecedor.sincronizarSequenciaId(maiorId);
+    }
+
+    public void salvar() {
+        PersistenciaJson.salvarLista(ARQUIVO, this.elementos);
     }
 
     @Override
     public void cadastrar(Fornecedor fornecedor) {
         super.cadastrar(fornecedor);
+        salvar();
     }
 
     @Override
@@ -37,6 +56,7 @@ public class RepositorioFornecedores extends RepositorioGenerico<Fornecedor> imp
                 antigo.setNome(fornecedorAtualizado.getNome());
                 antigo.setPaisOrigem(fornecedorAtualizado.getPaisOrigem());
                 antigo.setMoedaPadrao(fornecedorAtualizado.getMoedaPadrao());
+                salvar();
             }
         }
     }
@@ -46,7 +66,7 @@ public class RepositorioFornecedores extends RepositorioGenerico<Fornecedor> imp
         Fornecedor f = buscarPorId(id);
         if (f != null) {
             super.removerElemento(f);
+            salvar();
         }
     }
-
 }
