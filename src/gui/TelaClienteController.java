@@ -21,10 +21,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -66,9 +68,6 @@ public class TelaClienteController {
     private IGerenciadorRelatorios gerenciadorRelatorios =
             new GerenciadorRelatorios(Repositorios.pedidos());
 
-    /**
-     * Método utilitário para o colaborador da Tela de Login abrir o painel do cliente em 1 linha.
-     */
     public static void abrirParaCliente(Stage stage, Cliente cliente,
                                         IGerenciadorPedido gp,
                                         IGerenciadorCambio gc,
@@ -120,7 +119,8 @@ public class TelaClienteController {
         Locale ptBR = Locale.forLanguageTag("pt-BR");
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-        colIdPedido.setCellValueFactory(c -> new SimpleStringProperty("#" + c.getValue().getId()));
+        colIdPedido.setCellValueFactory(c -> new SimpleStringProperty(
+                c.getValue().getId() != null ? "#" + c.getValue().getId() : "Nulo"));
         colFornecedor.setCellValueFactory(c -> new SimpleStringProperty(
                 c.getValue().getFornecedor() != null ? c.getValue().getFornecedor().getNome() : "-"));
         colData.setCellValueFactory(c -> new SimpleStringProperty(
@@ -128,10 +128,24 @@ public class TelaClienteController {
         colTotal.setCellValueFactory(c -> new SimpleStringProperty(
                 String.format(ptBR, "R$ %.2f", c.getValue().getValorTotalFinal())));
         colStatus.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getStatus()));
+
+        // Destaque avermelhado nas linhas de pedidos cancelados
+        tablePedidosCliente.setRowFactory(tv -> new TableRow<Pedido>() {
+            @Override
+            protected void updateItem(Pedido pedido, boolean empty) {
+                super.updateItem(pedido, empty);
+                if (empty || pedido == null) {
+                    setStyle("");
+                } else if ("Cancelado".equalsIgnoreCase(pedido.getStatus())) {
+                    setStyle("-fx-background-color: #fadbd8; -fx-text-background-color: #78281f;");
+                } else {
+                    setStyle("");
+                }
+            }
+        });
     }
 
     private void configurarVisualNotificacoes() {
-        // Destaca visualmente as notificações não lidas em laranja claro e negrito
         listViewNotificacoes.setCellFactory(lv -> new ListCell<Notificacao>() {
             @Override
             protected void updateItem(Notificacao item, boolean empty) {
@@ -155,7 +169,6 @@ public class TelaClienteController {
     private void atualizarPainelCompleto() {
         if (clienteLogado == null) return;
 
-        // Sincroniza com o cadastro mais recente do repositório
         Cliente atualizado = gerenciadorCliente.buscarCliente(clienteLogado.getId());
         if (atualizado != null) {
             this.clienteLogado = atualizado;
@@ -196,6 +209,7 @@ public class TelaClienteController {
                 .collect(Collectors.toList());
 
         tablePedidosCliente.setItems(FXCollections.observableArrayList(meusPedidos));
+        tablePedidosCliente.refresh();
     }
 
     private void exibirPopupNovasNotificacoes() {
@@ -342,12 +356,56 @@ public class TelaClienteController {
             lblMensagemCliente.setTextFill(Color.ORANGE);
             return;
         }
+        if (selecionado.getId() == null || "Cancelado".equalsIgnoreCase(selecionado.getStatus())) {
+            lblMensagemCliente.setText("Não é possível gerar extrato HTML de um pedido cancelado.");
+            lblMensagemCliente.setTextFill(Color.ORANGE);
+            return;
+        }
         try {
             gerenciadorPedido.exportarPedidoParaHtml(selecionado.getId(), System.getProperty("user.dir"));
             lblMensagemCliente.setText("Extrato HTML do Pedido #" + selecionado.getId() + " aberto no navegador.");
             lblMensagemCliente.setTextFill(Color.GREEN);
         } catch (Exception e) {
             lblMensagemCliente.setText("Erro ao gerar extrato: " + e.getMessage());
+            lblMensagemCliente.setTextFill(Color.RED);
+        }
+    }
+
+    @FXML
+    private void handleCancelarPedido(ActionEvent event) {
+        Pedido selecionado = tablePedidosCliente.getSelectionModel().getSelectedItem();
+        if (selecionado == null) {
+            lblMensagemCliente.setText("Selecione um pedido na tabela acima para cancelar.");
+            lblMensagemCliente.setTextFill(Color.ORANGE);
+            return;
+        }
+        if (selecionado.getId() == null || "Cancelado".equalsIgnoreCase(selecionado.getStatus())) {
+            lblMensagemCliente.setText("Este pedido já está cancelado.");
+            lblMensagemCliente.setTextFill(Color.ORANGE);
+            return;
+        }
+
+        Long idOriginal = selecionado.getId();
+
+        Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
+        if (lblNomeCliente != null && lblNomeCliente.getScene() != null) {
+            confirmacao.initOwner(lblNomeCliente.getScene().getWindow());
+        }
+        confirmacao.setTitle("Confirmar Cancelamento");
+        confirmacao.setHeaderText("Cancelar Pedido #" + idOriginal);
+        confirmacao.setContentText("Deseja realmente cancelar este pedido?");
+
+        if (confirmacao.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            return;
+        }
+
+        try {
+            gerenciadorPedido.cancelarPedido(idOriginal);
+            atualizarPainelCompleto();
+            lblMensagemCliente.setText("Pedido #" + idOriginal + " cancelado com sucesso.");
+            lblMensagemCliente.setTextFill(Color.GREEN);
+        } catch (Exception e) {
+            lblMensagemCliente.setText(e.getMessage());
             lblMensagemCliente.setTextFill(Color.RED);
         }
     }

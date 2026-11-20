@@ -168,7 +168,8 @@ public class TelaCriarPedidoController {
             public String toString(Produto produto) {
                 if (produto == null) return "";
                 double preco = produto.getPrecoMoedaOrigem() == null ? 0.0 : produto.getPrecoMoedaOrigem();
-                return String.format(Locale.forLanguageTag("pt-BR"), "%s (%.2f)", produto.getNome(), preco);
+                return String.format(Locale.forLanguageTag("pt-BR"), "%s (%.2f | Estoque: %d)",
+                        produto.getNome(), preco, produto.getQuantidadeEstoque());
             }
 
             @Override
@@ -246,6 +247,24 @@ public class TelaCriarPedidoController {
             int qtd = Integer.parseInt(txtQuantidade.getText().trim());
             if (qtd <= 0) {
                 throw new Exception("A quantidade deve ser maior que zero.");
+            }
+
+            //Verifica o estoque considerando itens do mesmo produto já adicionados ao pedido
+            int jaNaLista = 0;
+            for (Item item : itensTemporarios) {
+                if (Objects.equals(item.getIdProduto(), produtoSelecionado.getId())
+                        && item.getQuantidade() != null) {
+                    jaNaLista += item.getQuantidade();
+                }
+            }
+
+            int estoqueDisponivel = produtoSelecionado.getQuantidadeEstoque();
+            if (qtd + jaNaLista > estoqueDisponivel) {
+                String detalheJaAdicionado = jaNaLista > 0
+                        ? " (já adicionadas: " + jaNaLista + ")"
+                        : "";
+                throw new Exception("Estoque insuficiente para \"" + produtoSelecionado.getNome()
+                        + "\". Disponível: " + estoqueDisponivel + detalheJaAdicionado + ".");
             }
 
             double pesoCalculado = produtoSelecionado.getPeso() * qtd;

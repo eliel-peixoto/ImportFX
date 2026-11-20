@@ -14,8 +14,6 @@
 
 <BorderPane prefHeight="620.0" prefWidth="860.0" style="-fx-background-color: #f4f5f7;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaClienteController">
 
-    <!-- CABEÇALHO SUPERIOR: Bem-vindo: Nome | ID: 0 -->
-    <!-- CABEÇALHO SUPERIOR -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #ff4501; -fx-padding: 18 25 18 25;">
             <children>
@@ -41,14 +39,12 @@
         </HBox>
     </top>
 
-    <!-- CORPO PRINCIPAL -->
     <center>
         <VBox spacing="16.0">
             <padding>
                 <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
             </padding>
             <children>
-                <!-- BARRA DE AÇÕES DO CLIENTE -->
                 <HBox alignment="CENTER_LEFT" spacing="12.0">
                     <children>
                         <Button mnemonicParsing="false" onAction="#handleCriarPedido" style="-fx-background-color: #ff4501; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 18 10 18; -fx-cursor: hand;" text="+ Criar Novo Pedido" />
@@ -59,7 +55,6 @@
                     </children>
                 </HBox>
 
-                <!-- PAINEL DE NOTIFICAÇÕES COM DESTAQUE PARA NÃO LIDAS -->
                 <VBox spacing="8.0" style="-fx-background-color: white; -fx-padding: 14; -fx-border-color: #dddddd; -fx-border-radius: 6; -fx-background-radius: 6;">
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -78,7 +73,6 @@
                     </children>
                 </VBox>
 
-                <!-- TABELA DE PEDIDOS E STATUS DO CLIENTE -->
                 <VBox spacing="8.0" style="-fx-background-color: white; -fx-padding: 14; -fx-border-color: #dddddd; -fx-border-radius: 6; -fx-background-radius: 6;" VBox.vgrow="ALWAYS">
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -89,6 +83,7 @@
                                     </font>
                                 </Label>
                                 <Region HBox.hgrow="ALWAYS" />
+                                <Button mnemonicParsing="false" onAction="#handleCancelarPedido" style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Cancelar Pedido Selecionado" />
                                 <Button mnemonicParsing="false" onAction="#handleVerExtratoHtml" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Abrir Extrato HTML do Pedido Selecionado" />
                             </children>
                         </HBox>

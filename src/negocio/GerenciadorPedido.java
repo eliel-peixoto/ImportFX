@@ -4,6 +4,7 @@ import beans.Cotacao;
 import beans.Item;
 import beans.Moeda;
 import beans.Pedido;
+import beans.Produto;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
@@ -20,11 +21,14 @@ import java.awt.Color;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class GerenciadorPedido implements IGerenciadorPedido {
 
@@ -40,6 +44,17 @@ public class GerenciadorPedido implements IGerenciadorPedido {
             instance = new GerenciadorPedido(Repositorios.pedidos());
         }
         return instance;
+    }
+
+    private static String escapeHtml(String texto) {
+        if (texto == null) {
+            return "";
+        }
+        return texto.replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;")
+                    .replace("\"", "&quot;")
+                    .replace("'", "&#39;");
     }
 
     @Override
@@ -69,6 +84,28 @@ public class GerenciadorPedido implements IGerenciadorPedido {
             throw new Exception("O pedido deve conter pelo menos um item.");
         }
 
+        // Valida disponibilidade em estoque agrupando por produto
+        Map<Long, Integer> qtdPorProduto = new HashMap<>();
+        for (Item item : pedido.getItemPedido()) {
+            if (item.getIdProduto() != null && item.getQuantidade() != null) {
+                if (item.getQuantidade() <= 0) {
+                    throw new Exception("A quantidade de cada item deve ser maior que zero.");
+                }
+                qtdPorProduto.merge(item.getIdProduto(), item.getQuantidade(), Integer::sum);
+            }
+        }
+
+        if (Repositorios.produtos() != null) {
+            for (Map.Entry<Long, Integer> entry : qtdPorProduto.entrySet()) {
+                Produto prod = Repositorios.produtos().buscarPorId(entry.getKey());
+                if (prod != null && entry.getValue() > prod.getQuantidadeEstoque()) {
+                    throw new Exception("Estoque insuficiente para \"" + prod.getNome()
+                            + "\". Disponível: " + prod.getQuantidadeEstoque()
+                            + ", solicitado: " + entry.getValue() + ".");
+                }
+            }
+        }
+
         if (pedido.getFornecedor() != null
                 && pedido.getFornecedor().getMoedaPadrao() != null
                 && !pedido.getFornecedor().getMoedaPadrao().isReal()) {
@@ -90,7 +127,6 @@ public class GerenciadorPedido implements IGerenciadorPedido {
             }
         }
 
-        //Atribui automaticamente o ID sequencial com base nos pedidos existentes
         pedido.setId(gerarProximoId());
         repositorio.cadastrar(pedido);
     }
@@ -121,7 +157,6 @@ public class GerenciadorPedido implements IGerenciadorPedido {
         pedidoExistente.setStatus(novoStatus);
         repositorio.atualizar(pedidoExistente);
 
-        //Gera notificação para o cliente sempre que o status realmente mudar
         if (pedidoExistente.getCliente() != null
                 && novoStatus != null
                 && !novoStatus.equalsIgnoreCase(statusAnterior)) {
@@ -140,7 +175,44 @@ public class GerenciadorPedido implements IGerenciadorPedido {
         if (pedido == null) {
             throw new Exception("Pedido não encontrado.");
         }
-        repositorio.remover(id);
+        if (pedido.isStatusPosPagamento()) {
+            throw new Exception("Não é possível cancelar um pedido com status \""
+                    + pedido.getStatus() + "\".");
+        }
+        if ("Cancelado".equalsIgnoreCase(pedido.getStatus())) {
+            throw new Exception("Este pedido já está cancelado.");
+        }
+
+        Long idAntigo = pedido.getId();
+
+        // Devolve ao estoque a quantidade de cada item do pedido cancelado
+        if (pedido.getItemPedido() != null && Repositorios.produtos() != null) {
+            for (Item item : pedido.getItemPedido()) {
+                if (item.getIdProduto() != null
+                        && item.getQuantidade() != null
+                        && item.getQuantidade() > 0) {
+                    Produto produto = Repositorios.produtos().buscarPorId(item.getIdProduto());
+                    if (produto != null) {
+                        produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + item.getQuantidade());
+                        Repositorios.produtos().atualizar(produto);
+                    }
+                }
+            }
+        }
+
+        // Remove o registro com o ID antigo para liberar o número e regrava como cancelado com ID nulo
+        repositorio.remover(idAntigo);
+        pedido.setId(null);
+        pedido.setStatus("Cancelado");
+        repositorio.cadastrar(pedido);
+
+        if (pedido.getCliente() != null) {
+            String aviso = "O seu Pedido #" + idAntigo + " foi cancelado.";
+            pedido.getCliente().adicionarNotificacao(aviso, idAntigo);
+            if (dados.Repositorios.clientes() != null) {
+                dados.Repositorios.clientes().atualizar(pedido.getCliente());
+            }
+        }
     }
 
     @Override
@@ -188,16 +260,16 @@ public class GerenciadorPedido implements IGerenciadorPedido {
 
         html.append("<h1>Extrato Detalhado - Pedido #").append(pedido.getId()).append("</h1>");
         html.append("<div class='info-box'>");
-        html.append("<p><strong>Data de Emissão:</strong> ").append(dataStr).append("</p>");
-        html.append("<p><strong>Status:</strong> ").append(pedido.getStatus()).append("</p>");
+        html.append("<p><strong>Data de Emissão:</strong> ").append(escapeHtml(dataStr)).append("</p>");
+        html.append("<p><strong>Status:</strong> ").append(escapeHtml(pedido.getStatus())).append("</p>");
         html.append("<p><strong>Cliente:</strong> ID ").append(pedido.getCliente().getId())
-            .append(" | ").append(pedido.getCliente().getNome()).append("</p>");
+            .append(" | ").append(escapeHtml(pedido.getCliente().getNome())).append("</p>");
         html.append("<p><strong>Fornecedor:</strong> ID ").append(pedido.getFornecedor().getId())
-            .append(" | ").append(pedido.getFornecedor().getNome())
-            .append(" (País: ").append(pedido.getFornecedor().getPaisOrigem()).append(")</p>");
+            .append(" | ").append(escapeHtml(pedido.getFornecedor().getNome()))
+            .append(" (País: ").append(escapeHtml(pedido.getFornecedor().getPaisOrigem())).append(")</p>");
 
         if (pedido.getCotacao() != null && !pedido.getCotacao().getMoeda().isReal()) {
-            html.append("<p><strong>Cotação PTAX utilizada:</strong> 1 ").append(pedido.getCotacao().getMoeda())
+            html.append("<p><strong>Cotação PTAX utilizada:</strong> 1 ").append(escapeHtml(String.valueOf(pedido.getCotacao().getMoeda())))
                 .append(" = R$ ").append(String.format(ptBR, "%.4f", pedido.getCotacao().getVenda()))
                 .append(" (").append(pedido.getCotacao().getDataHora().toLocalDate()).append(")")
                 .append(pedido.getCotacao().isDesatualizada() ? " - cotação do cache" : "")
@@ -218,23 +290,29 @@ public class GerenciadorPedido implements IGerenciadorPedido {
             double aliqExibicao = (item.getAliquota() != null && item.getAliquota() <= 1.0)
                     ? item.getAliquota() * 100.0
                     : (item.getAliquota() != null ? item.getAliquota() : 0.0);
+            String simboloEscapado = escapeHtml(item.getSimboloMoeda());
 
             html.append("<tr>")
-                .append("<td>").append(item.getNomeProduto()).append("</td>")
-                .append("<td>").append(item.getCategoria()).append("</td>")
+                .append("<td>").append(escapeHtml(item.getNomeProduto())).append("</td>")
+                .append("<td>").append(escapeHtml(item.getCategoria())).append("</td>")
                 .append("<td>").append(item.getQuantidade()).append("</td>")
                 .append("<td>").append(String.format(ptBR, "%.2f", item.getPesoTotal())).append("</td>")
-                .append("<td>").append(item.getSimboloMoeda()).append(" ").append(String.format(ptBR, "%.2f", item.getPrecoUnitario())).append("</td>")
-                .append("<td>").append(item.getSimboloMoeda()).append(" ").append(String.format(ptBR, "%.2f", subtotalItem)).append("</td>")
+                .append("<td>").append(simboloEscapado).append(" ").append(String.format(ptBR, "%.2f", item.getPrecoUnitario())).append("</td>")
+                .append("<td>").append(simboloEscapado).append(" ").append(String.format(ptBR, "%.2f", subtotalItem)).append("</td>")
                 .append("<td>").append(String.format(ptBR, "%.1f%%", aliqExibicao)).append("</td>")
                 .append("<td>R$ ").append(String.format(ptBR, "%.2f", impostoItem)).append("</td>")
                 .append("</tr>");
         }
         html.append("</table>");
 
-        String infoImpostoHtml = pedido.isIsentoImpostoImportacao()
-                ? "R$ 0,00 <small>(Isento - até US$ 50,00)</small>"
-                : "R$ " + String.format(ptBR, "%.2f", pedido.getTotalImpostos());
+        String infoImpostoHtml;
+        if (pedido.isPedidoNacional()) {
+            infoImpostoHtml = "R$ 0,00 <small>(Compra nacional)</small>";
+        } else if (pedido.isIsentoImpostoImportacao()) {
+            infoImpostoHtml = "R$ 0,00 <small>(Isento - até US$ 50,00/CPF)</small>";
+        } else {
+            infoImpostoHtml = "R$ " + String.format(ptBR, "%.2f", pedido.getTotalImpostos());
+        }
 
         html.append("<div class='resumo'>");
         html.append("<p><span><strong>Subtotal dos Produtos:</strong></span><span>R$ ")
@@ -244,7 +322,7 @@ public class GerenciadorPedido implements IGerenciadorPedido {
         html.append("<p><span><strong>Frete:</strong></span><span>R$ ")
             .append(String.format(ptBR, "%.2f", pedido.getValorFreteInternacional())).append("</span></p>");
         html.append("<div class='detalhe-frete'>")
-            .append(pedido.getDetalhamentoFrete())
+            .append(escapeHtml(pedido.getDetalhamentoFrete()))
             .append("</div>");
         html.append("<p class='total-final'><span><strong>TOTAL GERAL:</strong></span><span><strong>R$ ")
             .append(String.format(ptBR, "%.2f", pedido.getValorTotalFinal())).append("</strong></span></p>");
@@ -256,13 +334,12 @@ public class GerenciadorPedido implements IGerenciadorPedido {
         if (!pasta.exists()) pasta.mkdirs();
 
         File arquivoHtml = new File(pasta, "Pedido_" + pedido.getId() + ".html");
-        try (FileWriter writer = new FileWriter(arquivoHtml)) {
-            writer.write(html.toString());
+        try {
+            Files.writeString(arquivoHtml.toPath(), html.toString(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new Exception("Erro ao gravar o ficheiro HTML: " + e.getMessage());
         }
 
-        // Abre automaticamente no navegador padrão
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             Desktop.getDesktop().browse(arquivoHtml.toURI());
         }
@@ -352,9 +429,14 @@ public class GerenciadorPedido implements IGerenciadorPedido {
 
             document.add(new Paragraph(String.format(ptBR, "Subtotal dos Itens: R$ %.2f", pedido.getSubtotalItens()), fonteNormal));
 
-            String infoImpostoPdf = pedido.isIsentoImpostoImportacao()
-                    ? "Total de Impostos: R$ 0,00 (Isento - pedido até US$ 50,00)"
-                    : String.format(ptBR, "Total de Impostos: R$ %.2f", pedido.getTotalImpostos());
+            String infoImpostoPdf;
+            if (pedido.isPedidoNacional()) {
+                infoImpostoPdf = "Total de Impostos: R$ 0,00 (Compra nacional - sem imposto de importação)";
+            } else if (pedido.isIsentoImpostoImportacao()) {
+                infoImpostoPdf = "Total de Impostos: R$ 0,00 (Isento - acumulado por CPF até US$ 50,00)";
+            } else {
+                infoImpostoPdf = String.format(ptBR, "Total de Impostos: R$ %.2f", pedido.getTotalImpostos());
+            }
             document.add(new Paragraph(infoImpostoPdf, fonteNormal));
 
             document.add(new Paragraph(String.format(ptBR, "Frete: R$ %.2f", pedido.getValorFreteInternacional()), fonteNormal));

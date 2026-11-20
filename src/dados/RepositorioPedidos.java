@@ -32,8 +32,11 @@ public class RepositorioPedidos extends RepositorioGenerico<Pedido> implements I
 
     @Override
     public Pedido buscarPorId(Long id) {
+        if (id == null) {
+            return null;
+        }
         for (Pedido p : elementos) {
-            if (p.getId().equals(id)) {
+            if (id.equals(p.getId())) {
                 return p;
             }
         }

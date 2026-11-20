@@ -4,6 +4,7 @@ import dados.Repositorios;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -25,16 +26,23 @@ public class Pedido {
         this.dataCriacao = LocalDateTime.now();
     }
 
-    //REQ 20: Bloqueio de alteração de itens após pagamento
+    // --- REQ 20: Bloqueio de alteração após pagamento (ciclo real do ImportFX) ---
 
-    private boolean isBloqueadoParaAlteracaoItens() {
+    public boolean isStatusPosPagamento() {
         if (this.status == null) {
             return false;
         }
         String s = this.status.trim();
         return s.equalsIgnoreCase("Pago")
-                || s.equalsIgnoreCase("Enviado")
+                || s.equalsIgnoreCase("Em Trânsito")
+                || s.equalsIgnoreCase("Em Transito")
+                || s.equalsIgnoreCase("Alfândega")
+                || s.equalsIgnoreCase("Alfandega")
                 || s.equalsIgnoreCase("Entregue");
+    }
+
+    private boolean isBloqueadoParaAlteracaoItens() {
+        return isStatusPosPagamento();
     }
 
     public void adicionar(Item item) {
@@ -66,6 +74,7 @@ public class Pedido {
         return this.listaItems;
     }
 
+    // --- CÁLCULOS FINANCEIROS (SUBTOTAL, CÂMBIO, REQ 21, IMPOSTOS, FRETE, TOTAL) ---
 
     public boolean isPedidoNacional() {
         return fornecedor != null
@@ -83,10 +92,6 @@ public class Pedido {
         return pesoTotal;
     }
 
-    /**
-     * Retorna o subtotal do item já em Reais (BRL), convertendo pela cotação congelada
-     * caso o item ainda esteja na moeda estrangeira.
-     */
     public double getSubtotalItemEmReal(Item item) {
         if (item == null) return 0.0;
         int qtd = item.getQuantidade() != null ? item.getQuantidade() : 0;
@@ -110,55 +115,92 @@ public class Pedido {
         return subtotal;
     }
 
-    /**
-     * Calcula o teto de isenção de US$ 50,00 convertido para Reais (BRL).
-     */
-    public double getLimiteIsencaoEmReal() {
-        BigDecimal taxaUsd = null;
-        if (this.cotacao != null && this.cotacao.getMoeda() == Moeda.USD) {
-            taxaUsd = this.cotacao.getVenda();
-        } else if (Repositorios.cotacoes() != null) {
+    private BigDecimal getTaxaDolarParaReal() {
+        if (this.cotacao != null && this.cotacao.getMoeda() == Moeda.USD
+                && this.cotacao.getVenda() != null && this.cotacao.getVenda().signum() > 0) {
+            return this.cotacao.getVenda();
+        }
+        if (Repositorios.cotacoes() != null) {
             Cotacao cacheUsd = Repositorios.cotacoes().buscarUltima(Moeda.USD);
-            if (cacheUsd != null) {
-                taxaUsd = cacheUsd.getVenda();
+            if (cacheUsd != null && cacheUsd.getVenda() != null && cacheUsd.getVenda().signum() > 0) {
+                return cacheUsd.getVenda();
             }
         }
-        if (taxaUsd != null && taxaUsd.signum() > 0) {
-            return BigDecimal.valueOf(50).multiply(taxaUsd).doubleValue();
+        if (Repositorios.pedidos() != null) {
+            List<Pedido> todos = Repositorios.pedidos().listarTodos();
+            if (todos != null) {
+                for (Pedido p : todos) {
+                    if (p != null && p.getCotacao() != null && p.getCotacao().getMoeda() == Moeda.USD
+                            && p.getCotacao().getVenda() != null && p.getCotacao().getVenda().signum() > 0) {
+                        return p.getCotacao().getVenda();
+                    }
+                }
+            }
         }
-        return 0.0;
+        return BigDecimal.valueOf(5.00);
     }
 
     /**
-     * REQ 21: Importações com valor total convertido de até US$ 50,00 por CPF
-     * são isentas de imposto de importação.
+     * Calcula o teto de isenção de US\$ 50,00 convertido para Reais (BRL).
+     */
+    public double getLimiteIsencaoEmReal() {
+        BigDecimal taxaUsd = getTaxaDolarParaReal();
+        return BigDecimal.valueOf(50).multiply(taxaUsd).doubleValue();
+    }
+
+    /**
+     * Soma o valor em Reais de todas as importações do mesmo CPF (pedidos anteriores + pedido atual).
+     */
+    public double getAcumuladoImportacaoCpfEmReal() {
+        double acumulado = getSubtotalItens();
+        if (this.cliente == null || Repositorios.pedidos() == null) {
+            return acumulado;
+        }
+        Long cpfAtual = this.cliente.getCpf();
+        Long idClienteAtual = this.cliente.getId();
+
+        List<Pedido> todos = Repositorios.pedidos().listarTodos();
+        if (todos != null) {
+            for (Pedido outro : todos) {
+                if (outro == null || outro == this) {
+                    continue;
+                }
+                if (this.id != null && this.id.equals(outro.getId())) {
+                    continue;
+                }
+                if (outro.isPedidoNacional() || outro.getCliente() == null) {
+                    continue;
+                }
+                if (outro.getStatus() != null && outro.getStatus().trim().equalsIgnoreCase("Cancelado")) {
+                    continue;
+                }
+
+                boolean mesmoCliente = (cpfAtual != null && cpfAtual.equals(outro.getCliente().getCpf()))
+                        || (cpfAtual == null && idClienteAtual != null
+                                && idClienteAtual.equals(outro.getCliente().getId()));
+
+                if (mesmoCliente) {
+                    acumulado += outro.getSubtotalItens();
+                }
+            }
+        }
+        return acumulado;
+    }
+
+    /**
+     * REQ 21: Importações cuja soma acumulada por CPF não ultrapasse o equivalente
+     * a US\$ 50,00 são isentas de imposto de importação.
      */
     public boolean isIsentoImpostoImportacao() {
         if (listaItems == null || listaItems.isEmpty() || isPedidoNacional()) {
             return false;
         }
         double limiteBRL = getLimiteIsencaoEmReal();
-        if (limiteBRL > 0.0) {
-            return getSubtotalItens() <= limiteBRL;
-        }
-
-        boolean todosEmDolar = true;
-        double totalUsd = 0.0;
-        for (Item item : listaItems) {
-            if (item != null && "US$".equalsIgnoreCase(item.getSimboloMoeda())) {
-                int qtd = item.getQuantidade() != null ? item.getQuantidade() : 0;
-                double preco = item.getPrecoUnitario() != null ? item.getPrecoUnitario() : 0.0;
-                totalUsd += qtd * preco;
-            } else {
-                todosEmDolar = false;
-                break;
-            }
-        }
-        return todosEmDolar && totalUsd <= 50.0;
+        return getAcumuladoImportacaoCpfEmReal() <= limiteBRL;
     }
 
     public double calcularImpostoItem(Item item) {
-        if (item == null || isIsentoImpostoImportacao()) {
+        if (item == null || isPedidoNacional() || isIsentoImpostoImportacao()) {
             return 0.0;
         }
         double subtotalItemBRL = getSubtotalItemEmReal(item);
@@ -168,7 +210,7 @@ public class Pedido {
     }
 
     public double getTotalImpostos() {
-        if (isIsentoImpostoImportacao()) {
+        if (isPedidoNacional() || isIsentoImpostoImportacao()) {
             return 0.0;
         }
         double totalImpostos = 0.0;

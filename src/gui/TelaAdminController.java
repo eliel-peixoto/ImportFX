@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -121,7 +122,8 @@ public class TelaAdminController {
         DateTimeFormatter fmtData = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
         // Tabela de Pedidos
-        colPedId.setCellValueFactory(c -> new SimpleStringProperty("#" + c.getValue().getId()));
+        colPedId.setCellValueFactory(c -> new SimpleStringProperty(
+                c.getValue().getId() != null ? "#" + c.getValue().getId() : "Nulo"));
         colPedData.setCellValueFactory(c -> new SimpleStringProperty(
                 c.getValue().getDataCriacao() != null ? c.getValue().getDataCriacao().format(fmtData) : "-"));
         colPedCliente.setCellValueFactory(c -> new SimpleStringProperty(
@@ -137,6 +139,21 @@ public class TelaAdminController {
         colPedTotal.setCellValueFactory(c -> new SimpleStringProperty(
                 String.format(ptBR, "R$ %.2f", c.getValue().getValorTotalFinal())));
         colPedStatus.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getStatus()));
+
+        // Destaque avermelhado nas linhas de pedidos cancelados
+        tablePedidosAdmin.setRowFactory(tv -> new TableRow<Pedido>() {
+            @Override
+            protected void updateItem(Pedido pedido, boolean empty) {
+                super.updateItem(pedido, empty);
+                if (empty || pedido == null) {
+                    setStyle("");
+                } else if ("Cancelado".equalsIgnoreCase(pedido.getStatus())) {
+                    setStyle("-fx-background-color: #fadbd8; -fx-text-background-color: #78281f;");
+                } else {
+                    setStyle("");
+                }
+            }
+        });
 
         // Tabela de Clientes
         colCliId.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getId())));
@@ -166,8 +183,10 @@ public class TelaAdminController {
         double volumeTotal = 0.0;
         double impostosTotal = 0.0;
         for (Pedido p : todosPedidos) {
-            volumeTotal += p.getValorTotalFinal();
-            impostosTotal += p.getTotalImpostos();
+            if (!"Cancelado".equalsIgnoreCase(p.getStatus())) {
+                volumeTotal += p.getValorTotalFinal();
+                impostosTotal += p.getTotalImpostos();
+            }
         }
 
         lblTotalPedidos.setText(String.valueOf(todosPedidos.size()));
@@ -184,6 +203,12 @@ public class TelaAdminController {
         Pedido selecionado = tablePedidosAdmin.getSelectionModel().getSelectedItem();
         if (selecionado == null) {
             lblMensagemAdmin.setText("Aviso: Selecione um pedido na tabela antes de alterar o status.");
+            lblMensagemAdmin.setTextFill(Color.ORANGE);
+            return;
+        }
+
+        if (selecionado.getId() == null || "Cancelado".equalsIgnoreCase(selecionado.getStatus())) {
+            lblMensagemAdmin.setText("Aviso: Não é possível alterar o status de um pedido cancelado.");
             lblMensagemAdmin.setTextFill(Color.ORANGE);
             return;
         }
