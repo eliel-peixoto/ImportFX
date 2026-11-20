@@ -26,7 +26,7 @@ public class Pedido {
         this.dataCriacao = LocalDateTime.now();
     }
 
-    // --- REQ 20: Bloqueio de alteração após pagamento (ciclo real do ImportFX) ---
+    // req20
 
     public boolean isStatusPosPagamento() {
         if (this.status == null) {
@@ -74,7 +74,7 @@ public class Pedido {
         return this.listaItems;
     }
 
-    // --- CÁLCULOS FINANCEIROS (SUBTOTAL, CÂMBIO, REQ 21, IMPOSTOS, FRETE, TOTAL) ---
+    //calculos de impostos e totais
 
     public boolean isPedidoNacional() {
         return fornecedor != null
@@ -140,17 +140,12 @@ public class Pedido {
         return BigDecimal.valueOf(5.00);
     }
 
-    /**
-     * Calcula o teto de isenção de US\$ 50,00 convertido para Reais (BRL).
-     */
     public double getLimiteIsencaoEmReal() {
         BigDecimal taxaUsd = getTaxaDolarParaReal();
         return BigDecimal.valueOf(50).multiply(taxaUsd).doubleValue();
     }
 
-    /**
-     * Soma o valor em Reais de todas as importações do mesmo CPF (pedidos anteriores + pedido atual).
-     */
+    
     public double getAcumuladoImportacaoCpfEmReal() {
         double acumulado = getSubtotalItens();
         if (this.cliente == null || Repositorios.pedidos() == null) {
@@ -187,10 +182,8 @@ public class Pedido {
         return acumulado;
     }
 
-    /**
-     * REQ 21: Importações cuja soma acumulada por CPF não ultrapasse o equivalente
-     * a US\$ 50,00 são isentas de imposto de importação.
-     */
+    //REQ 21: Importações cuja soma acumulada por CPF não ultrapasse o equivalente a US\$ 50,00 são isentas de imposto de importação.
+    
     public boolean isIsentoImpostoImportacao() {
         if (listaItems == null || listaItems.isEmpty() || isPedidoNacional()) {
             return false;
@@ -249,7 +242,7 @@ public class Pedido {
         return getSubtotalItens() + getTotalImpostos() + getValorFreteInternacional();
     }
 
-    // --- GETTERS E SETTERS ---
+    //getters e setters
 
     public Cliente getCliente() {
         return this.cliente;
