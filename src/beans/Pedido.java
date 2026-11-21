@@ -169,6 +169,10 @@ public class Pedido {
                 if (outro.getStatus() != null && outro.getStatus().trim().equalsIgnoreCase("Cancelado")) {
                     continue;
                 }
+                if (outro.getDataCriacao() != null && this.dataCriacao != null
+                        && outro.getDataCriacao().isAfter(this.dataCriacao)) {
+                    continue;
+                }
 
                 boolean mesmoCliente = (cpfAtual != null && cpfAtual.equals(outro.getCliente().getCpf()))
                         || (cpfAtual == null && idClienteAtual != null
