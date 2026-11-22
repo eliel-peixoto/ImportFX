@@ -77,6 +77,8 @@ public abstract class Produto {
         this.peso = peso;
     }
 
+    public abstract Double getAliquota();
+
     public abstract Double calcularImposto();
 
     @Override

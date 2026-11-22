@@ -2,19 +2,20 @@ package beans;
 
 public class Brinquedo extends Produto {
 
-	private Double aliquota; //não colocar a aliquota em decimais!!!
+	private static final Double ALIQUOTA = 20.0; //não colocar a aliquota em decimais!!!
 	
 	//construtor
-	public Brinquedo(long id, String nome, Double precoMoedaOrigem, Double peso, Double aliquota) {
+	public Brinquedo(long id, String nome, Double precoMoedaOrigem, Double peso) {
 		super(id, nome, precoMoedaOrigem, peso);
-		this.aliquota = aliquota;
+	}
+
+	public Brinquedo(long id, String nome, Double precoMoedaOrigem, Double peso, Double aliquota) {
+		this(id, nome, precoMoedaOrigem, peso);
 	}
 	
+	@Override
 	public Double getAliquota() {
-		return this.aliquota;
-	}
-	public void setAliquota(Double aliquota) {
-		this.aliquota = aliquota;
+		return ALIQUOTA;
 	}
 	
 	//metodos
@@ -29,8 +30,12 @@ public class Brinquedo extends Produto {
 		return valorTotal;
 	}
 	@Override
-    public Double calcularImposto() {   
-    	return 0.0; //Retorno provisório apenas para o código voltar a compilar
+    public Double calcularImposto() {
+		Double preco = this.getPrecoMoedaOrigem();
+		if (preco == null) {
+			return 0.0;
+		}
+		return (this.getAliquota() / 100.0) * preco;
     }
 
 }

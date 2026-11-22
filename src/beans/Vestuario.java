@@ -2,18 +2,19 @@ package beans;
 
 public class Vestuario extends Produto {
 	
-	private Double aliquota; //não colocar a porcentagem da aliquota em decimais.
+	private static final Double ALIQUOTA = 35.0; //não colocar a porcentagem da aliquota em decimais.
 
-	public Vestuario(long id, String nome, Double precoMoedaOrigem, Double peso, Double aliquota) {
+	public Vestuario(long id, String nome, Double precoMoedaOrigem, Double peso) {
         super(id, nome, precoMoedaOrigem, peso);
-        this.aliquota = aliquota;
     }
 
+	public Vestuario(long id, String nome, Double precoMoedaOrigem, Double peso, Double aliquota) {
+        this(id, nome, precoMoedaOrigem, peso);
+    }
+
+	@Override
 	public Double getAliquota() {
-		return this.aliquota;
-	}
-	public void setAliquota(Double aliquota) {
-		this.aliquota = aliquota;
+		return ALIQUOTA;
 	}
 	
 	//metodos
@@ -28,7 +29,11 @@ public class Vestuario extends Produto {
 			return valorTotal;
 		}
 	@Override
-	public Double calcularImposto() {   
-		return 0.0; //Retorno provisório apenas para o código voltar a compilar
+	public Double calcularImposto() {
+		Double preco = this.getPrecoMoedaOrigem();
+		if (preco == null) {
+			return 0.0;
+		}
+		return (this.getAliquota() / 100.0) * preco;
 	}
 }

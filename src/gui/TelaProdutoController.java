@@ -52,6 +52,24 @@ public class TelaProdutoController {
         spnQuantidade.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1));
         cbCategoria.setItems(FXCollections.observableArrayList("Vestuário", "Eletrônico", "Brinquedo"));
 
+        if (txtAliquota != null) {
+            txtAliquota.setEditable(false);
+            txtAliquota.setFocusTraversable(false);
+        }
+
+        cbCategoria.valueProperty().addListener((obs, antiga, nova) -> {
+            if (txtAliquota == null) return;
+            if ("Eletrônico".equals(nova)) {
+                txtAliquota.setText("Alíquota da categoria: 60,0%");
+            } else if ("Vestuário".equals(nova)) {
+                txtAliquota.setText("Alíquota da categoria: 35,0%");
+            } else if ("Brinquedo".equals(nova)) {
+                txtAliquota.setText("Alíquota da categoria: 20,0%");
+            } else {
+                txtAliquota.clear();
+            }
+        });
+
         configurarComboFornecedores();
 
         msgErroProduto.setText("");
@@ -133,16 +151,15 @@ public class TelaProdutoController {
 
             double preco = lerNumero(txtPreco.getText(), "Preço", true);
             double peso = lerNumero(txtPeso.getText(), "Peso", true);
-            double aliquota = lerNumero(txtAliquota.getText(), "Alíquota", false);
             int quantidadeEstoque = (spnQuantidade != null && spnQuantidade.getValue() != null)
                     ? spnQuantidade.getValue() : 1;
 
             long id = gerarId(fornecedor);
             Produto novo;
             switch (cbCategoria.getValue()) {
-                case "Vestuário":  novo = new Vestuario(id, nome, preco, peso, aliquota); break;
-                case "Eletrônico": novo = new Eletronico(id, nome, preco, peso, aliquota); break;
-                default:           novo = new Brinquedo(id, nome, preco, peso, aliquota); break;
+                case "Vestuário":  novo = new Vestuario(id, nome, preco, peso); break;
+                case "Eletrônico": novo = new Eletronico(id, nome, preco, peso); break;
+                default:           novo = new Brinquedo(id, nome, preco, peso); break;
             }
             novo.setIdFornecedor(fornecedor.getId());
             novo.setQuantidadeEstoque(quantidadeEstoque);
@@ -154,7 +171,6 @@ public class TelaProdutoController {
             txtNomeProduto.clear();
             txtPreco.clear();
             txtPeso.clear();
-            txtAliquota.clear();
             spnQuantidade.getValueFactory().setValue(1);
 
         } catch (Exception e) {
