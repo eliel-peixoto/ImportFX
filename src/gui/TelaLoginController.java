@@ -147,4 +147,23 @@ public class TelaLoginController {
             lblAvisoLogin.setText("Erro ao abrir cadastros: " + e.getMessage());
         }
     }
+
+    @FXML
+    private void handleAbrirCambio(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/TelaCambio.fxml"));
+            Parent root = loader.load();
+
+            TelaCambioController controller = loader.getController();
+            controller.setTelaRetorno("/gui/TelaLogin.fxml", "ImportFX - Acesso ao Sistema", "Voltar ao Login");
+            controller.setGerenciadorCambio(new GerenciadorCambio(new ClientePtax(), Repositorios.cotacoes()));
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("ImportFX - Câmbio (Compra e Venda PTAX)");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            lblAvisoLogin.setText("Erro ao abrir tela de câmbio: " + e.getMessage());
+        }
+    }
 }

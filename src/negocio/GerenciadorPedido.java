@@ -5,6 +5,7 @@ import beans.Item;
 import beans.Moeda;
 import beans.Pedido;
 import beans.Produto;
+import beans.StatusPedido;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
@@ -127,6 +128,8 @@ public class GerenciadorPedido implements IGerenciadorPedido {
             }
         }
 
+        //REQ 14: Todo pedido nasce obrigatoriamente como Aguardando Pagamento
+        pedido.setStatus(StatusPedido.AGUARDANDO_PAGAMENTO);
         pedido.setId(gerarProximoId());
         repositorio.cadastrar(pedido);
     }
@@ -151,20 +154,24 @@ public class GerenciadorPedido implements IGerenciadorPedido {
             throw new Exception("Pedido não encontrado no sistema.");
         }
 
-        String statusAnterior = pedidoExistente.getStatus();
-        String novoStatus = pedido.getStatus();
+        StatusPedido statusAtual = pedidoExistente.getStatusEnum();
+        StatusPedido novoStatus = StatusPedido.fromDescricao(pedido.getStatus());
+
+        if (!statusAtual.podeTransicionarPara(novoStatus)) {
+            throw new Exception("Transição de status inválida: não é permitido alterar de \""
+                    + statusAtual.getDescricao() + "\" para \"" + novoStatus.getDescricao() + "\".");
+        }
 
         pedidoExistente.setStatus(novoStatus);
         repositorio.atualizar(pedidoExistente);
 
-        if (pedidoExistente.getCliente() != null
-                && novoStatus != null
-                && !novoStatus.equalsIgnoreCase(statusAnterior)) {
+        if (pedidoExistente.getCliente() != null) {
             String aviso = "O status do seu Pedido #" + pedidoExistente.getId()
-                    + " foi atualizado de \"" + statusAnterior + "\" para \"" + novoStatus + "\".";
+                    + " foi atualizado de \"" + statusAtual.getDescricao()
+                    + "\" para \"" + novoStatus.getDescricao() + "\".";
             pedidoExistente.getCliente().adicionarNotificacao(aviso, pedidoExistente.getId());
-            if (dados.Repositorios.clientes() != null) {
-                dados.Repositorios.clientes().atualizar(pedidoExistente.getCliente());
+            if (Repositorios.clientes() != null) {
+                Repositorios.clientes().atualizar(pedidoExistente.getCliente());
             }
         }
     }
@@ -175,17 +182,18 @@ public class GerenciadorPedido implements IGerenciadorPedido {
         if (pedido == null) {
             throw new Exception("Pedido não encontrado.");
         }
-        if (pedido.isStatusPosPagamento()) {
+        StatusPedido statusAtual = pedido.getStatusEnum();
+        if (statusAtual.isPosPagamento()) {
             throw new Exception("Não é possível cancelar um pedido com status \""
-                    + pedido.getStatus() + "\".");
+                    + statusAtual.getDescricao() + "\".");
         }
-        if ("Cancelado".equalsIgnoreCase(pedido.getStatus())) {
+        if (statusAtual == StatusPedido.CANCELADO) {
             throw new Exception("Este pedido já está cancelado.");
         }
 
         Long idAntigo = pedido.getId();
 
-        // Devolve ao estoque a quantidade de cada item do pedido cancelado
+        //Devolve ao estoque a quantidade de cada item do pedido cancelado
         if (pedido.getItemPedido() != null && Repositorios.produtos() != null) {
             for (Item item : pedido.getItemPedido()) {
                 if (item.getIdProduto() != null
@@ -200,17 +208,17 @@ public class GerenciadorPedido implements IGerenciadorPedido {
             }
         }
 
-        // Remove o registro com o ID antigo para liberar o número e regrava como cancelado com ID nulo
+        //Remove o registro com o ID antigo para liberar o número e regrava como cancelado com ID nulo
         repositorio.remover(idAntigo);
         pedido.setId(null);
-        pedido.setStatus("Cancelado");
+        pedido.setStatus(StatusPedido.CANCELADO);
         repositorio.cadastrar(pedido);
 
         if (pedido.getCliente() != null) {
             String aviso = "O seu Pedido #" + idAntigo + " foi cancelado.";
             pedido.getCliente().adicionarNotificacao(aviso, idAntigo);
-            if (dados.Repositorios.clientes() != null) {
-                dados.Repositorios.clientes().atualizar(pedido.getCliente());
+            if (Repositorios.clientes() != null) {
+                Repositorios.clientes().atualizar(pedido.getCliente());
             }
         }
     }

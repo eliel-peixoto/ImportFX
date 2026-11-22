@@ -12,43 +12,42 @@ public class Pedido {
     private Cliente cliente;
     private Fornecedor fornecedor;
     private Long id;
-    private String status;
+    private StatusPedido status = StatusPedido.AGUARDANDO_PAGAMENTO;
     private ArrayList<Item> listaItems;
     private LocalDateTime dataCriacao;
     private Cotacao cotacao;
 
-    public Pedido(Cliente cliente, Fornecedor fornecedor, Long id, String status) {
+    public Pedido(Cliente cliente, Fornecedor fornecedor, Long id) {
+        this(cliente, fornecedor, id, StatusPedido.AGUARDANDO_PAGAMENTO);
+    }
+
+    public Pedido(Cliente cliente, Fornecedor fornecedor, Long id, StatusPedido status) {
         this.cliente = cliente;
         this.fornecedor = fornecedor;
         this.id = id;
-        this.status = status;
+        this.status = (status != null) ? status : StatusPedido.AGUARDANDO_PAGAMENTO;
         this.listaItems = new ArrayList<Item>();
         this.dataCriacao = LocalDateTime.now();
+    }
+
+    public Pedido(Cliente cliente, Fornecedor fornecedor, Long id, String status) {
+        this(cliente, fornecedor, id, StatusPedido.fromDescricao(status));
     }
 
     // req20
 
     public boolean isStatusPosPagamento() {
-        if (this.status == null) {
-            return false;
-        }
-        String s = this.status.trim();
-        return s.equalsIgnoreCase("Pago")
-                || s.equalsIgnoreCase("Em Trânsito")
-                || s.equalsIgnoreCase("Em Transito")
-                || s.equalsIgnoreCase("Alfândega")
-                || s.equalsIgnoreCase("Alfandega")
-                || s.equalsIgnoreCase("Entregue");
+        return getStatusEnum().isPosPagamento();
     }
 
     private boolean isBloqueadoParaAlteracaoItens() {
-        return isStatusPosPagamento();
+        return isStatusPosPagamento() || getStatusEnum() == StatusPedido.CANCELADO;
     }
 
     public void adicionar(Item item) {
         if (isBloqueadoParaAlteracaoItens()) {
             throw new IllegalStateException(
-                    "Não é permitido adicionar itens a um pedido com status \"" + this.status + "\".");
+                    "Não é permitido adicionar itens a um pedido com status \"" + getStatus() + "\".");
         }
         this.listaItems.add(item);
     }
@@ -56,7 +55,7 @@ public class Pedido {
     public void remover(int i) {
         if (isBloqueadoParaAlteracaoItens()) {
             throw new IllegalStateException(
-                    "Não é permitido remover itens de um pedido com status \"" + this.status + "\".");
+                    "Não é permitido remover itens de um pedido com status \"" + getStatus() + "\".");
         }
         this.listaItems.remove(i);
     }
@@ -74,7 +73,7 @@ public class Pedido {
         return this.listaItems;
     }
 
-    //calculos de impostos e totais
+    // calculos de impostos e totais
 
     public boolean isPedidoNacional() {
         return fornecedor != null
@@ -145,7 +144,6 @@ public class Pedido {
         return BigDecimal.valueOf(50).multiply(taxaUsd).doubleValue();
     }
 
-
     public double getAcumuladoImportacaoCpfEmReal() {
         double acumulado = getSubtotalItens();
         if (this.cliente == null || Repositorios.pedidos() == null) {
@@ -166,7 +164,7 @@ public class Pedido {
                 if (outro.isPedidoNacional() || outro.getCliente() == null) {
                     continue;
                 }
-                if (outro.getStatus() != null && outro.getStatus().trim().equalsIgnoreCase("Cancelado")) {
+                if (outro.getStatusEnum() == StatusPedido.CANCELADO) {
                     continue;
                 }
                 if (outro.getDataCriacao() != null && this.dataCriacao != null
@@ -186,7 +184,7 @@ public class Pedido {
         return acumulado;
     }
 
-    //REQ 21: Importações cuja soma acumulada por CPF não ultrapasse o equivalente a US\$ 50,00 são isentas de imposto de importação.
+    //REQ 21: Importações cuja soma acumulada por CPF não ultrapasse o equivalente a US$ 50,00 são isentas de imposto de importação.
 
     public boolean isIsentoImpostoImportacao() {
         if (listaItems == null || listaItems.isEmpty() || isPedidoNacional()) {
@@ -272,12 +270,20 @@ public class Pedido {
         this.id = id;
     }
 
+    public StatusPedido getStatusEnum() {
+        return this.status != null ? this.status : StatusPedido.AGUARDANDO_PAGAMENTO;
+    }
+
     public String getStatus() {
-        return this.status;
+        return getStatusEnum().getDescricao();
+    }
+
+    public void setStatus(StatusPedido status) {
+        this.status = (status != null) ? status : StatusPedido.AGUARDANDO_PAGAMENTO;
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.status = StatusPedido.fromDescricao(status);
     }
 
     public LocalDateTime getDataCriacao() {

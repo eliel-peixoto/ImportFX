@@ -23,8 +23,8 @@ import negocio.IGerenciadorCambio;
 import negocio.ServicoCotacaoDia;
 
 /**
- * Tela de câmbio: mostra a cotação diária (PTAX) das moedas aceitas pelo sistema. */
-
+ * Tela de câmbio: mostra a cotação diária (PTAX) das moedas aceitas pelo sistema.
+ */
 public class TelaCambioController {
 
     private static final DateTimeFormatter HORA_CONSULTA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
@@ -43,6 +43,9 @@ public class TelaCambioController {
     private IGerenciadorCambio gerenciadorCambio;
     private boolean consultando = false;
 
+    private String fxmlRetorno = "/gui/TelaLogin.fxml";
+    private String tituloRetorno = "ImportFX - Acesso ao Sistema";
+
     @FXML
     private void initialize() {
         colMoeda.setCellValueFactory(new PropertyValueFactory<>("moeda"));
@@ -52,7 +55,20 @@ public class TelaCambioController {
         colSituacao.setCellValueFactory(new PropertyValueFactory<>("situacao"));
     }
 
-    /** Chamado pelo menu principal; já dispara a primeira consulta ao abrir a tela. */
+    //Define para qual tela o botão Voltar deve retornar.
+    public void setTelaRetorno(String fxmlRetorno, String tituloRetorno, String textoBotao) {
+        if (fxmlRetorno != null && !fxmlRetorno.isBlank()) {
+            this.fxmlRetorno = fxmlRetorno;
+        }
+        if (tituloRetorno != null && !tituloRetorno.isBlank()) {
+            this.tituloRetorno = tituloRetorno;
+        }
+        if (btnVoltar != null && textoBotao != null && !textoBotao.isBlank()) {
+            btnVoltar.setText(textoBotao);
+        }
+    }
+
+    //chamado ao abrir a tela; já dispara a primeira consulta. 
     public void setGerenciadorCambio(IGerenciadorCambio gerenciadorCambio) {
         this.gerenciadorCambio = gerenciadorCambio;
         atualizar();
@@ -115,12 +131,12 @@ public class TelaCambioController {
     @FXML
     private void handleVoltarMenu(ActionEvent event) {
         try {
-            Parent raiz = FXMLLoader.load(getClass().getResource("/gui/MenuPrincipal.fxml"));
+            Parent raiz = FXMLLoader.load(getClass().getResource(fxmlRetorno));
             Stage janela = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            janela.setTitle("ImportFX - Menu Principal");
+            janela.setTitle(tituloRetorno);
             janela.setScene(new Scene(raiz));
         } catch (Exception erro) {
-            mostrarAviso("Não foi possível voltar ao menu: " + erro.getMessage());
+            mostrarAviso("Não foi possível voltar: " + erro.getMessage());
         }
     }
 }

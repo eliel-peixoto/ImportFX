@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaCriarPedidoController">
+<AnchorPane prefHeight="660.0" prefWidth="620.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.TelaCriarPedidoController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="70.0" style="-fx-background-color: #ff4501;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -34,13 +34,13 @@
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="ID do Pedido:" />
-                        <TextField fx:id="txtId" promptText="Ex: 101" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" />
+                        <TextField fx:id="txtId" editable="false" focusTraversable="false" promptText="Ex: 101" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Status Inicial:" />
-                        <TextField fx:id="txtStatus" editable="false" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" text="PENDENTE" />
+                        <TextField fx:id="txtStatus" editable="false" focusTraversable="false" style="-fx-border-color: #ff4501; -fx-border-radius: 4;" text="Aguardando Pagamento" />
                      </children>
                   </VBox>
                </children>
@@ -63,9 +63,16 @@
                </children>
             </HBox>
 
+            <VBox spacing="5.0">
+               <children>
+                  <Label text="Cotação Vigente (PTAX):" />
+                  <TextField fx:id="txtCotacao" editable="false" focusTraversable="false" promptText="Selecione um fornecedor para exibir a cotação" style="-fx-border-color: #ff4501; -fx-border-radius: 4; -fx-background-color: #f9f9f9;" />
+               </children>
+            </VBox>
+
             <Label text="Adicionar Item ao Pedido:">
                <VBox.margin>
-                  <Insets top="10.0" />
+                  <Insets top="5.0" />
                </VBox.margin>
             </Label>
             <HBox spacing="10.0">
@@ -80,7 +87,7 @@
             
             <HBox alignment="CENTER_RIGHT" spacing="15.0">
                <children>
-                  <Label fx:id="lblMensagem" textFill="RED" />
+                  <Label fx:id="lblMensagem" textFill="RED" wrapText="true" HBox.hgrow="ALWAYS" />
                   <Button mnemonicParsing="false" onAction="#handleVoltarMenu" styleClass="btn-secondary" text="Voltar ao menu" />
                   <Button mnemonicParsing="false" onAction="#handleAbrirRelatorios" styleClass="btn-primary" text="Relatórios CSV" />
                   <Button fx:id="btnSalvarPedido" mnemonicParsing="false" onAction="#handleSalvarPedido" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 4;" text="Salvar Pedido" />

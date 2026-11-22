@@ -3,6 +3,7 @@ package gui;
 import beans.Cliente;
 import beans.Fornecedor;
 import beans.Pedido;
+import beans.StatusPedido;
 import dados.Repositorios;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -38,7 +39,7 @@ public class TelaAdminController {
     @FXML private Label lblTotalImpostos;
     @FXML private Label lblMensagemAdmin;
 
-    @FXML private ComboBox<String> cbNovoStatusAdmin;
+    @FXML private ComboBox<StatusPedido> cbNovoStatusAdmin;
     @FXML private TableView<Pedido> tablePedidosAdmin;
     @FXML private TableColumn<Pedido, String> colPedId;
     @FXML private TableColumn<Pedido, String> colPedData;
@@ -72,9 +73,6 @@ public class TelaAdminController {
                     Repositorios.pedidos()
             );
 
-    /**
-     * Método utilitário para a Tela de Login abrir diretamente o painel do Administrador.
-     */
     public static void abrirParaAdmin(Stage stage,
                                       IGerenciadorPedido gp,
                                       IGerenciadorRelatorios gr) throws Exception {
@@ -104,17 +102,36 @@ public class TelaAdminController {
 
     @FXML
     public void initialize() {
-        cbNovoStatusAdmin.getItems().addAll(
-                "Pendente",
-                "Aguardando Pagamento",
-                "Pago",
-                "Em Trânsito",
-                "Alfândega",
-                "Entregue"
-        );
+        cbNovoStatusAdmin.setDisable(true);
+        cbNovoStatusAdmin.setPromptText("Selecione um pedido");
+
+        tablePedidosAdmin.getSelectionModel().selectedItemProperty().addListener((obs, anterior, selecionado) -> {
+            atualizarOpcoesStatusDisponiveis(selecionado);
+        });
 
         configurarTabelas();
         atualizarPainelCompleto();
+    }
+
+    private void atualizarOpcoesStatusDisponiveis(Pedido pedido) {
+        cbNovoStatusAdmin.getItems().clear();
+        cbNovoStatusAdmin.getSelectionModel().clearSelection();
+
+        if (pedido == null || pedido.getId() == null) {
+            cbNovoStatusAdmin.setDisable(true);
+            cbNovoStatusAdmin.setPromptText("Indisponível");
+            return;
+        }
+
+        List<StatusPedido> proximos = pedido.getStatusEnum().proximosStatusValidos();
+        if (proximos.isEmpty()) {
+            cbNovoStatusAdmin.setDisable(true);
+            cbNovoStatusAdmin.setPromptText("Fluxo finalizado (" + pedido.getStatus() + ")");
+        } else {
+            cbNovoStatusAdmin.getItems().addAll(proximos);
+            cbNovoStatusAdmin.setDisable(false);
+            cbNovoStatusAdmin.setPromptText("Selecione o próximo status");
+        }
     }
 
     private void configurarTabelas() {
@@ -147,7 +164,7 @@ public class TelaAdminController {
                 super.updateItem(pedido, empty);
                 if (empty || pedido == null) {
                     setStyle("");
-                } else if ("Cancelado".equalsIgnoreCase(pedido.getStatus())) {
+                } else if (pedido.getStatusEnum() == StatusPedido.CANCELADO) {
                     setStyle("-fx-background-color: #fadbd8; -fx-text-background-color: #78281f;");
                 } else {
                     setStyle("");
@@ -175,15 +192,15 @@ public class TelaAdminController {
     private void atualizarPainelCompleto() {
         Locale ptBR = Locale.forLanguageTag("pt-BR");
 
-        // 1. Atualiza Pedidos e Totais
         List<Pedido> todosPedidos = gerenciadorPedido.listarPedidos();
         tablePedidosAdmin.setItems(FXCollections.observableArrayList(todosPedidos));
         tablePedidosAdmin.refresh();
+        atualizarOpcoesStatusDisponiveis(tablePedidosAdmin.getSelectionModel().getSelectedItem());
 
         double volumeTotal = 0.0;
         double impostosTotal = 0.0;
         for (Pedido p : todosPedidos) {
-            if (!"Cancelado".equalsIgnoreCase(p.getStatus())) {
+            if (p.getStatusEnum() != StatusPedido.CANCELADO) {
                 volumeTotal += p.getValorTotalFinal();
                 impostosTotal += p.getTotalImpostos();
             }
@@ -193,7 +210,6 @@ public class TelaAdminController {
         lblVolumeTotal.setText(String.format(ptBR, "R$ %.2f", volumeTotal));
         lblTotalImpostos.setText(String.format(ptBR, "R$ %.2f", impostosTotal));
 
-        // 2. Atualiza Clientes e Fornecedores Cadastrados
         tableClientesAdmin.setItems(FXCollections.observableArrayList(gerenciadorCliente.listarTodos()));
         tableFornecedoresAdmin.setItems(FXCollections.observableArrayList(gerenciadorFornecedor.listarTodos()));
     }
@@ -207,15 +223,9 @@ public class TelaAdminController {
             return;
         }
 
-        if (selecionado.getId() == null || "Cancelado".equalsIgnoreCase(selecionado.getStatus())) {
-            lblMensagemAdmin.setText("Aviso: Não é possível alterar o status de um pedido cancelado.");
-            lblMensagemAdmin.setTextFill(Color.ORANGE);
-            return;
-        }
-
-        String novoStatus = cbNovoStatusAdmin.getValue();
+        StatusPedido novoStatus = cbNovoStatusAdmin.getValue();
         if (novoStatus == null) {
-            lblMensagemAdmin.setText("Aviso: Selecione o novo status na lista.");
+            lblMensagemAdmin.setText("Aviso: Selecione o próximo status válido na lista.");
             lblMensagemAdmin.setTextFill(Color.ORANGE);
             return;
         }
@@ -229,11 +239,10 @@ public class TelaAdminController {
             );
             gerenciadorPedido.atualizarStatusPedido(atualizacao);
 
-            cbNovoStatusAdmin.getSelectionModel().clearSelection();
             atualizarPainelCompleto();
 
             lblMensagemAdmin.setText("Pedido #" + selecionado.getId() + " atualizado para \""
-                    + novoStatus + "\" (Notificação enviada ao cliente).");
+                    + novoStatus.getDescricao() + "\" (Notificação enviada ao cliente).");
             lblMensagemAdmin.setTextFill(Color.GREEN);
         } catch (Exception e) {
             lblMensagemAdmin.setText("Erro ao atualizar status: " + e.getMessage());

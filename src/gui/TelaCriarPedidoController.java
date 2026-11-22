@@ -9,6 +9,7 @@ import beans.Item;
 import beans.Moeda;
 import beans.Pedido;
 import beans.Produto;
+import beans.StatusPedido;
 import beans.Vestuario;
 import dados.Repositorios;
 import java.io.File;
@@ -51,6 +52,7 @@ public class TelaCriarPedidoController {
 
     @FXML private TextField txtId;
     @FXML private TextField txtStatus;
+    @FXML private TextField txtCotacao;
     @FXML private ComboBox<Cliente> cbCliente;
     @FXML private ComboBox<Fornecedor> cbFornecedor;
     @FXML private ComboBox<Produto> cbProduto;
@@ -86,6 +88,9 @@ public class TelaCriarPedidoController {
 
     public void setGerenciadorCambio(IGerenciadorCambio gerenciadorCambio) {
         this.gerenciadorCambio = gerenciadorCambio;
+        if (cbFornecedor != null && cbFornecedor.getValue() != null) {
+            atualizarCotacaoFornecedor(cbFornecedor.getValue());
+        }
     }
 
     public void setGerenciadorRelatorios(IGerenciadorRelatorios gerenciadorRelatorios) {
@@ -110,9 +115,7 @@ public class TelaCriarPedidoController {
             cbCliente.setDisable(true);
         }
         if (txtStatus != null) {
-            if (txtStatus.getText() == null || txtStatus.getText().trim().isEmpty()) {
-                txtStatus.setText("Pendente");
-            }
+            txtStatus.setText(StatusPedido.AGUARDANDO_PAGAMENTO.getDescricao());
             txtStatus.setEditable(false);
             txtStatus.setFocusTraversable(false);
         }
@@ -123,6 +126,18 @@ public class TelaCriarPedidoController {
         txtId.setEditable(false);
         txtId.setFocusTraversable(false);
         atualizarProximoIdNaTela();
+
+        if (txtStatus != null) {
+            txtStatus.setText(StatusPedido.AGUARDANDO_PAGAMENTO.getDescricao());
+            txtStatus.setEditable(false);
+            txtStatus.setFocusTraversable(false);
+        }
+
+        if (txtCotacao != null) {
+            txtCotacao.setEditable(false);
+            txtCotacao.setFocusTraversable(false);
+            txtCotacao.setText("Selecione um fornecedor para exibir a cotação");
+        }
 
         configurarConversoresComboBox();
         carregarDadosReais();
@@ -139,8 +154,7 @@ public class TelaCriarPedidoController {
         cbCliente.setConverter(new StringConverter<Cliente>() {
             @Override
             public String toString(Cliente cliente) {
-                if (cliente == null) return "";
-                return cliente.getNome();
+                return cliente == null ? "" : cliente.getNome();
             }
 
             @Override
@@ -210,10 +224,16 @@ public class TelaCriarPedidoController {
             cbProduto.setValue(null);
 
             if (novoFornecedor == null) {
+                cotacaoDoPedido = null;
+                if (txtCotacao != null) {
+                    txtCotacao.setText("Selecione um fornecedor para exibir a cotação");
+                }
                 cbProduto.setDisable(true);
                 cbProduto.setPromptText("Selecione um fornecedor primeiro");
                 return;
             }
+
+            atualizarCotacaoFornecedor(novoFornecedor);
 
             List<Produto> produtosDoFornecedor = gerenciadorProduto.listarTodos().stream()
                     .filter(p -> Objects.equals(p.getIdFornecedor(), novoFornecedor.getId()))
@@ -229,6 +249,46 @@ public class TelaCriarPedidoController {
                 cbProduto.setPromptText("Selecione o Produto (" + novoFornecedor.getMoedaPadrao() + ")");
             }
         });
+    }
+
+    
+    //REQ 05: Consulta e exibe a cotação vigente imediatamente ao selecionar o fornecedor.
+     
+    private void atualizarCotacaoFornecedor(Fornecedor fornecedor) {
+        Moeda moeda = fornecedor.getMoedaPadrao();
+        if (moeda == null) {
+            cotacaoDoPedido = null;
+            if (txtCotacao != null) txtCotacao.setText("Moeda não definida para este fornecedor");
+            return;
+        }
+        if (moeda == Moeda.BRL) {
+            cotacaoDoPedido = null;
+            if (txtCotacao != null) txtCotacao.setText("Moeda Nacional (BRL - R$ 1,0000)");
+            return;
+        }
+        if (gerenciadorCambio == null) {
+            cotacaoDoPedido = null;
+            if (txtCotacao != null) txtCotacao.setText("Serviço de câmbio não inicializado");
+            return;
+        }
+        try {
+            cotacaoDoPedido = gerenciadorCambio.obterCotacao(moeda);
+            if (txtCotacao != null) {
+                Locale ptBR = Locale.forLanguageTag("pt-BR");
+                String info = String.format(ptBR, "1 %s = R$ %.4f (Compra: R$ %.4f | Venda: R$ %.4f)%s",
+                        moeda,
+                        cotacaoDoPedido.getVenda(),
+                        cotacaoDoPedido.getCompra(),
+                        cotacaoDoPedido.getVenda(),
+                        cotacaoDoPedido.isDesatualizada() ? " [Cache local]" : "");
+                txtCotacao.setText(info);
+            }
+        } catch (Exception e) {
+            cotacaoDoPedido = null;
+            if (txtCotacao != null) {
+                txtCotacao.setText("Cotação indisponível para " + moeda + ": " + e.getMessage());
+            }
+        }
     }
 
     @FXML
@@ -249,7 +309,6 @@ public class TelaCriarPedidoController {
                 throw new Exception("A quantidade deve ser maior que zero.");
             }
 
-            //Verifica o estoque considerando itens do mesmo produto já adicionados ao pedido
             int jaNaLista = 0;
             for (Item item : itensTemporarios) {
                 if (Objects.equals(item.getIdProduto(), produtoSelecionado.getId())
@@ -344,9 +403,12 @@ public class TelaCriarPedidoController {
                 throw new Exception("O pedido deve conter pelo menos um item.");
             }
 
-            String status = (txtStatus.getText() == null || txtStatus.getText().trim().isEmpty())
-                    ? "Pendente" : txtStatus.getText().trim();
-            Pedido novoPedido = new Pedido(clienteSelecionado, fornecedorSelecionado, idAutomatico, status);
+            Pedido novoPedido = new Pedido(
+                    clienteSelecionado,
+                    fornecedorSelecionado,
+                    idAutomatico,
+                    StatusPedido.AGUARDANDO_PAGAMENTO.getDescricao()
+            );
 
             for (Item item : itensTemporarios) {
                 novoPedido.adicionar(item);
@@ -361,6 +423,9 @@ public class TelaCriarPedidoController {
             pedidoCriado = novoPedido;
             btnSalvarPedido.setDisable(true);
             txtId.setText(String.valueOf(novoPedido.getId()));
+            if (txtStatus != null) {
+                txtStatus.setText(novoPedido.getStatus());
+            }
 
             atualizarEstoqueProdutos(itensTemporarios);
 
