@@ -33,6 +33,10 @@ public class Cliente {
         }
     }
 
+    public static void sincronizarSequenciaId(long maiorIdExistente) {
+        SEQUENCIA_ID.updateAndGet(atual -> Math.max(atual, maiorIdExistente + 1));
+    }
+
     public Long getId() { return id; }
 
     public String getNome() { return nome; }

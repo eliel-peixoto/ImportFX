@@ -20,11 +20,14 @@ public class GerenciadorCliente implements IGerenciadorCliente {
         if (cliente.getNome() == null || cliente.getNome().trim().isEmpty()) {
             throw new Exception("O nome do cliente é obrigatório.");
         }
+        if (cliente.getEndereco() == null || cliente.getEndereco().trim().isEmpty()) {
+            throw new Exception("O endereço do cliente é obrigatório.");
+        }
         if (cliente.getCpf() == null) {
             throw new Exception("O CPF do cliente é obrigatório.");
         }
-        if (cliente.getCpf() <= 0 || cliente.getCpf() > 99_999_999_999L) {
-            throw new Exception("O CPF deve conter exatamente 11 dígitos numéricos.");
+        if (!cpfValido(cliente.getCpf())) {
+            throw new Exception("CPF inválido. Verifique os 11 dígitos informados.");
         }
         for (Cliente existente : repositorio.listarTodos()) {
             if (existente.getCpf() != null && existente.getCpf().equals(cliente.getCpf())) {
@@ -33,6 +36,30 @@ public class GerenciadorCliente implements IGerenciadorCliente {
         }
         cliente.gerarId();
         repositorio.cadastrar(cliente);
+    }
+
+    public static boolean cpfValido(long cpf) {
+        if (cpf <= 0 || cpf > 99_999_999_999L) {
+            return false;
+        }
+        String d = String.format("%011d", cpf);
+        if (d.chars().distinct().count() == 1) {
+            return false;
+        }
+        for (int t = 9; t <= 10; t++) {
+            int soma = 0;
+            for (int i = 0; i < t; i++) {
+                soma += (d.charAt(i) - '0') * (t + 1 - i);
+            }
+            int dv = (soma * 10) % 11;
+            if (dv == 10) {
+                dv = 0;
+            }
+            if (dv != d.charAt(t) - '0') {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

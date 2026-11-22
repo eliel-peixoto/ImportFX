@@ -145,7 +145,7 @@ public class Pedido {
         return BigDecimal.valueOf(50).multiply(taxaUsd).doubleValue();
     }
 
-    
+
     public double getAcumuladoImportacaoCpfEmReal() {
         double acumulado = getSubtotalItens();
         if (this.cliente == null || Repositorios.pedidos() == null) {
@@ -169,10 +169,14 @@ public class Pedido {
                 if (outro.getStatus() != null && outro.getStatus().trim().equalsIgnoreCase("Cancelado")) {
                     continue;
                 }
+                if (outro.getDataCriacao() != null && this.dataCriacao != null
+                        && outro.getDataCriacao().isAfter(this.dataCriacao)) {
+                    continue;
+                }
 
                 boolean mesmoCliente = (cpfAtual != null && cpfAtual.equals(outro.getCliente().getCpf()))
                         || (cpfAtual == null && idClienteAtual != null
-                                && idClienteAtual.equals(outro.getCliente().getId()));
+                        && idClienteAtual.equals(outro.getCliente().getId()));
 
                 if (mesmoCliente) {
                     acumulado += outro.getSubtotalItens();
@@ -183,7 +187,7 @@ public class Pedido {
     }
 
     //REQ 21: Importações cuja soma acumulada por CPF não ultrapasse o equivalente a US\$ 50,00 são isentas de imposto de importação.
-    
+
     public boolean isIsentoImpostoImportacao() {
         if (listaItems == null || listaItems.isEmpty() || isPedidoNacional()) {
             return false;

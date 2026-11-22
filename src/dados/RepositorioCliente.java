@@ -13,6 +13,14 @@ public class RepositorioCliente extends RepositorioGenerico<Cliente> implements 
         super();
         Type tipoLista = new TypeToken<List<Cliente>>() {}.getType();
         this.elementos.addAll(PersistenciaJson.carregarLista(ARQUIVO, tipoLista));
+
+        long maiorId = 0;
+        for (Cliente c : this.elementos) {
+            if (c.getId() != null && c.getId() > maiorId) {
+                maiorId = c.getId();
+            }
+        }
+        Cliente.sincronizarSequenciaId(maiorId);
     }
 
     public void salvar() {
@@ -21,12 +29,10 @@ public class RepositorioCliente extends RepositorioGenerico<Cliente> implements 
 
     @Override
     public void cadastrar(Cliente cliente) {
-        if (cliente != null) {
-            cliente.gerarId();
-            while (cliente.getId() != null && buscarPorId(cliente.getId()) != null) {
-                cliente.gerarId();
-            }
+        if (cliente == null) {
+            return;
         }
+        cliente.gerarId();
         super.cadastrar(cliente);
         salvar();
     }

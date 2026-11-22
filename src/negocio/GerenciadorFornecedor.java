@@ -31,6 +31,9 @@ public class GerenciadorFornecedor implements IGerenciadorFornecedor {
         if (fornecedor.getNome() == null || fornecedor.getNome().trim().isEmpty()) {
             throw new Exception("O nome do fornecedor é obrigatório.");
         }
+        if (fornecedor.getPaisOrigem() == null || fornecedor.getPaisOrigem().trim().isEmpty()) {
+            throw new Exception("O país de origem é obrigatório.");
+        }
         if (fornecedor.getMoedaPadrao() == null) {
             throw new Exception("A moeda padrão é obrigatória.");
         }
@@ -52,6 +55,16 @@ public class GerenciadorFornecedor implements IGerenciadorFornecedor {
         }
         if (moedaPadrao == null) {
             throw new Exception("A moeda padrão é obrigatória.");
+        }
+        if (existente.getMoedaPadrao() != moedaPadrao) {
+            boolean temProdutos = !existente.getListaProdutos().listarTodos().isEmpty();
+            boolean temPedidos = Repositorios.pedidos().listarTodos().stream()
+                    .anyMatch(p -> p.getFornecedor() != null
+                            && p.getFornecedor().getId() != null
+                            && p.getFornecedor().getId() == id);
+            if (temProdutos || temPedidos) {
+                throw new Exception("Não é possível trocar a moeda de um fornecedor que já possui produtos ou pedidos.");
+            }
         }
 
         existente.setNome(nome.trim());
@@ -79,7 +92,9 @@ public class GerenciadorFornecedor implements IGerenciadorFornecedor {
             if (p.getFornecedor() != null && p.getFornecedor().getId() != null
                     && p.getFornecedor().getId() == id) {
                 String status = p.getStatus() == null ? "" : p.getStatus().trim();
-                if (!status.equalsIgnoreCase("Entregue")) {
+                boolean encerrado = status.equalsIgnoreCase("Entregue")
+                        || status.equalsIgnoreCase("Cancelado");
+                if (!encerrado) {
                     throw new Exception("Não é possível remover este fornecedor: existe pelo menos um pedido em andamento (#" + p.getId() + ").");
                 }
             }
