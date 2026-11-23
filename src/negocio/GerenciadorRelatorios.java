@@ -8,6 +8,7 @@ import beans.Pedido;
 import beans.Produto;
 import beans.RelatorioPedido;
 import beans.RelatorioProduto;
+import beans.StatusPedido;
 import dados.IRepositorioCliente;
 import dados.IRepositorioFornecedores;
 import dados.IRepositorioPedidos;
@@ -102,7 +103,7 @@ public class GerenciadorRelatorios implements IGerenciadorRelatorios {
         if (repoPedidos == null) return resultado;
 
         for (Pedido pedido : repoPedidos.listarTodos()) {
-            if (pedido == null) continue;
+            if (pedido == null || pedido.getStatusEnum() == StatusPedido.CANCELADO) continue;
             LocalDate data = pedido.getDataCriacao() == null
                     ? LocalDate.now() : pedido.getDataCriacao().toLocalDate();
             if (data.isBefore(inicio) || data.isAfter(fim)) continue;
@@ -118,10 +119,10 @@ public class GerenciadorRelatorios implements IGerenciadorRelatorios {
 
                 double subtotal = valor(item.getPrecoUnitario()) * quantidade(item);
                 totalConvertido += subtotal;
-                impostoCalculado += subtotal * valor(item.getAliquota()) / 100.0;
+                impostoCalculado += pedido.calcularImpostoItem(item);
             }
 
-            double impostoArrecadado = statusPagoOuDepois(pedido.getStatus())
+            double impostoArrecadado = pedido.isStatusPosPagamento()
                     ? impostoCalculado : 0.0;
             resultado.add(new RelatorioPedido(
                     pedido.getId(), data,
@@ -147,10 +148,11 @@ public class GerenciadorRelatorios implements IGerenciadorRelatorios {
         if (filtroCategoria.equals("todas")) filtroCategoria = "";
 
         for (Pedido pedido : repoPedidos.listarTodos()) {
-            if (pedido == null || pedido.getDataCriacao() == null) continue;
+            if (pedido == null || pedido.getDataCriacao() == null
+                    || pedido.getStatusEnum() == StatusPedido.CANCELADO) continue;
             LocalDate data = pedido.getDataCriacao().toLocalDate();
             if (data.isBefore(inicio) || data.isAfter(fim)
-                    || !statusPagoOuDepois(pedido.getStatus())) continue;
+                    || !pedido.isStatusPosPagamento()) continue;
 
             for (Item item : pedido.getItemPedido()) {
                 String nomeCategoria = texto(item.getCategoria());
@@ -194,6 +196,7 @@ public class GerenciadorRelatorios implements IGerenciadorRelatorios {
         adicionarLinha(csv, "ID do Pedido", "Data", "Cliente", "Fornecedor", "Status",
                 "Total convertido (R$)", "Impostos arrecadados (R$)", "Conversão");
         for (RelatorioPedido linha : linhas) {
+            if (linha == null || "Cancelado".equalsIgnoreCase(linha.getStatus())) continue;
             adicionarLinha(csv, String.valueOf(linha.getIdPedido()), linha.getDataFormatada(),
                     linha.getCliente(), linha.getFornecedor(), linha.getStatus(),
                     decimalCsv(linha.getTotalConvertido()), decimalCsv(linha.getImpostosArrecadados()),
@@ -222,13 +225,6 @@ public class GerenciadorRelatorios implements IGerenciadorRelatorios {
         if (inicio.isAfter(fim)) {
             throw new IllegalArgumentException("A data inicial deve ser anterior à data final.");
         }
-    }
-
-    private boolean statusPagoOuDepois(String status) {
-        String valor = normalizar(status).replace('_', ' ');
-        return valor.equals("pago") || valor.equals("em transito")
-                || valor.equals("transito") || valor.equals("alfandega")
-                || valor.equals("entregue");
     }
 
     private int quantidade(Item item) {
